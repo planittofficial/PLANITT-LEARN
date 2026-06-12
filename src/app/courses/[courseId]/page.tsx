@@ -1,0 +1,128 @@
+"use client";
+
+import Link from "next/link";
+import { notFound, useParams } from "next/navigation";
+import { CheckCircle2, Circle } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+
+import { LearnShell } from "@/components/layout/LearnShell";
+import { useAuth } from "@/context/auth-context";
+import { useEnrollment } from "@/hooks/useEnrollment";
+import { getCourseById } from "@/lib/catalog/courses";
+import { isEnrolledInCourse } from "@/lib/learning/enrollment";
+import {
+  countCompletedLessons,
+  loadCourseProgress,
+  type CourseProgress,
+} from "@/lib/learning/progress";
+import { MAIN_WEBSITE_URL } from "@/lib/env";
+
+export default function CourseHubPage() {
+  const params = useParams<{ courseId: string }>();
+  const courseId = params.courseId;
+  const course = getCourseById(courseId);
+  const { user } = useAuth();
+  const { enrolledIds, loading } = useEnrollment();
+  const [progress, setProgress] = useState<CourseProgress>({});
+
+  useEffect(() => {
+    if (!user?.id) return;
+    setProgress(loadCourseProgress(user.id, courseId));
+  }, [courseId, user?.id]);
+
+  const lessonIds = useMemo(
+    () => course?.modules.flatMap((m) => m.lessons.map((l) => l.id)) ?? [],
+    [course],
+  );
+  const stats = countCompletedLessons(progress, lessonIds);
+
+  if (!course) notFound();
+
+  if (loading) {
+    return (
+      <LearnShell>
+        <p className="text-sm text-textSecondary">Loading course…</p>
+      </LearnShell>
+    );
+  }
+
+  if (!isEnrolledInCourse(enrolledIds, courseId)) {
+    return (
+      <LearnShell>
+        <h1 className="text-2xl font-bold">{course.title}</h1>
+        <p className="mt-4 text-sm text-textSecondary">
+          You are not enrolled in this course. Purchase it on Planitt first.
+        </p>
+        <a
+          href={`${MAIN_WEBSITE_URL}/learn`}
+          className="mt-4 inline-block text-sm text-brand hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Go to checkout →
+        </a>
+      </LearnShell>
+    );
+  }
+
+  const pct = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+
+  return (
+    <LearnShell>
+      <Link href="/" className="text-sm text-textMuted hover:text-brand">
+        ← My courses
+      </Link>
+      <h1 className="mt-4 text-3xl font-bold">{course.title}</h1>
+      <p className="mt-2 text-sm text-textSecondary">{course.blurb}</p>
+
+      <div className="mt-6">
+        <div className="mb-1 flex justify-between text-xs text-textMuted">
+          <span>Progress</span>
+          <span>
+            {stats.completed}/{stats.total} lessons · {pct}%
+          </span>
+        </div>
+        <div className="h-2 overflow-hidden rounded-full bg-borderSubtle">
+          <div className="h-full bg-brand transition-all" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+
+      <div className="mt-8 space-y-6">
+        {course.modules.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-borderSubtle p-6 text-sm text-textSecondary">
+            Module content coming soon — interns add curriculum in{" "}
+            <code className="text-brand">src/lib/catalog/courses.ts</code>.
+          </p>
+        ) : (
+          course.modules.map((module) => (
+            <section key={module.id} className="rounded-xl border border-borderSubtle bg-surface p-5">
+              <h2 className="text-lg font-semibold">{module.title}</h2>
+              <p className="mt-1 text-sm text-textSecondary">{module.summary}</p>
+              <ul className="mt-4 space-y-2">
+                {module.lessons.map((lesson) => {
+                  const done = progress[lesson.id]?.completed;
+                  return (
+                    <li key={lesson.id}>
+                      <Link
+                        href={`/courses/${courseId}/${module.id}/${lesson.id}`}
+                        className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm hover:bg-white/5"
+                      >
+                        {done ? (
+                          <CheckCircle2 className="h-4 w-4 text-brand" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-textMuted" />
+                        )}
+                        <span>{lesson.title}</span>
+                        <span className="ml-auto text-xs text-textMuted">{lesson.durationMinutes}m</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))
+        )}
+      </div>
+    </LearnShell>
+  );
+}
