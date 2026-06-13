@@ -29,3 +29,39 @@ export function devMockEnrollments(): string[] {
   if (!raw) return [];
   return raw.split(",").map((id) => id.trim().toLowerCase()).filter(Boolean);
 }
+
+function envFlag(value: string | undefined): boolean {
+  const v = value?.trim().toLowerCase();
+  return v === "true" || v === "1" || v === "yes";
+}
+
+/**
+ * Local dev without Planitt appbackend.
+ * Enable with LEARN_DEV_STANDALONE=true — used by the whole team locally.
+ * Blocked automatically in production.
+ */
+export function isDevStandalone(): boolean {
+  if (isProduction) return false;
+  return envFlag(process.env.LEARN_DEV_STANDALONE);
+}
+
+/** Mock user profile for dev standalone login (server-side). */
+export function devMockUser(): { id: string; email: string; name: string } {
+  return {
+    id: process.env.LEARN_DEV_MOCK_USER_ID?.trim() || "dev-local-001",
+    email: process.env.LEARN_DEV_MOCK_USER_EMAIL?.trim() || "intern@localhost.dev",
+    name: process.env.LEARN_DEV_MOCK_USER_NAME?.trim() || "Local Dev User",
+  };
+}
+
+export function getDatabaseUrl(): string | undefined {
+  return process.env.DATABASE_URL?.trim() || undefined;
+}
+
+export function requireDatabaseUrl(): string {
+  const url = getDatabaseUrl();
+  if (!url) {
+    throw new Error("Missing DATABASE_URL.");
+  }
+  return url;
+}

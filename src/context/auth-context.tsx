@@ -24,7 +24,9 @@ type AuthState = {
 
 type AuthContextValue = AuthState & {
   authReady: boolean;
+  devStandalone: boolean;
   loginWithGoogleIdToken: (googleIdToken: string) => Promise<void>;
+  loginAsDevUser: () => Promise<void>;
   logout: () => void;
 };
 
@@ -35,6 +37,9 @@ const emptyState: AuthState = {
   user: null,
 };
 
+const DEV_STANDALONE =
+  process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE?.trim().toLowerCase() === "true";
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(emptyState);
   const [authReady, setAuthReady] = useState(false);
@@ -43,6 +48,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await fetch("/api/auth/me", withApiCredentials());
       if (!res.ok) {
+        await fetch(
+          "/api/auth/logout",
+          withApiCredentials({
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}",
+          }),
+        );
         setState(emptyState);
         return;
       }
@@ -78,6 +91,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await bootstrap();
   }, [bootstrap]);
 
+  const loginAsDevUser = useCallback(async () => {
+    const res = await fetch(
+      "/api/auth/dev-login",
+      withApiCredentials({ method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }),
+    );
+    if (!res.ok) {
+      throw new Error("Dev sign-in failed.");
+    }
+    await bootstrap();
+  }, [bootstrap]);
+
   const logout = useCallback(() => {
     void fetch(
       "/api/auth/logout",
@@ -90,10 +114,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     () => ({
       ...state,
       authReady,
+      devStandalone: DEV_STANDALONE,
       loginWithGoogleIdToken,
+      loginAsDevUser,
       logout,
     }),
-    [authReady, loginWithGoogleIdToken, logout, state],
+    [authReady, loginAsDevUser, loginWithGoogleIdToken, logout, state],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

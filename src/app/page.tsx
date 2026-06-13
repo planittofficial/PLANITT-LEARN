@@ -14,8 +14,8 @@ export default function HomePage() {
         </div>
         <h1 className="mt-2 text-3xl font-bold">My learning</h1>
         <p className="mt-2 max-w-2xl text-sm text-textSecondary">
-          Courses you purchased on Planitt appear here. New enrollments happen on the main website
-          checkout — this app is for consuming content only.
+          Your enrolled courses appear below. Open a course to explore modules and lessons — then
+          complete your assigned tasks in the catalog files.
         </p>
         <a
           href={`${MAIN_WEBSITE_URL}/learn`}

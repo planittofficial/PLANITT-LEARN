@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { devAuthMeResponse, isDevAccessToken } from "@/lib/dev/standalone";
 import { requireAppBackendUrl } from "@/lib/env";
 import { getAccessTokenFromRequest } from "@/lib/security/auth-cookies";
 import { enforceApiRateLimit } from "@/lib/security/rate-limit";
@@ -12,6 +13,10 @@ export async function GET(request: Request) {
   const token = getAccessTokenFromRequest(request);
   if (!token) {
     return NextResponse.json({ ok: false, detail: "Unauthorized" }, { status: 401 });
+  }
+
+  if (isDevAccessToken(token)) {
+    return devAuthMeResponse();
   }
 
   try {

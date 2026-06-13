@@ -1,0 +1,286 @@
+// Planitt Learn — PostgreSQL schema (NPTEL / Udemy-lite LMS)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Users (synced from Planitt auth — id matches appbackend user id)
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String   @id
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  enrollments        Enrollment[]
+  lessonProgress     LessonProgress[]
+  quizAttempts       QuizAttempt[]
+  leaderboardEntries LeaderboardEntry[]
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Course catalog
+// ---------------------------------------------------------------------------
+
+model Course {
+  id           String   @id // plan_id e.g. learn-forex-master-track
+  title        String
+  category     String
+  level        String
+  duration     String?
+  blurb        String?
+  description  String?  @db.Text
+  thumbnailUrl String?  @map("thumbnail_url")
+  outcomes     Json     @default("[]")
+  published    Boolean  @default(false)
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  modules            Module[]
+  enrollments        Enrollment[]
+  leaderboardEntries LeaderboardEntry[]
+
+  @@index([published, sortOrder])
+  @@map("courses")
+}
+
+model Module {
+  id        String   @id // slug e.g. fx-m1
+  courseId  String   @map("course_id")
+  title     String
+  summary   String?  @db.Text
+  sortOrder Int      @default(0) @map("sort_order")
+  published Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  course       Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons      Lesson[]
+  moduleTest   ModuleTest?
+  quizAttempts QuizAttempt[]
+
+  @@index([courseId, sortOrder])
+  @@map("modules")
+}
+
+enum LessonKind {
+  video
+  article
+  external
+}
+
+model Lesson {
+  id              String     @id // slug e.g. fx-m1-l1
+  moduleId        String     @map("module_id")
+  title           String
+  summary         String?    @db.Text
+  kind            LessonKind @default(article)
+  sortOrder       Int        @default(0) @map("sort_order")
+  durationMinutes Int        @default(10) @map("duration_minutes")
+  durationSeconds Int?       @map("duration_seconds")
+  minWatchPercent Int        @default(75) @map("min_watch_percent")
+  videoKey        String?    @map("video_key")
+  videoUrl        String?    @map("video_url")
+  markdown        String?    @db.Text
+  externalUrl     String?    @map("external_url")
+  published       Boolean    @default(true)
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  module       Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessonQuiz   LessonQuiz?
+  progress     LessonProgress[]
+  quizAttempts QuizAttempt[]
+
+  @@index([moduleId, sortOrder])
+  @@map("lessons")
+}
+
+// ---------------------------------------------------------------------------
+// Quizzes & module final tests
+// ---------------------------------------------------------------------------
+
+model LessonQuiz {
+  id           String   @id @default(cuid())
+  lessonId     String   @unique @map("lesson_id")
+  title        String?
+  passingScore Int      @default(60) @map("passing_score")
+  /// [{ "id": "q1", "prompt": "...", "options": ["a","b"], "correctIndex": 0 }]
+  questions    Json     @default("[]")
+  published    Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_quizzes")
+}
+
+model ModuleTest {
+  id           String   @id @default(cuid())
+  moduleId     String   @unique @map("module_id")
+  title        String?
+  passingScore Int      @default(60) @map("passing_score")
+  /// Full questions or refs: [{ "id", "prompt", "options", "correctIndex" }]
+  questionPool Json     @default("[]") @map("question_pool")
+  published    Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@map("module_tests")
+}
+
+// ---------------------------------------------------------------------------
+// Enrollment (Planitt payment webhook or local dev mock)
+// ---------------------------------------------------------------------------
+
+enum EnrollmentSource {
+  payment
+  admin_grant
+  dev_mock
+}
+
+model Enrollment {
+  id         String           @id @default(cuid())
+  userId     String           @map("user_id")
+  courseId   String           @map("course_id")
+  source     EnrollmentSource @default(payment)
+  planId     String?          @map("plan_id")
+  enrolledAt DateTime         @default(now()) @map("enrolled_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+// ---------------------------------------------------------------------------
+// Progress & watch tracking (75% rule)
+// ---------------------------------------------------------------------------
+
+model LessonProgress {
+  id             String    @id @default(cuid())
+  userId         String    @map("user_id")
+  lessonId       String    @map("lesson_id")
+  watchedSeconds Int       @default(0) @map("watched_seconds")
+  watchPercent   Float     @default(0) @map("watch_percent")
+  completed      Boolean   @default(false)
+  completedAt    DateTime? @map("completed_at")
+  lastWatchedAt  DateTime  @default(now()) @map("last_watched_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+// ---------------------------------------------------------------------------
+// Quiz / test attempts
+// ---------------------------------------------------------------------------
+
+enum QuizAttemptType {
+  lesson
+  module
+}
+
+model QuizAttempt {
+  id          String          @id @default(cuid())
+  userId      String          @map("user_id")
+  attemptType QuizAttemptType @map("attempt_type")
+  lessonId    String?         @map("lesson_id")
+  moduleId    String?         @map("module_id")
+  score       Int
+  maxScore    Int             @map("max_score")
+  passed      Boolean
+  answers     Json?
+  attemptedAt DateTime        @default(now()) @map("attempted_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  module Module? @relation(fields: [moduleId], references: [id], onDelete: SetNull)
+
+  @@index([userId, lessonId])
+  @@index([userId, moduleId])
+  @@index([userId, attemptedAt])
+  @@map("quiz_attempts")
+}
+
+// ---------------------------------------------------------------------------
+// Leaderboard (recomputed periodically or on quiz submit)
+// ---------------------------------------------------------------------------
+
+model LeaderboardEntry {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  courseId          String   @map("course_id")
+  totalScore        Int      @default(0) @map("total_score")
+  completionPercent Float    @default(0) @map("completion_percent")
+  lessonsCompleted  Int      @default(0) @map("lessons_completed")
+  rank              Int?
+  computedAt        DateTime @default(now()) @map("computed_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([courseId, rank])
+  @@index([courseId, totalScore(sort: Desc)])
+  @@map("leaderboard_entries")
+}
+
+// ---------------------------------------------------------------------------
+// Admin panel access
+// ---------------------------------------------------------------------------
+
+enum AdminRole {
+  admin
+  editor
+}
+
+model AdminUser {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  role      AdminRole @default(editor)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@map("admin_users")
+}
+
+// ---------------------------------------------------------------------------
+// Enrollment webhook audit log
+// ---------------------------------------------------------------------------
+
+model EnrollmentEvent {
+  id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
+  planId      String   @map("plan_id")
+  courseId    String?  @map("course_id")
+  payload     Json?
+  processed   Boolean  @default(false)
+  receivedAt  DateTime @default(now()) @map("received_at")
+
+  @@index([planId])
+  @@index([receivedAt])
+  @@map("enrollment_events")
+}

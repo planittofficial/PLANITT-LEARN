@@ -19,6 +19,20 @@ This repo was split out of the Planitt monorepo (`Planitt-inhouse/apps/learn`) s
 
 **Content flow:** course curriculum is defined in `src/lib/catalog/courses.ts` → interns extend modules and lessons there.
 
+### Roadmap: NPTEL-lite / Udemy-lite
+
+The full vision (videos, quizzes, module tests, 75% watch rule, leaderboard, admin panel) **requires a dedicated Learn PostgreSQL database** and video object storage — separate from Planitt's main backend DB.
+
+| Phase | Status | Key env |
+|-------|--------|---------|
+| **0 — Now** | Static catalog + localStorage | `.env.example` + optional `DATABASE_URL` |
+| **1** | PostgreSQL + admin CRUD | `DATABASE_URL` — **schema in `prisma/schema.prisma`** |
+| **2** | Video upload + watch tracking | `R2_*` / S3 |
+| **3** | Lesson quizzes + module tests | DB |
+| **4** | Dashboard + leaderboard | DB |
+
+See **[docs/LMS_ARCHITECTURE.md](docs/LMS_ARCHITECTURE.md)** and **[docs/ENV_REFERENCE.md](docs/ENV_REFERENCE.md)**.
+
 ---
 
 ## Tech stack
@@ -35,12 +49,10 @@ Auth tokens are stored in HTTP-only cookies. The Learn app acts as a **BFF (Back
 
 ## Prerequisites
 
-Before you start, you need:
-
 1. **Node.js 20+** and npm
-2. **Planitt appbackend** running locally (default `http://127.0.0.1:8000`) — handles auth and payment history
-3. **Google OAuth client ID** — same web client as the main Planitt website; add `http://localhost:3001` to authorized JavaScript origins
-4. *(Optional)* **Main Planitt website** on port 3000 — only needed if you want to test the full buy → learn flow
+2. Copy **`.env.example`** → **`.env.local`** (same setup for the whole team)
+
+You do **not** need Planitt appbackend, Google OAuth, or Docker for Phase 0.
 
 ---
 
@@ -50,14 +62,31 @@ Before you start, you need:
 git clone <your-planitt-learn-repo-url>
 cd Planitt-Learn
 cp .env.example .env.local
-# Edit .env.local — see Environment section below
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001).
+Open [http://localhost:3001](http://localhost:3001) → **Sign in** → **Continue as dev user**.
 
-**Important:** The env file must be named `.env.local` (not `.env.example`). Restart `npm run dev` after creating or editing it.
+**Important:** Restart `npm run dev` after editing `.env.local`.
+
+Onboarding guide: [`docs/intern/README.md`](docs/intern/README.md) · Architecture: [`docs/LMS_ARCHITECTURE.md`](docs/LMS_ARCHITECTURE.md)
+
+### Database setup (Supabase / PostgreSQL)
+
+Prisma schema lives in `prisma/schema.prisma`. After setting `DATABASE_URL` in `.env.local`:
+
+```bash
+Copy-Item .env.local .env          # Prisma reads .env
+npm run db:deploy                  # Create all tables in Supabase
+npm run db:seed                    # Load course catalog into DB
+```
+
+Check connection: http://localhost:3001/api/health/db
+
+Full schema reference: [`docs/DATABASE_SCHEMA.md`](docs/DATABASE_SCHEMA.md)
+
+**Supabase URL tip:** if your password contains `@`, encode it as `%40`.
 
 ---
 
@@ -106,7 +135,8 @@ Planitt-Learn/
 │   ├── hooks/
 │   │   └── useEnrollment.ts          # Fetches payment history → enrolled course IDs
 │   └── lib/
-│       ├── catalog/courses.ts        # ★ Course catalog — main intern work area
+│       ├── catalog/course-content.ts # ★ Course catalog — main work area
+│       ├── catalog/courses.ts        # Types, helpers, exports
 │       ├── learning/
 │       │   ├── enrollment.ts         # Derives enrolled courses from payments
 │       │   └── progress.ts           # localStorage lesson completion
@@ -119,9 +149,9 @@ Planitt-Learn/
 
 ---
 
-## Where interns work
+## Where to work
 
-### Primary file: `src/lib/catalog/courses.ts`
+### Primary file: `src/lib/catalog/course-content.ts`
 
 This file defines every course, module, and lesson. The `id` on each course **must match** the `plan_id` in appbackend (e.g. `learn-forex-master-track`).
 

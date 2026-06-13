@@ -3,11 +3,18 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/context/auth-context";
-import { enrolledCourseIdsFromTransactions, type PaymentTransaction } from "@/lib/learning/enrollment";
+import {
+  enrolledCourseIdsFromTransactions,
+  type PaymentTransaction,
+} from "@/lib/learning/enrollment";
 import { withApiCredentials } from "@/lib/security/client-auth";
 
 type HistoryResponse = {
   items?: PaymentTransaction[];
+};
+
+type DevPreviewResponse = {
+  enrolledCourseIds?: string[];
 };
 
 async function fetchPaymentHistory(): Promise<PaymentTransaction[]> {
@@ -17,23 +24,48 @@ async function fetchPaymentHistory(): Promise<PaymentTransaction[]> {
   return Array.isArray(data.items) ? data.items : [];
 }
 
-export function useEnrollment() {
-  const { isAuthenticated, authReady } = useAuth();
+async function fetchDevPreview(): Promise<Set<string>> {
+  const res = await fetch("/api/dev/preview");
+  if (!res.ok) return new Set();
+  const data = (await res.json()) as DevPreviewResponse;
+  return new Set(Array.isArray(data.enrolledCourseIds) ? data.enrolledCourseIds : []);
+}
 
-  const query = useQuery({
+const DEV_STANDALONE =
+  process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE?.trim().toLowerCase() === "true";
+
+export function useEnrollment() {
+  const { isAuthenticated, authReady, devStandalone } = useAuth();
+
+  const paymentQuery = useQuery({
     queryKey: ["enrollment", "payments"],
     queryFn: fetchPaymentHistory,
     enabled: authReady && isAuthenticated,
     staleTime: 60_000,
   });
 
-  const enrolledIds = enrolledCourseIdsFromTransactions(query.data ?? []);
+  const previewQuery = useQuery({
+    queryKey: ["enrollment", "dev-preview"],
+    queryFn: fetchDevPreview,
+    enabled: authReady && !isAuthenticated && (devStandalone || DEV_STANDALONE),
+    staleTime: 60_000,
+  });
+
+  const enrolledIds = isAuthenticated
+    ? enrolledCourseIdsFromTransactions(paymentQuery.data ?? [])
+    : previewQuery.data ?? new Set<string>();
+
+  const loading =
+    !authReady ||
+    (isAuthenticated && paymentQuery.isLoading) ||
+    (!isAuthenticated && (devStandalone || DEV_STANDALONE) && previewQuery.isLoading);
 
   return {
     authReady,
     isAuthenticated,
-    loading: !authReady || (isAuthenticated && query.isLoading),
+    devPreview: !isAuthenticated && (devStandalone || DEV_STANDALONE),
+    loading,
     enrolledIds,
-    refetch: query.refetch,
+    refetch: isAuthenticated ? paymentQuery.refetch : previewQuery.refetch,
   };
 }

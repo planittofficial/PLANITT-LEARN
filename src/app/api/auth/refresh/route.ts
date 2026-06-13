@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { devRefreshResponse, isDevRefreshToken } from "@/lib/dev/standalone";
 import { requireAppBackendUrl } from "@/lib/env";
 import {
   applyAuthCookies,
@@ -16,6 +17,10 @@ export async function POST(request: Request) {
   const refreshToken = getRefreshTokenFromRequest(request);
   if (!refreshToken) {
     return NextResponse.json({ ok: false, detail: "Missing refresh token." }, { status: 401 });
+  }
+
+  if (isDevRefreshToken(refreshToken)) {
+    return devRefreshResponse();
   }
 
   const response = await fetch(`${requireAppBackendUrl()}/api/v1/auth/refresh`, {

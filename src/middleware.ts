@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { SESSION_HINT_COOKIE } from "@/lib/security/auth-cookies";
 
-const PUBLIC_PATHS = new Set(["/login", "/api/auth/google", "/api/health"]);
+const PUBLIC_PATHS = new Set(["/login", "/api/auth/google", "/api/auth/dev-login", "/api/health"]);
+
+function isDevStandalone(): boolean {
+  const flag = process.env.LEARN_DEV_STANDALONE?.trim().toLowerCase();
+  return flag === "true" || flag === "1" || flag === "yes";
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,6 +17,11 @@ export function middleware(request: NextRequest) {
   }
 
   if (PUBLIC_PATHS.has(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Local dev mode — home page is public so the course catalog is visible before login
+  if (isDevStandalone() && pathname === "/") {
     return NextResponse.next();
   }
 

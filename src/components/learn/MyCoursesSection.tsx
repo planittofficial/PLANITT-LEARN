@@ -1,87 +1,95 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Lock } from "lucide-react";
 
-import { LearnShell } from "@/components/layout/LearnShell";
+import { CourseCard } from "@/components/learn/CourseCard";
+import { useAuth } from "@/context/auth-context";
 import { useEnrollment } from "@/hooks/useEnrollment";
 import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
-import { cn } from "@/lib/utils";
+import { countCompletedLessons, loadCourseProgress } from "@/lib/learning/progress";
 
 export function MyCoursesSection() {
-  const { loading, enrolledIds, isAuthenticated } = useEnrollment();
+  const { user } = useAuth();
+  const { loading, enrolledIds, isAuthenticated, devPreview } = useEnrollment();
 
   if (loading) {
     return <p className="text-sm text-textSecondary">Loading your courses…</p>;
   }
 
-  if (!isAuthenticated) {
-    return (
-      <p className="rounded-xl border border-borderSubtle bg-surface p-6 text-sm text-textSecondary">
-        <Link href="/login" className="text-brand hover:underline">
-          Sign in
-        </Link>{" "}
-        to see courses linked to your Planitt account.
-      </p>
-    );
+  const enrolledCount = COURSE_CATALOG.filter((c) =>
+    isEnrolledInCourse(enrolledIds, c.id),
+  ).length;
+
+  function progressForCourse(courseId: string, lessonIds: string[]): number {
+    if (!user?.id || lessonIds.length === 0) return 0;
+    const progress = loadCourseProgress(user.id, courseId);
+    const stats = countCompletedLessons(progress, lessonIds);
+    return Math.round((stats.completed / stats.total) * 100);
   }
 
-  const enrolled = COURSE_CATALOG.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
-  const catalog = COURSE_CATALOG.filter((c) => !isEnrolledInCourse(enrolledIds, c.id));
-
   return (
-    <div className="space-y-8">
-      <section>
-        <h2 className="mb-3 text-lg font-semibold">My courses</h2>
-        {enrolled.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-borderSubtle p-6 text-sm text-textSecondary">
-            No enrolled courses yet. Complete checkout on the main Planitt Learn page, then return
-            here.
-          </p>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {enrolled.map((course) => (
-              <Link
-                key={course.id}
-                href={`/courses/${course.id}`}
-                className="rounded-xl border border-brand/30 bg-surface p-5 transition hover:border-brand"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-brand">{course.category}</p>
-                    <h3 className="mt-1 font-semibold">{course.title}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-textSecondary">{course.blurb}</p>
-                  </div>
-                  <BookOpen className="h-5 w-5 shrink-0 text-brand" />
-                </div>
-                <p className="mt-4 text-sm font-medium text-brand">Continue learning →</p>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
+    <div className="space-y-6">
+      {devPreview ? (
+        <div className="rounded-xl border border-brand/30 bg-brand/5 p-4 text-sm text-textSecondary">
+          <strong className="text-brand">Local preview</strong> — courses from{" "}
+          <code className="text-brand">LEARN_DEV_MOCK_ENROLLMENTS</code>.{" "}
+          <Link href="/login" className="font-medium text-brand hover:underline">
+            Sign in as dev user
+          </Link>{" "}
+          to open lessons and save progress.
+        </div>
+      ) : null}
 
-      {catalog.length > 0 ? (
-        <section>
-          <h2 className="mb-3 text-lg font-semibold text-textSecondary">Catalog (locked)</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {catalog.map((course) => (
-              <div
-                key={course.id}
-                className={cn(
-                  "rounded-xl border border-borderSubtle bg-surface/50 p-4 opacity-80",
-                )}
-              >
-                <div className="flex items-center gap-2 text-textMuted">
-                  <Lock className="h-4 w-4" />
-                  <span className="text-xs uppercase">{course.category}</span>
-                </div>
-                <h3 className="mt-1 font-medium">{course.title}</h3>
-              </div>
-            ))}
+      {!isAuthenticated && !devPreview ? (
+        <div className="rounded-xl border border-borderSubtle bg-surface p-6 text-sm text-textSecondary">
+          <Link href="/login" className="font-medium text-brand hover:underline">
+            Sign in
+          </Link>{" "}
+          to see courses linked to your Planitt account.
+        </div>
+      ) : null}
+
+      {(isAuthenticated || devPreview) && enrolledCount === 0 ? (
+        <p className="rounded-xl border border-dashed border-borderSubtle p-6 text-sm text-textSecondary">
+          No enrolled courses. Set{" "}
+          <code className="text-brand">LEARN_DEV_MOCK_ENROLLMENTS=learn-all-courses-combo</code> in{" "}
+          <code className="text-brand">.env.local</code>, restart the dev server
+          {isAuthenticated ? ", then sign in again" : ""}.
+        </p>
+      ) : null}
+
+      {(isAuthenticated || devPreview) && enrolledCount > 0 ? (
+        <>
+          <p className="text-sm text-textSecondary">
+            {enrolledCount} of {COURSE_CATALOG.length} courses enrolled
+          </p>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {COURSE_CATALOG.map((course) => {
+              const enrolled = isEnrolledInCourse(enrolledIds, course.id);
+              const lessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
+              const pct =
+                isAuthenticated && enrolled
+                  ? progressForCourse(course.id, lessonIds)
+                  : undefined;
+              return (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  enrolled={enrolled}
+                  preview={devPreview && !isAuthenticated}
+                  progressPercent={pct}
+                />
+              );
+            })}
           </div>
-        </section>
+        </>
+      ) : null}
+
+      {devPreview && enrolledCount > 0 ? (
+        <p className="text-xs text-textMuted">
+          Locked cards in preview mode — sign in to explore modules and lessons.
+        </p>
       ) : null}
     </div>
   );
