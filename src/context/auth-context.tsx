@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 
+import { ROUTES } from "@/constants/routes";
 import { withApiCredentials } from "@/lib/security/client-auth";
 
 type AuthUser = {
@@ -46,10 +47,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const bootstrap = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/me", withApiCredentials());
+      const res = await fetch(ROUTES.API.AUTH.ME, withApiCredentials());
       if (!res.ok) {
         await fetch(
-          "/api/auth/logout",
+          ROUTES.API.AUTH.LOGOUT,
           withApiCredentials({
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -78,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithGoogleIdToken = useCallback(async (googleIdToken: string) => {
     const res = await fetch(
-      "/api/auth/google",
+      ROUTES.API.AUTH.GOOGLE,
       withApiCredentials({
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginAsDevUser = useCallback(async () => {
     const res = await fetch(
-      "/api/auth/dev-login",
+      ROUTES.API.AUTH.DEV_LOGIN,
       withApiCredentials({ method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }),
     );
     if (!res.ok) {
@@ -104,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     void fetch(
-      "/api/auth/logout",
+      ROUTES.API.AUTH.LOGOUT,
       withApiCredentials({ method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }),
     );
     setState(emptyState);

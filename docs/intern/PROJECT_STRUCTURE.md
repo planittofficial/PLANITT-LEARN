@@ -1,81 +1,136 @@
-# Project structure — intern reference
+# Project structure — team reference
+
+**Architecture (ownership, API layout, Git branches):** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md)  
+**Your tasks:** [`TASKS.md`](./TASKS.md) — Sanvi (student UI) · Gauri (admin + APIs)
 
 ```
 Planitt-Learn/
 │
 ├── .env.example             ← Copy to .env.local (everyone)
 ├── docs/
-│   ├── MENTOR_CHECKLIST.md  ← For mentors (not your daily doc)
+│   ├── ARCHITECTURE.md      ← Full production structure (read this)
+│   ├── MENTOR_CHECKLIST.md
 │   └── intern/
-│       ├── README.md        ← Start here
-│       ├── TASKS.md         ← Your sprint tasks
-│       └── PROJECT_STRUCTURE.md  ← This file
+│       ├── README.md
+│       ├── TASKS.md
+│       └── PROJECT_STRUCTURE.md
 │
-├── src/
-│   ├── app/                 ← Pages and API routes (Next.js App Router)
-│   ├── components/          ← Reusable UI
-│   ├── context/             ← React context (auth state)
-│   ├── hooks/               ← Custom hooks
-│   └── lib/                 ← Business logic, catalog, utilities
+├── prisma/                  ← Lead owns schema; Gauri uses services
+├── scripts/
+│   └── scaffold-architecture.mjs
 │
-├── package.json
-└── README.md
+└── src/
+    ├── app/
+    │   ├── (student)/       ← Sanvi — URL: /, /login, /courses/...
+    │   ├── (admin)/admin/   ← Gauri — URL: /admin/...
+    │   └── api/
+    │       ├── health/
+    │       └── v1/          ← Versioned API
+    ├── features/            ← Domain UI (sanvi/*, admin-* for Gauri)
+    ├── components/
+    │   ├── ui/              ← Sanvi — design system
+    │   ├── layout/student/  ← Sanvi — LearnShell
+    │   ├── layout/admin/    ← Gauri — AdminShell
+    │   └── shared/
+    ├── services/            ← Gauri (+ Lead for auth/enrollment)
+    ├── hooks/               ← Consumer hooks (Sanvi), admin/ (Gauri)
+    ├── lib/                 ← Infra — Lead owns security/env
+    ├── types/
+    ├── constants/
+    └── validations/         ← Gauri
 ```
 
 ---
 
-## `src/app/` — pages & API
+## `src/app/(student)/` — Sanvi
 
-| Path | Type | Purpose |
-|------|------|---------|
-| `page.tsx` | Page | Home — "My learning" dashboard |
-| `login/page.tsx` | Page | Sign-in (dev user button in intern mode) |
-| `courses/[courseId]/page.tsx` | Page | Course hub — modules, progress bar |
-| `courses/.../[lessonId]/page.tsx` | Page | Lesson player |
-| `api/auth/dev-login/route.ts` | API | Intern dev sign-in (standalone only) |
-| `api/auth/me/route.ts` | API | Current user profile |
-| `api/auth/logout/route.ts` | API | Clear session cookies |
-| `api/payments/me/history/route.ts` | API | Enrollment data (mocked in intern mode) |
-| `api/health/route.ts` | API | Health check |
+| Path | Purpose |
+|------|---------|
+| `page.tsx` | Home — "My learning" dashboard |
+| `login/page.tsx` | Dev / Google sign-in |
+| `courses/[courseId]/page.tsx` | Course hub — modules, progress |
+| `courses/.../[lessonId]/page.tsx` | Lesson player |
+| `leaderboard/page.tsx` | Leaderboard (placeholder) |
+| `profile/page.tsx` | Profile (placeholder) |
 
-**Intern rule:** Edit pages under `courses/` freely. Do **not** change `api/auth/*` or `api/payments/*` without mentor approval.
+**Sanvi rule:** Keep pages thin — compose from `features/*`. Do **not** change `api/v1/auth/*` or `api/v1/enrollment/*` without Lead approval.
 
 ---
 
-## `src/components/`
+## `src/app/(admin)/admin/` — Gauri
 
-| File | Purpose |
+| Path | Purpose |
 |------|---------|
-| `layout/LearnShell.tsx` | Top nav, logout, "Buy courses" link |
-| `learn/MyCoursesSection.tsx` | Dashboard — enrolled vs locked courses |
+| `page.tsx` | Admin dashboard |
+| `courses/` | Course CRUD shells |
+| `modules/[moduleId]/` | Module editor |
+| `lessons/[lessonId]/` | Lesson editor |
+| `quizzes/` | Quiz / module test editors |
+| `students/` | Student list + detail |
+| `leaderboard/`, `analytics/` | Admin views |
+
+**Gauri rule:** Do **not** edit `lib/security/*`, `middleware.ts`, or `prisma/schema.prisma` without Lead review.
+
+---
+
+## `src/app/api/v1/` — API routes
+
+| Path | Owner | Purpose |
+|------|-------|---------|
+| `auth/*` | Lead | Google BFF, dev-login, me, logout, refresh |
+| `enrollment/me` | Lead | Enrolled course IDs (payment history) |
+| `enrollment/preview` | Lead | Dev preview without login |
+| `webhooks/enrollment` | Lead | Enrollment sync from main backend |
+| `courses/*` | Gauri | Public course read APIs |
+| `lessons/*` | Gauri | Lesson content + progress |
+| `quizzes/*` | Gauri | Quiz fetch + submit |
+| `leaderboard/*` | Gauri | Rankings |
+| `admin/*` | Gauri | Admin CRUD + upload + analytics |
+
+Legacy paths (`/api/auth/*`, `/api/payments/*`) were removed — use `/api/v1/...` only.
+
+---
+
+## `src/features/` — domain UI
+
+| Folder | Owner | Contains |
+|--------|-------|----------|
+| `student-dashboard/` | Sanvi | `MyCoursesSection` |
+| `course-catalog/` | Sanvi | `CourseCard` |
+| `lesson-player/` | Sanvi | Video / markdown player |
+| `progress/`, `quizzes/`, `leaderboard/`, `profile/` | Sanvi | Student-facing UI |
+| `admin-*` | Gauri | Admin feature UIs |
+
+Backward-compat re-exports still work at `src/components/learn/*` — prefer importing from `features/` in new code.
 
 ---
 
 ## `src/lib/` — core logic
 
-| File | Purpose | Intern edits? |
-|------|---------|---------------|
-| `catalog/course-content.ts` | **All course content** — modules, lessons, markdown | ✅ Primary work area |
-| `catalog/courses.ts` | Types, helpers, exports | ❌ Types/helpers only |
-| `learning/progress.ts` | Lesson completion in localStorage | ✅ With care |
-| `learning/enrollment.ts` | Which courses user can access | ❌ Read only |
-| `env.ts` | Environment variables (server) | ❌ |
-| `dev-standalone.ts` | Mock auth for intern mode | ❌ |
-| `security/*` | Cookies, rate limits, BFF proxy | ❌ |
+| File | Purpose | Who edits? |
+|------|---------|------------|
+| `catalog/course-content.ts` | Course curriculum source + seed | Sanvi (content), Gauri (seed sync) |
+| `catalog/courses.ts` | Types, helpers | Read-only unless Lead |
+| `learning/progress.ts` | localStorage progress (Phase 0) | Sanvi until API lands |
+| `learning/enrollment.ts` | Enrollment derivation | Lead only |
+| `dev/standalone.ts` | Mock auth | Lead only |
+| `security/*` | Cookies, BFF, rate limits | Lead only |
+| `db/prisma.ts` | Prisma client | Lead only |
 
 ---
 
-## `src/context/` & `src/hooks/`
+## Hooks
 
-| File | Purpose |
-|------|---------|
-| `context/auth-context.tsx` | Login state, dev login, logout |
-| `context/app-providers.tsx` | Wraps app with React Query + auth |
-| `hooks/useEnrollment.ts` | Fetches enrolled course IDs |
+| File | Owner | Purpose |
+|------|-------|---------|
+| `hooks/enrollment/use-enrollment.ts` | Sanvi consumes | Fetches `/api/v1/enrollment/*` |
+| `hooks/courses/*` | Sanvi | Course catalog (wire to Gauri's API) |
+| `hooks/progress/*`, `hooks/quizzes/*` | Sanvi | Consumer hooks |
+| `hooks/admin/*` | Gauri | Admin React Query hooks |
 
 ---
 
-## Data flow (intern mode)
+## Data flow (local dev)
 
 ```
 .env.local
@@ -83,31 +138,17 @@ Planitt-Learn/
   LEARN_DEV_MOCK_ENROLLMENTS=...
         │
         ▼
-/login → POST /api/auth/dev-login → mock cookies
+/login → POST /api/v1/auth/dev-login → mock cookies
         │
         ▼
 / (dashboard) → useEnrollment()
-        │         └─ GET /api/payments/me/history → { items: [] }
-        │         └─ enrollment.ts merges LEARN_DEV_MOCK_ENROLLMENTS
+        │         └─ GET /api/v1/enrollment/me
+        │         └─ GET /api/v1/enrollment/preview (if not signed in)
         ▼
-/courses/[id] → courses.ts content + progress.ts (localStorage)
-```
-
----
-
-## Course catalog shape
-
-Defined in `src/lib/catalog/courses.ts`:
-
-```
-CourseDefinition
-├── id          ← must match plan_id (e.g. learn-forex-master-track)
-├── title, category, level, duration, blurb, outcomes
-└── modules[]
-    ├── id, title, summary
-    └── lessons[]
-        ├── id, title, durationMinutes, kind, summary
-        └── content { markdown?, videoUrl?, externalUrl? }
+/courses/[id] → catalog + progress.ts (localStorage)
+        │
+        ▼ (Phase 2+)
+Gauri's APIs → Prisma → PostgreSQL
 ```
 
 ---
@@ -116,10 +157,8 @@ CourseDefinition
 
 - **Tailwind CSS** — utility classes in components
 - Global styles: `src/app/globals.css`
-- Brand color class: `text-brand`, `bg-brand`
-- Surface/card: `bg-surface`, `border-borderSubtle`
-
-Match existing pages when adding UI.
+- Shared UI: `src/components/ui/` (Sanvi maintains)
+- Brand: `text-brand`, `bg-brand` · Surface: `bg-surface`, `border-borderSubtle`
 
 ---
 
@@ -127,25 +166,22 @@ Match existing pages when adding UI.
 
 `src/middleware.ts` redirects unauthenticated users to `/login`.
 
-Public paths (no login): `/login`, `/api/auth/*`, `/api/health`.
+Public paths: `/login`, `/api/health`, `/api/v1/auth/google`, `/api/v1/auth/dev-login`, `/api/v1/enrollment/preview`.
 
-You rarely need to touch this file.
+Home `/` is public when `LEARN_DEV_STANDALONE=true`.
 
 ---
 
-## What is NOT in this repo (yet)
+## Phase status
 
-| Feature | Status | Requires |
-|---------|--------|----------|
-| PostgreSQL database | **Planned Phase 1** | `DATABASE_URL` |
-| Admin panel | Planned Phase 1 | DB + `LEARN_ADMIN_EMAILS` |
-| Video upload | Planned Phase 2 | DB + R2/S3 (`R2_*` env vars) |
-| Quizzes / tests | Planned Phase 3 | DB |
-| Leaderboard | Planned Phase 4 | DB |
-| Server-side progress | Planned Phase 2 | DB |
-| 75% video watch rule | Planned Phase 2 | DB + video player |
+| Feature | Status | Owner |
+|---------|--------|-------|
+| PostgreSQL + seed | ✅ Schema + seed ready | Lead |
+| Scaffold `(student)` + `(admin)` + `api/v1` | ✅ Done | Lead |
+| Course read from DB | 🔲 Stub (501) | Gauri |
+| Admin CRUD | 🔲 Placeholder pages | Gauri |
+| Server-side progress | 🔲 Stub | Gauri |
+| Student UI polish | 🔲 Tasks S4–S13 | Sanvi |
+| Quizzes / leaderboard | 🔲 Stubs | Gauri + Sanvi |
 
-Current content lives in `courses.ts`. Current progress lives in browser localStorage.
-
-**Full roadmap:** [docs/LMS_ARCHITECTURE.md](../LMS_ARCHITECTURE.md)  
-**All env vars:** [docs/ENV_REFERENCE.md](../ENV_REFERENCE.md)
+**Roadmap:** [LMS_ARCHITECTURE.md](../LMS_ARCHITECTURE.md) · **Env vars:** [ENV_REFERENCE.md](../ENV_REFERENCE.md)

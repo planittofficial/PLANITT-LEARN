@@ -1,0 +1,1 @@
+export const DEFAULT_MIN_WATCH_PERCENT = 75;

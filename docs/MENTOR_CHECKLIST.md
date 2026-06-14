@@ -1,6 +1,6 @@
 # Mentor checklist — onboarding to Planitt Learn
 
-Use this when someone new joins the Learn portal team (interns or full-time).
+Use this when **Sanvi**, **Gauri**, or another developer joins the Learn portal team.
 
 ---
 
@@ -11,9 +11,10 @@ Use this when someone new joins the Learn portal team (interns or full-time).
 | 1 | **Git repo access** | Add to `Planitt-Learn` on GitHub/GitLab |
 | 2 | **Env template** | They copy `.env.example` → `.env.local` (same for everyone) |
 | 3 | **Onboarding doc** | [`docs/intern/README.md`](./intern/README.md) |
-| 4 | **Architecture** | [`docs/LMS_ARCHITECTURE.md`](./LMS_ARCHITECTURE.md) |
-| 5 | **Tasks** | [`docs/intern/TASKS.md`](./intern/TASKS.md) |
-| 6 | **Review channel** | Slack/Discord + weekly sync |
+| 4 | **Architecture** | [`docs/ARCHITECTURE.md`](./ARCHITECTURE.md) (structure + ownership) |
+| 5 | **Product roadmap** | [`docs/LMS_ARCHITECTURE.md`](./LMS_ARCHITECTURE.md) |
+| 6 | **Tasks** | [`docs/intern/TASKS.md`](./intern/TASKS.md) — Sanvi vs Gauri tracks |
+| 7 | **Review channel** | Slack/Discord + weekly sync |
 
 ---
 
@@ -54,7 +55,7 @@ LEARN_DEV_MOCK_ENROLLMENTS=
   npm install && npm run dev
   ```
 - [ ] http://localhost:3001 shows courses → login → **Continue as dev user** → open a course
-- [ ] GitHub issues created for first tasks
+- [ ] GitHub issues created for first tasks (Sanvi: S1–S4 · Gauri: G1–G4)
 
 ---
 

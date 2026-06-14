@@ -65,17 +65,32 @@ npm run dev
 npm run typecheck    # before PR
 ```
 
-Tasks: [TASKS.md](./TASKS.md) · Code map: [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
+Tasks: [TASKS.md](./TASKS.md) (Sanvi · Gauri) · Code map: [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) · Architecture: [ARCHITECTURE.md](../ARCHITECTURE.md)
+
+---
+
+## Team
+
+| Person | Focus | Start here |
+|--------|-------|------------|
+| **Sanvi** | Student portal — dashboard, courses, lesson player, UI | `src/app/(student)/`, `src/features/` |
+| **Gauri** | Admin panel, APIs, services, database queries | `src/app/(admin)/`, `src/app/api/v1/`, `src/services/` |
+
+Do **not** edit each other's owned folders without coordinating. See [`ARCHITECTURE.md`](../ARCHITECTURE.md) §4 for the full matrix.
 
 ---
 
 ## Where to edit
 
-| Task | File |
-|------|------|
-| Course content | `src/lib/catalog/course-content.ts` |
-| Dashboard UI | `src/components/learn/` |
-| Course / lesson pages | `src/app/courses/` |
+| Task | Owner | Location |
+|------|-------|----------|
+| Course content | Sanvi | `src/lib/catalog/course-content.ts` |
+| Dashboard UI | Sanvi | `src/features/student-dashboard/` |
+| Course / lesson pages | Sanvi | `src/app/(student)/courses/` |
+| Shared UI components | Sanvi | `src/components/ui/` |
+| Admin pages | Gauri | `src/app/(admin)/admin/` |
+| Public + admin APIs | Gauri | `src/app/api/v1/` (except auth/enrollment) |
+| Business logic | Gauri | `src/services/` |
 
 ---
 
