@@ -44,7 +44,7 @@ export function CourseCard({ course, enrolled, progressPercent, completedLessons
       className={cn(
         "flex h-full flex-col rounded-xl border bg-surface p-5 transition",
         enrolled
-          ? "border-brand/30 hover:border-brand"
+          ? "border-brand/30 hover:border-brand hover:-translate-y-1"
           : "border-borderSubtle opacity-90 hover:opacity-100",
       )}
     >
@@ -101,7 +101,7 @@ export function CourseCard({ course, enrolled, progressPercent, completedLessons
       </ul>
 
       {enrolled && progressPercent !== undefined ? (
-        <div className="mt-4">
+        <div className="mt-4 rounded-lg bg-black/20 p-3">
           <div className="mb-1 flex justify-between text-xs text-textMuted">
   <span>Progress</span>
   <span>{progressPercent}% Complete</span>
@@ -134,7 +134,9 @@ export function CourseCard({ course, enrolled, progressPercent, completedLessons
     transition
     hover:opacity-90
   "
->            {progressPercent && progressPercent > 0 ? "Continue learning →" : "Explore modules →"}
+>            {progressPercent && progressPercent > 0
+ ? "Resume Course →"
+ : "Start Learning →"}
           </span>
         ) : (
           <span className="inline-flex w-full items-center justify-center rounded-lg border border-dashed border-borderSubtle px-4 py-2.5 text-sm text-textMuted">

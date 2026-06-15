@@ -84,10 +84,9 @@ const nextLesson =
         ← {course.title}
       </Link>
       <p className="mt-4 text-xs uppercase tracking-wide text-brand">{module.title}</p>
-      <h1 className="mt-1 text-2xl font-bold">{lesson.title}</h1>
+      <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{lesson.title}</h1>
       <p className="mt-2 text-sm text-textSecondary">{lesson.summary}</p>
-      <div className="mt-4 flex flex-wrap gap-3 text-xs text-textMuted">
-  <span>
+<div className="mt-4 flex flex-wrap gap-3 rounded-lg border border-borderSubtle bg-surface px-4 py-3 text-xs text-textMuted">  <span>
     Duration: {lesson.durationMinutes} min
   </span>
     <span>•</span>
@@ -103,33 +102,48 @@ const nextLesson =
   </span>
 </div>
 
-      {lesson.kind === "video" &&
- lesson.content.videoUrl ? (
-  <div className="mt-8 overflow-hidden rounded-xl border border-borderSubtle bg-surface">
-    <iframe
-      src={lesson.content.videoUrl}
-      title={lesson.title}
-      className="aspect-video w-full"
-      allowFullScreen
-    />
-  </div>
-) : null}
-      
-      {lesson.kind === "article" && (
+      {lesson.kind === "video" && lesson.content.videoUrl ? (
+<div className="mt-8 rounded-xl border border-borderSubtle bg-surface p-4 sm:p-6">    <video controls className="w-full rounded-xl">
+      <source
+        src={lesson.content.videoUrl}
+        type="video/mp4"
+      />
+    </video>
 
-      <article className="prose-lesson mt-8 rounded-xl border border-borderSubtle bg-surface p-6">
-        {lesson.content.markdown ? (
-          lesson.content.markdown.split("\n\n").map((block) => {
-            if (block.startsWith("## ")) {
-              return <h2 key={block}>{block.replace(/^##\s*/, "")}</h2>;
-            }
-            return <p key={block}>{block}</p>;
-          })
-        ) : (
-          <p className="text-textSecondary">Lesson content placeholder.</p>
-        )}
-      </article>
-      )}
+    <p className="mt-4 text-sm text-textSecondary">
+      {lesson.summary}
+    </p>
+  </div>
+) : (
+<article className="mt-8 rounded-xl border border-borderSubtle bg-surface p-4 sm:p-6">    {lesson.content.markdown ? (
+      lesson.content.markdown.split("\n\n").map((block) => {
+        if (block.startsWith("## ")) {
+          return (
+            <h2
+              key={block}
+              className="mb-3 text-xl font-semibold"
+            >
+              {block.replace(/^##\s*/, "")}
+            </h2>
+          );
+        }
+
+        return (
+          <p
+            key={block}
+            className="mb-4 text-textSecondary"
+          >
+            {block}
+          </p>
+        );
+      })
+    ) : (
+      <p className="text-textSecondary">
+        Lesson content placeholder.
+      </p>
+    )}
+  </article>
+)}
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <button

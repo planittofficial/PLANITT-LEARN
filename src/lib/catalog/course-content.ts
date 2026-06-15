@@ -112,8 +112,37 @@ export const COURSE_CATALOG_DATA: CourseDefinition[] = [
       "Risk and position sizing framework for consistency",
     ],
     modules: [
-      moduleWithIntro("fx-m1", "FX Foundations", "How currency markets work.", "What moves currency pairs"),
-      moduleWithIntro("fx-m2", "Reading Forex Quotes", "Bid, ask, spread, pip value, and lot sizes.", "Reading a forex quote"),
+{
+  id: "fx-m1",
+  title: "FX Foundations",
+  summary: "How currency markets work.",
+  lessons: [
+    articleLesson(
+      "fx-m1-l1",
+      "What moves currency pairs",
+      "Introduction to Forex markets",
+      "## Forex Basics\n\nCurrencies move because of supply, demand, interest rates and economic conditions."
+    ),
+
+    {
+      id: "fx-m1-l2",
+      title: "Forex Market Overview Video",
+      durationMinutes: 12,
+      kind: "video",
+      summary: "Introduction to global currency markets.",
+      content: {
+        // videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+      },
+    },
+
+    articleLesson(
+      "fx-m1-l3",
+      "Major Currency Pairs",
+      "Understanding EUR/USD and other major pairs",
+      "## Major Currency Pairs\n\nEUR/USD, GBP/USD and USD/JPY are among the most traded forex pairs."
+    ),
+  ],
+},      moduleWithIntro("fx-m2", "Reading Forex Quotes", "Bid, ask, spread, pip value, and lot sizes.", "Reading a forex quote"),
       moduleWithIntro("fx-m3", "Major Pairs & Sessions", "London, New York, Asia session behavior.", "Session timing edge"),
       moduleWithIntro("fx-m4", "Trend Analysis", "Higher-high / lower-low structure and trend filters.", "Identifying trend direction"),
       moduleWithIntro("fx-m5", "Breakout Setups", "Range breaks, volatility expansion, and confirmation.", "Breakout framework"),
