@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { CheckCircle2, Circle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+
 import { LearnShell } from "@/components/layout/student";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/context/auth-context";
@@ -25,29 +25,19 @@ export default function CourseHubPage() {
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
   const [progress, setProgress] = useState<CourseProgress>({});
-  const [expandedModules, setExpandedModules] = useState<string[]>(["fx-ml"]);
 
   useEffect(() => {
-  if (!user?.id) return;
-  setProgress(loadCourseProgress(user.id, courseId));
-}, [courseId, user?.id]);
+    if (!user?.id) return;
+    setProgress(loadCourseProgress(user.id, courseId));
+  }, [courseId, user?.id]);
 
-const lessonIds = useMemo(
-  () => course?.modules.flatMap((m) => m.lessons.map((l) => l.id)) ?? [],
-  [course],
-);
-
-const stats = countCompletedLessons(progress, lessonIds);
-
-const toggleModule = (moduleId: string) => {
-  setExpandedModules((prev) =>
-    prev.includes(moduleId)
-      ? prev.filter((id) => id !== moduleId)
-      : [...prev, moduleId]
+  const lessonIds = useMemo(
+    () => course?.modules.flatMap((m) => m.lessons.map((l) => l.id)) ?? [],
+    [course],
   );
-};
+  const stats = countCompletedLessons(progress, lessonIds);
 
-if (!course) notFound();
+  if (!course) notFound();
 
   if (loading) {
     return (
@@ -105,67 +95,11 @@ if (!course) notFound();
             <code className="text-brand">src/lib/catalog/courses.ts</code>.
           </p>
         ) : (
-          course.modules.map((module) => {
-  const moduleLessonIds = module.lessons.map((l) => l.id);
-
-  const moduleStats = countCompletedLessons(
-    progress,
-    moduleLessonIds
-  );
-
-  const modulePct =
-    moduleStats.total > 0
-      ? Math.round(
-          (moduleStats.completed / moduleStats.total) * 100
-        )
-      : 0;
-
-  return (
-    <section
-      key={module.id}
-      className="rounded-xl border border-borderSubtle bg-surface p-5"
-    >
-              <div className="flex items-center justify-between gap-4">
-  <button
-  type="button"
-  onClick={() => toggleModule(module.id)}
-  className="flex w-full items-center justify-between"
->
-  <h2 className="text-lg font-semibold">
-    {module.title}
-  </h2>
-
-  {expandedModules.includes(module.id) ? (
-    <ChevronDown className="h-4 w-4" />
-  ) : (
-    <ChevronRight className="h-4 w-4" />
-  )}
-</button>
-
-  <span className="text-xs text-brand">
-    {moduleStats.completed}/{moduleStats.total} lessons done
-  </span>
-</div>
-
-<p className="mt-1 text-sm text-textSecondary">
-  {module.summary}
-</p>
-
-<div className="mt-3">
-  <div className="mb-1 flex justify-between text-xs text-textMuted">
-    <span>Module Progress</span>
-    <span>{modulePct}%</span>
-  </div>
-
-  <div className="h-1.5 rounded-full bg-borderSubtle">
-    <div
-      className="h-full rounded-full bg-brand"
-      style={{ width: `${modulePct}%` }}
-    />
-  </div>
-</div>
-              {expandedModules.includes(module.id) && (
-  <ul className="mt-4 space-y-2">
+          course.modules.map((module) => (
+            <section key={module.id} className="rounded-xl border border-borderSubtle bg-surface p-5">
+              <h2 className="text-lg font-semibold">{module.title}</h2>
+              <p className="mt-1 text-sm text-textSecondary">{module.summary}</p>
+              <ul className="mt-4 space-y-2">
                 {module.lessons.map((lesson) => {
                   const done = progress[lesson.id]?.completed;
                   return (
@@ -186,10 +120,8 @@ if (!course) notFound();
                   );
                 })}
               </ul>
-              )}
             </section>
-          );
-        })
+          ))
         )}
       </div>
     </LearnShell>

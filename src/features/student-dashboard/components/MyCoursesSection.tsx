@@ -68,45 +68,19 @@ export function MyCoursesSection() {
           <div className="grid gap-4 lg:grid-cols-2">
             {COURSE_CATALOG.map((course) => {
               const enrolled = isEnrolledInCourse(enrolledIds, course.id);
-              const lessonIds = course.modules.flatMap((m) =>
-  m.lessons.map((l) => l.id)
-);
-
-let pct: number | undefined;
-let completedLessons = 0;
-let totalLessons = lessonIds.length;
-
-if (isAuthenticated && enrolled && user?.id) {
-  const progress = loadCourseProgress(
-    user.id,
-    course.id
-  );
-
-  const stats = countCompletedLessons(
-    progress,
-    lessonIds
-  );
-
-  completedLessons = stats.completed;
-  totalLessons = stats.total;
-
-  pct =
-    stats.total > 0
-      ? Math.round(
-          (stats.completed / stats.total) * 100
-        )
-      : 0;
-}
+              const lessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
+              const pct =
+                isAuthenticated && enrolled
+                  ? progressForCourse(course.id, lessonIds)
+                  : undefined;
               return (
                 <CourseCard
-  key={course.id}
-  course={course}
-  enrolled={enrolled}
-  preview={devPreview && !isAuthenticated}
-  progressPercent={pct}
-  completedLessons={completedLessons}
-  totalLessons={totalLessons}
-/>
+                  key={course.id}
+                  course={course}
+                  enrolled={enrolled}
+                  preview={devPreview && !isAuthenticated}
+                  progressPercent={pct}
+                />
               );
             })}
           </div>

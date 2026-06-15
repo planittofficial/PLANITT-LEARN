@@ -27,13 +27,11 @@ type CourseCardProps = {
   course: CourseDefinition;
   enrolled: boolean;
   progressPercent?: number;
-  completedLessons?: number;
-  totalLessons?: number;
+  /** Preview mode — show card but don't link (not signed in yet) */
   preview?: boolean;
 };
 
-export function CourseCard({ course, enrolled, progressPercent, completedLessons, totalLessons
-  , preview }: CourseCardProps) {
+export function CourseCard({ course, enrolled, progressPercent, preview }: CourseCardProps) {
   const moduleCount = course.modules.length;
   const lessonCount = countCourseLessons(course);
   const levelClass = LEVEL_STYLES[course.level] ?? "bg-white/10 text-textSecondary";
@@ -65,27 +63,8 @@ export function CourseCard({ course, enrolled, progressPercent, completedLessons
         )}
       </div>
 
-<div className="mt-3 flex items-center justify-between">
-  <h3 className="text-lg font-semibold leading-snug">
-    {course.title}
-  </h3>
-
-  {enrolled ? (
-    progressPercent === 100 ? (
-      <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-xs font-medium text-emerald-400">
-        Completed
-      </span>
-    ) : (
-      <span className="rounded-full bg-brand/15 px-2 py-1 text-xs font-medium text-brand">
-        In Progress
-      </span>
-    )
-  ) : (
-    <span className="rounded-full bg-white/5 px-2 py-1 text-xs font-medium text-textMuted">
-      Locked
-    </span>
-  )}
-</div>      <p className="mt-2 line-clamp-2 text-sm text-textSecondary">{course.blurb}</p>
+      <h3 className="mt-3 text-lg font-semibold leading-snug">{course.title}</h3>
+      <p className="mt-2 line-clamp-2 text-sm text-textSecondary">{course.blurb}</p>
 
       <p className="mt-3 text-xs text-textMuted">
         Duration: {course.duration} · Modules: {moduleCount} · Lessons: {lessonCount}
@@ -103,13 +82,9 @@ export function CourseCard({ course, enrolled, progressPercent, completedLessons
       {enrolled && progressPercent !== undefined ? (
         <div className="mt-4">
           <div className="mb-1 flex justify-between text-xs text-textMuted">
-  <span>Progress</span>
-  <span>{progressPercent}% Complete</span>
-</div>
-
-<div className="mb-2 text-xs text-textMuted">
-  {completedLessons}/{totalLessons} lessons completed
-</div>
+            <span>Progress</span>
+            <span>{progressPercent}%</span>
+          </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-borderSubtle">
             <div className="h-full bg-brand transition-all" style={{ width: `${progressPercent}%` }} />
           </div>
@@ -118,23 +93,8 @@ export function CourseCard({ course, enrolled, progressPercent, completedLessons
 
       <div className="mt-5">
         {enrolled ? (
-<span
-  className="
-    inline-flex
-    w-full
-    items-center
-    justify-center
-    rounded-lg
-    bg-brand
-    px-4
-    py-2.5
-    text-sm
-    font-semibold
-    text-black
-    transition
-    hover:opacity-90
-  "
->            {progressPercent && progressPercent > 0 ? "Continue learning →" : "Explore modules →"}
+          <span className="inline-flex w-full items-center justify-center rounded-lg border border-borderSubtle px-4 py-2.5 text-sm font-medium text-textPrimary">
+            {progressPercent && progressPercent > 0 ? "Continue learning →" : "Explore modules →"}
           </span>
         ) : (
           <span className="inline-flex w-full items-center justify-center rounded-lg border border-dashed border-borderSubtle px-4 py-2.5 text-sm text-textMuted">
