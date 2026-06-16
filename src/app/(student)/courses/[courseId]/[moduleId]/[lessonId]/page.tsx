@@ -102,48 +102,68 @@ const nextLesson =
   </span>
 </div>
 
-      {lesson.kind === "video" && lesson.content.videoUrl ? (
-<div className="mt-8 rounded-xl border border-borderSubtle bg-surface p-4 sm:p-6">    <video controls className="w-full rounded-xl">
-      <source
-        src={lesson.content.videoUrl}
-        type="video/mp4"
-      />
-    </video>
+      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+  <div className="lg:col-span-2">
+  {lesson.kind === "video" ? (
+    <div className="overflow-hidden rounded-xl border border-borderSubtle bg-surface">
+      {lesson.content.videoUrl ? (
+        <video controls className="aspect-video w-full">
+          <source
+            src={lesson.content.videoUrl}
+            type="video/mp4"
+          />
+        </video>
+      ) : (
+        <div className="flex aspect-video items-center justify-center">
+          <p className="text-sm text-textMuted">
+            Video will appear here when added by the instructor
+          </p>
+        </div>
+      )}
+    </div>
+  ) : (
+    <div className="flex aspect-video items-center justify-center rounded-xl border border-borderSubtle bg-surface">
+      <div className="text-center">
+        <h3 className="font-semibold">
+          Reading Lesson
+        </h3>
 
-    <p className="mt-4 text-sm text-textSecondary">
+        <p className="mt-2 text-sm text-textMuted">
+          Review the lesson notes below
+        </p>
+      </div>
+    </div>
+  )}
+</div>
+  
+
+  <aside className="rounded-xl border border-borderSubtle bg-surface p-5">
+    <h3 className="font-semibold">
+      Lecture Overview
+    </h3>
+
+    <p className="mt-3 text-sm text-textSecondary">
       {lesson.summary}
     </p>
-  </div>
-) : (
-<article className="mt-8 rounded-xl border border-borderSubtle bg-surface p-4 sm:p-6">    {lesson.content.markdown ? (
-      lesson.content.markdown.split("\n\n").map((block) => {
-        if (block.startsWith("## ")) {
-          return (
-            <h2
-              key={block}
-              className="mb-3 text-xl font-semibold"
-            >
-              {block.replace(/^##\s*/, "")}
-            </h2>
-          );
-        }
 
-        return (
-          <p
-            key={block}
-            className="mb-4 text-textSecondary"
-          >
-            {block}
-          </p>
-        );
-      })
-    ) : (
-      <p className="text-textSecondary">
-        Lesson content placeholder.
-      </p>
-    )}
-  </article>
-)}
+    <div className="mt-4 space-y-2 text-sm">
+      <div>
+        <span className="text-textMuted">Duration:</span>{" "}
+        {lesson.durationMinutes} min
+      </div>
+
+      <div>
+        <span className="text-textMuted">Module:</span>{" "}
+        {module.title}
+      </div>
+
+      <div>
+        <span className="text-textMuted">Lesson Type:</span>{" "}
+        {lesson.kind}
+      </div>
+    </div>
+  </aside>
+</div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <button
