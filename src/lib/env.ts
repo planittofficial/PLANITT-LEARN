@@ -65,3 +65,41 @@ export function requireDatabaseUrl(): string {
   }
   return url;
 }
+
+export function hasDatabase(): boolean {
+  return Boolean(getDatabaseUrl());
+}
+
+/** Comma-separated emails with /admin access (Phase 1+). */
+export function adminEmails(): string[] {
+  const raw = process.env.LEARN_ADMIN_EMAILS?.trim();
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+/** Validates enrollment webhooks from Planitt appbackend. */
+export function enrollmentWebhookSecret(): string | undefined {
+  const secret = process.env.LEARN_ENROLLMENT_WEBHOOK_SECRET?.trim();
+  return secret || undefined;
+}
+
+/** Same Google OAuth web client ID as main Planitt website — required when LEARN_DEV_STANDALONE=false. */
+export function googleWebClientId(): string | undefined {
+  const id = process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim();
+  return id || undefined;
+}
+
+export const LEARN_PORTAL_URL =
+  trimUrl(process.env.NEXT_PUBLIC_LEARN_PORTAL_URL) ??
+  (isProduction ? "" : "http://localhost:3001");
+
+/**
+ * Production/staging: real Google auth + appbackend payment history.
+ * Local: LEARN_DEV_STANDALONE=true bypasses appbackend.
+ */
+export function isPlanittIntegrationMode(): boolean {
+  return !isDevStandalone() && Boolean(APPBACKEND_URL);
+}

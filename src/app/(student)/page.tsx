@@ -1,8 +1,8 @@
 import { GraduationCap } from "lucide-react";
 
 import { LearnShell } from "@/components/layout/student";
+import { planittCheckoutUrl } from "@/constants/urls";
 import { MyCoursesSection } from "@/features/student-dashboard";
-import { MAIN_WEBSITE_URL } from "@/lib/env";
 
 export default function HomePage() {
   return (
@@ -18,7 +18,7 @@ export default function HomePage() {
           complete your assigned tasks in the catalog files.
         </p>
         <a
-          href={`${MAIN_WEBSITE_URL}/learn`}
+          href={planittCheckoutUrl()}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 inline-flex items-center gap-1 text-sm text-brand hover:underline"

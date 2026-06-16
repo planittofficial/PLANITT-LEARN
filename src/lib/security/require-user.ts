@@ -1,7 +1,7 @@
 import { fail } from "@/lib/api/response";
 import { isDevAccessToken, devAuthMeResponse } from "@/lib/dev/standalone";
 import { getAccessTokenFromRequest } from "@/lib/security/auth-cookies";
-import { requireAppBackendUrl } from "@/lib/env";
+import { fetchAuthMe } from "@/services/auth/auth.service";
 
 export type AuthUser = { id: string; email: string; name: string };
 
@@ -19,17 +19,10 @@ export async function requireUser(request: Request): Promise<
     return { user: data.user, token };
   }
 
-  try {
-    const response = await fetch(`${requireAppBackendUrl()}/api/v1/auth/me`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      cache: "no-store",
-    });
-    if (!response.ok) return fail("Unauthorized", 401);
-    const data = (await response.json()) as { user?: AuthUser };
-    if (!data.user?.id) return fail("Unauthorized", 401);
-    return { user: data.user, token };
-  } catch {
-    return fail("Auth service unavailable", 503);
+  const result = await fetchAuthMe(token);
+  if (!result.ok) {
+    return fail(result.status === 503 ? "Auth service unavailable" : "Unauthorized", result.status);
   }
+
+  return { user: result.user, token };
 }
