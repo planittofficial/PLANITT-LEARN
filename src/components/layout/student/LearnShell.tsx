@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
 import { ROUTES } from "@/constants/routes";
+import { planittCheckoutUrl } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
-import { MAIN_WEBSITE_URL } from "@/lib/env";
 
 export function LearnShell({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, authReady, user, logout } = useAuth();
@@ -26,7 +26,7 @@ export function LearnShell({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="flex items-center gap-4 text-sm text-textSecondary">
             <a
-              href={`${MAIN_WEBSITE_URL}/learn`}
+              href={planittCheckoutUrl()}
               className="hidden sm:inline hover:text-textPrimary"
               target="_blank"
               rel="noopener noreferrer"

@@ -11,7 +11,7 @@ import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getLessonByPath } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { loadCourseProgress, saveLessonComplete, type CourseProgress } from "@/lib/learning/progress";
-import { MAIN_WEBSITE_URL } from "@/lib/env";
+import { planittCheckoutUrl } from "@/constants/urls";
 
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
@@ -61,7 +61,7 @@ const nextLesson =
     return (
       <LearnShell>
         <p className="text-sm text-textSecondary">Enroll on Planitt to access this lesson.</p>
-        <a href={`${MAIN_WEBSITE_URL}/learn`} className="mt-2 inline-block text-sm text-brand">
+        <a href={planittCheckoutUrl(courseId)} className="mt-2 inline-block text-sm text-brand">
           Buy course →
         </a>
       </LearnShell>
