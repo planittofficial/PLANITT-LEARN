@@ -27,6 +27,8 @@ type CourseCardProps = {
   course: CourseDefinition;
   enrolled: boolean;
   progressPercent?: number;
+  completedLessons?: number;
+  totalLessons?: number;
   /** Preview mode — show card but don't link (not signed in yet) */
   preview?: boolean;
 };
