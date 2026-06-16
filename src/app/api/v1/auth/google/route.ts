@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 
-import { requireAppBackendUrl } from "@/lib/env";
+import { enforceApiRateLimit } from "@/lib/security/rate-limit";
 import {
   applyAuthCookies,
   stripTokensFromAuthPayload,
 } from "@/lib/security/auth-cookies";
-import { enforceApiRateLimit } from "@/lib/security/rate-limit";
 import { logServerError } from "@/lib/security/server-log";
+import { postGoogleAuth } from "@/services/auth/auth.service";
+import { extractAuthTokens, parseAuthJson } from "@/services/auth/session.service";
+import { ensureUserProfile } from "@/services/enrollment/enrollment.service";
 
 export async function POST(request: Request) {
   const limited = enforceApiRateLimit(request, "auth:google", 20, 60_000);
@@ -14,26 +16,35 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json().catch(() => ({}));
-    const response = await fetch(`${requireAppBackendUrl()}/api/v1/auth/google`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      body: JSON.stringify(body ?? {}),
-    });
-
+    const response = await postGoogleAuth(body);
     const text = await response.text();
-    try {
-      const parsed = JSON.parse(text) as Record<string, unknown>;
-      const accessToken =
-        typeof parsed.access_token === "string" ? parsed.access_token : undefined;
-      const refreshToken =
-        typeof parsed.refresh_token === "string" ? parsed.refresh_token : undefined;
-      const safeBody = stripTokensFromAuthPayload(parsed);
-      const headers = applyAuthCookies({ accessToken, refreshToken });
-      return NextResponse.json(safeBody, { status: response.status, headers });
-    } catch {
+    const parsed = parseAuthJson(text);
+
+    if (!parsed) {
       return NextResponse.json({ ok: false, detail: "Google auth failed." }, { status: response.status });
     }
+
+    const user = parsed.user;
+    if (
+      response.ok &&
+      user &&
+      typeof user === "object" &&
+      !Array.isArray(user) &&
+      typeof (user as Record<string, unknown>).id === "string" &&
+      typeof (user as Record<string, unknown>).email === "string"
+    ) {
+      const profile = user as { id: string; email: string; name?: string | null };
+      try {
+        await ensureUserProfile(profile);
+      } catch (error) {
+        logServerError("google auth user sync", error);
+      }
+    }
+
+    const { accessToken, refreshToken } = extractAuthTokens(parsed);
+    const safeBody = stripTokensFromAuthPayload(parsed);
+    const headers = applyAuthCookies({ accessToken, refreshToken });
+    return NextResponse.json(safeBody, { status: response.status, headers });
   } catch (error) {
     logServerError("auth google", error);
     return NextResponse.json({ ok: false, detail: "Auth service unavailable." }, { status: 503 });

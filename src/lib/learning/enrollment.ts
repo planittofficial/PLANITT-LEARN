@@ -1,5 +1,9 @@
 import { ALL_COURSE_IDS, COMBO_PLAN_ID } from "@/lib/catalog/courses";
-import { devMockEnrollments } from "@/lib/env";
+
+/**
+ * Client-safe enrollment helpers.
+ * Server source of truth: `services/enrollment/enrollment.service.ts` + GET /api/v1/enrollment/me
+ */
 
 export type PaymentTransaction = {
   plan_id?: string;
@@ -15,12 +19,9 @@ export function expandComboEnrollments(planIds: Set<string>): Set<string> {
   return planIds;
 }
 
+/** @deprecated Server-only — use getEnrollmentSnapshot() or GET /api/v1/enrollment/me */
 export function enrolledCourseIdsFromTransactions(transactions: PaymentTransaction[]): Set<string> {
   const ids = new Set<string>();
-
-  for (const mock of devMockEnrollments()) {
-    ids.add(mock);
-  }
 
   for (const tx of transactions) {
     const planId = (tx.plan_id ?? "").trim().toLowerCase();

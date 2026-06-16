@@ -16,7 +16,7 @@ import {
   loadCourseProgress,
   type CourseProgress,
 } from "@/lib/learning/progress";
-import { MAIN_WEBSITE_URL } from "@/lib/env";
+import { planittCheckoutUrl } from "@/constants/urls";
 
 export default function CourseHubPage() {
   const params = useParams<{ courseId: string }>();
@@ -55,7 +55,7 @@ export default function CourseHubPage() {
           You are not enrolled in this course. Purchase it on Planitt first.
         </p>
         <a
-          href={`${MAIN_WEBSITE_URL}/learn`}
+          href={planittCheckoutUrl(courseId)}
           className="mt-4 inline-block text-sm text-brand hover:underline"
           target="_blank"
           rel="noopener noreferrer"

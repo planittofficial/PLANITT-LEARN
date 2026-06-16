@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { ROUTES } from "@/constants/routes";
+import { planittCheckoutUrl } from "@/constants/urls";
 import { CourseCard } from "@/features/course-catalog/components/CourseCard";
 import { useAuth } from "@/context/auth-context";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
@@ -12,15 +13,13 @@ import { countCompletedLessons, loadCourseProgress } from "@/lib/learning/progre
 
 export function MyCoursesSection() {
   const { user } = useAuth();
-  const { loading, enrolledIds, isAuthenticated, devPreview } = useEnrollment();
+  const { loading, enrolledIds, isAuthenticated, devPreview, devStandalone } = useEnrollment();
 
   if (loading) {
     return <p className="text-sm text-textSecondary">Loading your courses…</p>;
   }
 
-  const enrolledCount = COURSE_CATALOG.filter((c) =>
-    isEnrolledInCourse(enrolledIds, c.id),
-  ).length;
+  const enrolledCourses = COURSE_CATALOG.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
 
   function progressForCourse(courseId: string, lessonIds: string[]): number {
     if (!user?.id || lessonIds.length === 0) return 0;
@@ -47,39 +46,66 @@ export function MyCoursesSection() {
           <Link href={ROUTES.STUDENT.LOGIN} className="font-medium text-brand hover:underline">
             Sign in
           </Link>{" "}
-          to see courses linked to your Planitt account.
+          with your Planitt Google account to see courses from your purchase history.
         </div>
       ) : null}
 
-      {(isAuthenticated || devPreview) && enrolledCount === 0 ? (
-        <p className="rounded-xl border border-dashed border-borderSubtle p-6 text-sm text-textSecondary">
-          No enrolled courses. Set{" "}
-          <code className="text-brand">LEARN_DEV_MOCK_ENROLLMENTS=learn-all-courses-combo</code> in{" "}
-          <code className="text-brand">.env.local</code>, restart the dev server
-          {isAuthenticated ? ", then sign in again" : ""}.
-        </p>
+      {(isAuthenticated || devPreview) && enrolledCourses.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-borderSubtle p-6 text-sm text-textSecondary">
+          <p>No enrolled courses yet.</p>
+          {devStandalone ? (
+            <p className="mt-2">
+              Local dev: set{" "}
+              <code className="text-brand">LEARN_DEV_MOCK_ENROLLMENTS=learn-all-courses-combo</code>{" "}
+              in <code className="text-brand">.env.local</code> and restart the dev server.
+            </p>
+          ) : (
+            <p className="mt-2">
+              Purchase a course on Planitt — your payment history will unlock it here automatically.
+            </p>
+          )}
+          <a
+            href={planittCheckoutUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block font-medium text-brand hover:underline"
+          >
+            Browse courses on Planitt →
+          </a>
+        </div>
       ) : null}
 
-      {(isAuthenticated || devPreview) && enrolledCount > 0 ? (
+      {(isAuthenticated || devPreview) && enrolledCourses.length > 0 ? (
         <>
           <p className="text-sm text-textSecondary">
-            {enrolledCount} of {COURSE_CATALOG.length} courses enrolled
+            {enrolledCourses.length} enrolled course{enrolledCourses.length === 1 ? "" : "s"}
           </p>
           <div className="grid gap-4 lg:grid-cols-2">
-            {COURSE_CATALOG.map((course) => {
-              const enrolled = isEnrolledInCourse(enrolledIds, course.id);
+            {enrolledCourses.map((course) => {
               const lessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
-              const pct =
-                isAuthenticated && enrolled
-                  ? progressForCourse(course.id, lessonIds)
-                  : undefined;
+
+              let pct: number | undefined;
+              let completedLessons = 0;
+              let totalLessons = lessonIds.length;
+
+              if (isAuthenticated && user?.id) {
+                const progress = loadCourseProgress(user.id, course.id);
+                const stats = countCompletedLessons(progress, lessonIds);
+                completedLessons = stats.completed;
+                totalLessons = stats.total;
+                pct =
+                  stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+              }
+
               return (
                 <CourseCard
                   key={course.id}
                   course={course}
-                  enrolled={enrolled}
+                  enrolled
                   preview={devPreview && !isAuthenticated}
                   progressPercent={pct}
+                  completedLessons={completedLessons}
+                  totalLessons={totalLessons}
                 />
               );
             })}
@@ -87,9 +113,9 @@ export function MyCoursesSection() {
         </>
       ) : null}
 
-      {devPreview && enrolledCount > 0 ? (
+      {devPreview && enrolledCourses.length > 0 ? (
         <p className="text-xs text-textMuted">
-          Locked cards in preview mode — sign in to explore modules and lessons.
+          Preview mode — sign in to open modules and lessons.
         </p>
       ) : null}
     </div>
