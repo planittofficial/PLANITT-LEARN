@@ -27,6 +27,7 @@ export const ROUTES = {
     ENROLLMENT: {
       ME: "/api/v1/enrollment/me",
       PREVIEW: "/api/v1/enrollment/preview",
+      verify: (courseId: string) => `/api/v1/enrollment/verify/${courseId}`,
     },
   },
 } as const;

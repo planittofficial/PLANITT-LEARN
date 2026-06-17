@@ -115,8 +115,8 @@ function LoginForm() {
         ) : (
           <>
             <p className="mt-2 text-sm text-textSecondary">
-              Use the same Google account you use on Planitt. Course purchases are linked via payment
-              history.
+              Use the same Google account you use on Planitt. After checkout on the main website,
+              your purchased courses appear here automatically from payment history.
             </p>
             {error ? <p className="mt-4 text-sm text-red-400">{error}</p> : null}
             <div className="mt-6 min-h-[44px]" ref={buttonHostRef} />

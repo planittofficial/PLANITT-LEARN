@@ -4,43 +4,39 @@ import { useQuery } from "@tanstack/react-query";
 
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/context/auth-context";
-import {
-  enrolledCourseIdsFromTransactions,
-  type PaymentTransaction,
-} from "@/lib/learning/enrollment";
+import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { withApiCredentials } from "@/lib/security/client-auth";
+import type { EnrollmentMeResponse, EnrollmentPreviewResponse } from "@/types/enrollment.types";
 
-type HistoryResponse = {
-  items?: PaymentTransaction[];
-};
-
-type DevPreviewResponse = {
-  enrolledCourseIds?: string[];
-};
-
-async function fetchEnrollment(): Promise<PaymentTransaction[]> {
+async function fetchEnrollmentMe(): Promise<EnrollmentMeResponse | null> {
   const res = await fetch(ROUTES.API.ENROLLMENT.ME, withApiCredentials());
-  if (!res.ok) return [];
-  const data = (await res.json()) as HistoryResponse;
-  return Array.isArray(data.items) ? data.items : [];
+  if (!res.ok) return null;
+  const data = (await res.json()) as EnrollmentMeResponse;
+  if (!data.ok || !Array.isArray(data.enrolledCourseIds)) return null;
+  return data;
 }
 
 async function fetchDevPreview(): Promise<Set<string>> {
   const res = await fetch(ROUTES.API.ENROLLMENT.PREVIEW);
   if (!res.ok) return new Set();
-  const data = (await res.json()) as DevPreviewResponse;
+  const data = (await res.json()) as EnrollmentPreviewResponse;
   return new Set(Array.isArray(data.enrolledCourseIds) ? data.enrolledCourseIds : []);
 }
 
 const DEV_STANDALONE =
   process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE?.trim().toLowerCase() === "true";
 
+/**
+ * Enrollment state for the student UI.
+ * Always uses server-resolved enrolledCourseIds from /api/v1/enrollment/me in production
+ * (payment history from Planitt appbackend + optional Learn DB webhook sync).
+ */
 export function useEnrollment() {
   const { isAuthenticated, authReady, devStandalone } = useAuth();
 
-  const paymentQuery = useQuery({
+  const enrollmentQuery = useQuery({
     queryKey: ["enrollment", "me"],
-    queryFn: fetchEnrollment,
+    queryFn: fetchEnrollmentMe,
     enabled: authReady && isAuthenticated,
     staleTime: 60_000,
   });
@@ -53,20 +49,25 @@ export function useEnrollment() {
   });
 
   const enrolledIds = isAuthenticated
-    ? enrolledCourseIdsFromTransactions(paymentQuery.data ?? [])
+    ? new Set(enrollmentQuery.data?.enrolledCourseIds ?? [])
     : previewQuery.data ?? new Set<string>();
 
   const loading =
     !authReady ||
-    (isAuthenticated && paymentQuery.isLoading) ||
+    (isAuthenticated && enrollmentQuery.isLoading) ||
     (!isAuthenticated && (devStandalone || DEV_STANDALONE) && previewQuery.isLoading);
 
   return {
     authReady,
     isAuthenticated,
     devPreview: !isAuthenticated && (devStandalone || DEV_STANDALONE),
+    devStandalone: devStandalone || DEV_STANDALONE,
     loading,
     enrolledIds,
-    refetch: isAuthenticated ? paymentQuery.refetch : previewQuery.refetch,
+    /** Raw payment rows from appbackend (paid learn-* plan_ids). */
+    paymentItems: enrollmentQuery.data?.items ?? [],
+    enrollmentSource: enrollmentQuery.data?.source,
+    refetch: isAuthenticated ? enrollmentQuery.refetch : previewQuery.refetch,
+    isEnrolledIn: (courseId: string) => isEnrolledInCourse(enrolledIds, courseId),
   };
 }

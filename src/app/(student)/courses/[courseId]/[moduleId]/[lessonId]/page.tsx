@@ -11,7 +11,7 @@ import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getLessonByPath } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { loadCourseProgress, saveLessonComplete, type CourseProgress } from "@/lib/learning/progress";
-import { MAIN_WEBSITE_URL } from "@/lib/env";
+import { planittCheckoutUrl } from "@/constants/urls";
 
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
@@ -28,6 +28,7 @@ export default function LessonPage() {
 
   if (!resolved) notFound();
   const { course, module, lesson } = resolved;
+
   const allLessons = course.modules.flatMap((m) =>
   m.lessons.map((l) => ({
     lesson: l,
@@ -61,7 +62,7 @@ const nextLesson =
     return (
       <LearnShell>
         <p className="text-sm text-textSecondary">Enroll on Planitt to access this lesson.</p>
-        <a href={`${MAIN_WEBSITE_URL}/learn`} className="mt-2 inline-block text-sm text-brand">
+        <a href={planittCheckoutUrl(courseId)} className="mt-2 inline-block text-sm text-brand">
           Buy course →
         </a>
       </LearnShell>
@@ -86,7 +87,8 @@ const nextLesson =
       <p className="mt-4 text-xs uppercase tracking-wide text-brand">{module.title}</p>
       <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{lesson.title}</h1>
       <p className="mt-2 text-sm text-textSecondary">{lesson.summary}</p>
-<div className="mt-4 flex flex-wrap gap-3 rounded-lg border border-borderSubtle bg-surface px-4 py-3 text-xs text-textMuted">  <span>
+      <div className="mt-4 flex flex-wrap gap-3 text-xs text-textMuted">
+  <span>
     Duration: {lesson.durationMinutes} min
   </span>
     <span>•</span>
@@ -102,68 +104,128 @@ const nextLesson =
   </span>
 </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
-  <div className="lg:col-span-2">
-  {lesson.kind === "video" ? (
-    <div className="overflow-hidden rounded-xl border border-borderSubtle bg-surface">
+      {lesson.kind === "video" ? (
+  <div className="mt-8 grid gap-6 lg:grid-cols-3">
+    <div className="lg:col-span-2 rounded-xl border border-borderSubtle bg-surface p-4">
       {lesson.content.videoUrl ? (
-        <video controls className="aspect-video w-full">
-          <source
-            src={lesson.content.videoUrl}
-            type="video/mp4"
-          />
-        </video>
+        <iframe
+          src={lesson.content.videoUrl}
+          title={lesson.title}
+          className="aspect-video w-full rounded-lg"
+          allowFullScreen
+        />
       ) : (
-        <div className="flex aspect-video items-center justify-center">
-          <p className="text-sm text-textMuted">
-            Video will appear here when added by the instructor
-          </p>
+        <div className="flex aspect-video items-center justify-center rounded-lg bg-black/20 text-sm text-textMuted">
+          Video will appear here when added by the instructor
         </div>
       )}
     </div>
-  ) : (
-    <div className="flex aspect-video items-center justify-center rounded-xl border border-borderSubtle bg-surface">
-      <div className="text-center">
-        <h3 className="font-semibold">
-          Reading Lesson
-        </h3>
 
-        <p className="mt-2 text-sm text-textMuted">
-          Review the lesson notes below
+    <div className="rounded-xl border border-borderSubtle bg-surface p-5">
+      <h3 className="text-lg font-semibold">
+        Lecture Overview
+      </h3>
+
+      <div className="mt-4 space-y-3 text-sm">
+        <p className="text-textSecondary">
+          {lesson.summary}
+        </p>
+
+        <p>
+          <span className="text-textMuted">
+            Duration:
+          </span>{" "}
+          {lesson.durationMinutes} min
+        </p>
+
+        <p>
+          <span className="text-textMuted">
+            Module:
+          </span>{" "}
+          {module.title}
+        </p>
+
+        <p>
+          <span className="text-textMuted">
+            Lesson Type:
+          </span>{" "}
+          {lesson.kind}
         </p>
       </div>
     </div>
-  )}
-</div>
-  
+  </div>
+) : (
+  <div className="mt-8 grid gap-6 lg:grid-cols-3">
 
-  <aside className="rounded-xl border border-borderSubtle bg-surface p-5">
-    <h3 className="font-semibold">
-      Lecture Overview
-    </h3>
+    <div className="lg:col-span-2 rounded-xl border border-borderSubtle bg-surface p-6">
+      <h3 className="mb-4 text-lg font-semibold">
+        Reading Material
+      </h3>
 
-    <p className="mt-3 text-sm text-textSecondary">
-      {lesson.summary}
-    </p>
+      {lesson.content.markdown ? (
+        lesson.content.markdown.split("\n\n").map((block) => {
+          if (block.startsWith("## ")) {
+            return (
+              <h2
+                key={block}
+                className="mb-3 text-xl font-semibold"
+              >
+                {block.replace(/^##\s*/, "")}
+              </h2>
+            );
+          }
 
-    <div className="mt-4 space-y-2 text-sm">
-      <div>
-        <span className="text-textMuted">Duration:</span>{" "}
-        {lesson.durationMinutes} min
-      </div>
+          return (
+            <p
+              key={block}
+              className="mb-4 text-textSecondary"
+            >
+              {block}
+            </p>
+          );
+        })
+      ) : (
+        <p className="text-textSecondary">
+          Lesson content placeholder.
+        </p>
+      )}
+    </div>
 
-      <div>
-        <span className="text-textMuted">Module:</span>{" "}
-        {module.title}
-      </div>
+    <div className="rounded-xl border border-borderSubtle bg-surface p-5">
+      <h3 className="text-lg font-semibold">
+        Reading Overview
+      </h3>
 
-      <div>
-        <span className="text-textMuted">Lesson Type:</span>{" "}
-        {lesson.kind}
+      <div className="mt-4 space-y-3 text-sm">
+        <p className="text-textSecondary">
+          {lesson.summary}
+        </p>
+
+        <p>
+          <span className="text-textMuted">
+            Duration:
+          </span>{" "}
+          {lesson.durationMinutes} min
+        </p>
+
+        <p>
+          <span className="text-textMuted">
+            Module:
+          </span>{" "}
+          {module.title}
+        </p>
+
+        <p>
+          <span className="text-textMuted">
+            Lesson Type:
+          </span>{" "}
+          {lesson.kind}
+        </p>
       </div>
     </div>
-  </aside>
-</div>
+
+  </div>
+)}
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <button
@@ -176,7 +238,6 @@ const nextLesson =
         </button>
       </div>
 
-
       <div className="mt-10 flex justify-between">
   {previousLesson ? (
     <Link
@@ -185,20 +246,21 @@ const nextLesson =
         previousLesson.moduleId,
         previousLesson.lesson.id
       )}
-className="
-rounded-lg
-border
-border-brand/30
-bg-brand/5
-px-4
-py-2
-text-sm
-font-medium
-text-brand
-transition
-hover:border-brand
-hover:bg-brand/10
-"    >
+      className="
+        rounded-lg
+        border
+        border-brand/30
+        bg-brand/5
+        px-4
+        py-2
+        text-sm
+        font-medium
+        text-brand
+        transition
+        hover:border-brand
+        hover:bg-brand/10
+      "
+    >
       ← Previous Lesson
     </Link>
   ) : (
@@ -212,25 +274,26 @@ hover:bg-brand/10
         nextLesson.moduleId,
         nextLesson.lesson.id
       )}
-className="
-rounded-lg
-border
-border-brand/30
-bg-brand/5
-px-4
-py-2
-text-sm
-font-medium
-text-brand
-transition
-hover:border-brand
-hover:bg-brand/10
-"    >
+      className="
+        rounded-lg
+        border
+        border-brand/30
+        bg-brand/5
+        px-4
+        py-2
+        text-sm
+        font-medium
+        text-brand
+        transition
+        hover:border-brand
+        hover:bg-brand/10
+      "
+    >
       Next Lesson →
     </Link>
   ) : null}
 </div>
-
+      
       <p className="mt-10 text-xs text-textMuted">
         Educational content only — not investment advice. Always perform your own due diligence.
       </p>
