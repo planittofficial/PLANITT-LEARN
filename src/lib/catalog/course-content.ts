@@ -131,7 +131,7 @@ export const COURSE_CATALOG_DATA: CourseDefinition[] = [
       kind: "video",
       summary: "Introduction to global currency markets.",
       content: {
-        // videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+        videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
       },
     },
 
