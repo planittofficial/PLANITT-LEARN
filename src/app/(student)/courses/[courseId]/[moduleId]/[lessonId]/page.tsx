@@ -6,12 +6,17 @@ import { useEffect, useState } from "react";
 
 import { LearnShell } from "@/components/layout/student";
 import { ROUTES } from "@/constants/routes";
+import { planittCheckoutUrl } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
+import { VideoPlayer } from "@/features/lesson-player";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getLessonByPath } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
-import { loadCourseProgress, saveLessonComplete, type CourseProgress } from "@/lib/learning/progress";
-import { planittCheckoutUrl } from "@/constants/urls";
+import {
+  loadCourseProgress,
+  saveLessonComplete,
+  type CourseProgress,
+} from "@/lib/learning/progress";
 
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
@@ -107,7 +112,16 @@ const nextLesson =
       {lesson.kind === "video" ? (
   <div className="mt-8 grid gap-6 lg:grid-cols-3">
     <div className="lg:col-span-2 rounded-xl border border-borderSubtle bg-surface p-4">
-      {lesson.content.videoUrl ? (
+      {lesson.content.videoUrl && user?.id ? (
+        <VideoPlayer
+          lessonId={lesson.id}
+          courseId={courseId}
+          userId={user.id}
+          videoUrl={lesson.content.videoUrl}
+          title={lesson.title}
+          onComplete={() => setProgress(saveLessonComplete(user.id, courseId, lesson.id))}
+        />
+      ) : lesson.content.videoUrl ? (
         <iframe
           src={lesson.content.videoUrl}
           title={lesson.title}

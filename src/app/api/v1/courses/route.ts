@@ -1,5 +1,8 @@
-import { fail } from "@/lib/api/response";
+import { ok } from "@/lib/api/response";
+import { listPublishedCourses } from "@/services/courses/course.service";
 
+/** Public catalog — published courses (DB or static fallback). */
 export async function GET() {
-  return fail("Not implemented", 501);
+  const courses = await listPublishedCourses();
+  return ok({ ok: true, courses });
 }
