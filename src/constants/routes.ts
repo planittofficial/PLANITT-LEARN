@@ -29,5 +29,17 @@ export const ROUTES = {
       PREVIEW: "/api/v1/enrollment/preview",
       verify: (courseId: string) => `/api/v1/enrollment/verify/${courseId}`,
     },
+    COURSES: {
+      LIST: "/api/v1/courses",
+      detail: (courseId: string) => `/api/v1/courses/${courseId}`,
+      modules: (courseId: string) => `/api/v1/courses/${courseId}/modules`,
+    },
+    LESSONS: {
+      detail: (lessonId: string) => `/api/v1/lessons/${lessonId}`,
+      progress: (lessonId: string) => `/api/v1/lessons/${lessonId}/progress`,
+    },
+    PROFILE: {
+      ME: "/api/v1/profile/me",
+    },
   },
 } as const;

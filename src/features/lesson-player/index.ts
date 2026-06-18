@@ -1,1 +1,1 @@
-export {};
+export { VideoPlayer } from "./components/VideoPlayer";
