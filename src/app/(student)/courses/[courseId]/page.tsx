@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { LearnShell } from "@/components/layout/student";
 import { ROUTES } from "@/constants/routes";
+
 import { useAuth } from "@/context/auth-context";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getCourseById } from "@/lib/catalog/courses";
@@ -16,7 +17,7 @@ import {
   loadCourseProgress,
   type CourseProgress,
 } from "@/lib/learning/progress";
-import { planittCheckoutUrl } from "@/constants/urls";
+import { MAIN_WEBSITE_URL } from "@/lib/env";
 
 export default function CourseHubPage() {
   const params = useParams<{ courseId: string }>();
@@ -25,12 +26,18 @@ export default function CourseHubPage() {
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
   const [progress, setProgress] = useState<CourseProgress>({});
-  const [expandedModules, setExpandedModules] = useState<string[]>(["fx-ml"]);
+  const [expandedModules, setExpandedModules] = useState<string[]>([]);
 
   useEffect(() => {
   if (!user?.id) return;
   setProgress(loadCourseProgress(user.id, courseId));
 }, [courseId, user?.id]);
+
+useEffect(() => {
+  if (!course) return;
+
+  setExpandedModules([course.modules[0]?.id]);
+}, [course]);
 
 const lessonIds = useMemo(
   () => course?.modules.flatMap((m) => m.lessons.map((l) => l.id)) ?? [],
@@ -65,7 +72,7 @@ if (!course) notFound();
           You are not enrolled in this course. Purchase it on Planitt first.
         </p>
         <a
-          href={planittCheckoutUrl(courseId)}
+          href={`${MAIN_WEBSITE_URL}/learn`}
           className="mt-4 inline-block text-sm text-brand hover:underline"
           target="_blank"
           rel="noopener noreferrer"
@@ -131,8 +138,7 @@ if (!course) notFound();
   onClick={() => toggleModule(module.id)}
   className="flex w-full items-center justify-between"
 >
-  <h2 className="text-lg font-semibold">
-    {module.title}
+<h2 className="text-lg font-semibold text-textPrimary">    {module.title}
   </h2>
 
   {expandedModules.includes(module.id) ? (
@@ -147,7 +153,7 @@ if (!course) notFound();
   </span>
 </div>
 
-<p className="mt-1 text-sm text-textSecondary">
+<p className="mt-2 text-sm leading-relaxed text-textSecondary">
   {module.summary}
 </p>
 
@@ -172,14 +178,19 @@ if (!course) notFound();
                     <li key={lesson.id}>
                       <Link
                         href={ROUTES.STUDENT.lesson(courseId, module.id, lesson.id)}
-                        className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm hover:bg-white/5"
-                      >
+className="flex flex-wrap items-center gap-3 rounded-lg px-2 py-2 text-sm hover:bg-white/5"                      >
                         {done ? (
                           <CheckCircle2 className="h-4 w-4 text-brand" />
                         ) : (
                           <Circle className="h-4 w-4 text-textMuted" />
                         )}
-                        <span>{lesson.title}</span>
+                        <div className="flex flex-col">
+  <span>{lesson.title}</span>
+
+  <span className="text-xs text-textMuted">
+    {lesson.summary}
+  </span>
+</div>
                         <span className="ml-auto text-xs text-textMuted">{lesson.durationMinutes}m</span>
                       </Link>
                     </li>
