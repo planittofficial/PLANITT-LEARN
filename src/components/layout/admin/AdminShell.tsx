@@ -18,6 +18,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <Link href={ROUTES.ADMIN.STUDENTS} className="text-textSecondary hover:text-textPrimary">
             Students
           </Link>
+          <Link href={ROUTES.ADMIN.ANALYTICS} className="text-textSecondary hover:text-textPrimary">
+            Analytics
+          </Link>
           <Link href={ROUTES.STUDENT.HOME} className="ml-auto text-textMuted hover:text-brand">
             ← Student portal
           </Link>
