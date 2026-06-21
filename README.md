@@ -1,4 +1,4 @@
-# Planitt Learn
+# Planitt Learn 
 
 **Planitt Learn** is the standalone learning portal for [Planitt](https://planitt.in) — a course consumption app where users watch lessons, track progress, and continue courses they purchased on the main website.
 
