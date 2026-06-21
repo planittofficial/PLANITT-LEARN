@@ -1,8 +1,7 @@
+"use client";
+
+import { AdminDashboardView } from "@/features/admin-dashboard";
+
 export default function Page() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Admin dashboard</h1>
-      <p className="mt-2 text-sm text-textSecondary">Admin scaffold — Gauri implements in Phase 2.</p>
-    </div>
-  );
+  return <AdminDashboardView />;
 }

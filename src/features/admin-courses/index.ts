@@ -1,1 +1,1 @@
-export {};
+export { CoursesAdminView } from "./components/CoursesAdminView";

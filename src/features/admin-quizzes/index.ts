@@ -1,1 +1,1 @@
-export {};
+export { QuizBuilder } from "./components/QuizBuilder";

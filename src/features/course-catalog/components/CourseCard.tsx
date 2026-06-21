@@ -1,27 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Lock } from "lucide-react";
+import {
+  BookOpen,
+  Clock,
+  Lock,
+  Play,
+  Sparkles,
+} from "lucide-react";
 
+import { Badge } from "@/components/ui/Badge";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ROUTES } from "@/constants/routes";
+import { planittCheckoutUrl } from "@/constants/urls";
+import {
+  courseIcon,
+  courseInitials,
+  courseThumbnailClass,
+} from "@/lib/catalog/course-visuals";
 import type { CourseDefinition } from "@/lib/catalog/courses";
 import { countCourseLessons } from "@/lib/catalog/courses";
 import { cn } from "@/lib/utils";
-
-const LEVEL_STYLES: Record<string, string> = {
-  Beginner: "bg-emerald-500/15 text-emerald-400",
-  Intermediate: "bg-amber-500/15 text-amber-400",
-  Advanced: "bg-rose-500/15 text-rose-400",
-};
-
-const CATEGORY_STYLES: Record<string, string> = {
-  "Indian Stocks": "bg-brand/15 text-brand",
-  Forex: "bg-sky-500/15 text-sky-400",
-  "F&O": "bg-violet-500/15 text-violet-400",
-  Crypto: "bg-yellow-500/15 text-yellow-400",
-  Psychology: "bg-rose-500/15 text-rose-300",
-  "Algo Trading": "bg-indigo-500/15 text-indigo-400",
-};
 
 type CourseCardProps = {
   course: CourseDefinition;
@@ -30,119 +29,136 @@ type CourseCardProps = {
   completedLessons?: number;
   totalLessons?: number;
   preview?: boolean;
+  variant?: "default" | "compact";
 };
 
-export function CourseCard({ course, enrolled, progressPercent, completedLessons, totalLessons
-  , preview }: CourseCardProps) {
-  const moduleCount = course.modules.length;
-  const lessonCount = countCourseLessons(course);
-  const levelClass = LEVEL_STYLES[course.level] ?? "bg-white/10 text-textSecondary";
-  const categoryClass = CATEGORY_STYLES[course.category] ?? "bg-brand/15 text-brand";
+export function CourseCard({
+  course,
+  enrolled,
+  progressPercent = 0,
+  completedLessons = 0,
+  totalLessons,
+  preview = false,
+  variant = "default",
+}: CourseCardProps) {
+  const lessonCount = totalLessons ?? countCourseLessons(course);
+  const isComplete = enrolled && progressPercent === 100;
+  const inProgress = enrolled && progressPercent > 0 && progressPercent < 100;
+  const notStarted = enrolled && progressPercent === 0;
+
+  const statusBadge = !enrolled ? (
+    <Badge variant="locked">
+      <Lock className="h-3 w-3" />
+      Locked
+    </Badge>
+  ) : isComplete ? (
+    <Badge variant="success">Completed</Badge>
+  ) : inProgress ? (
+    <Badge variant="brand">In Progress</Badge>
+  ) : (
+    <Badge variant="warning">New</Badge>
+  );
+
+  const ctaLabel = !enrolled
+    ? "Unlock on Planitt"
+    : isComplete
+      ? "Review Course"
+      : inProgress
+        ? "Continue Learning"
+        : "Start Learning";
 
   const inner = (
     <article
       className={cn(
-        "flex h-full flex-col rounded-xl border bg-surface p-5 transition",
+        "group flex h-full flex-col overflow-hidden rounded-2xl border bg-surface transition-all duration-300",
         enrolled
-          ? "border-brand/30 hover:border-brand hover:-translate-y-1"
-          : "border-borderSubtle opacity-90 hover:opacity-100",
+          ? "border-borderSubtle hover:border-brand/40 hover:shadow-lg hover:shadow-brand/5"
+          : "border-borderSubtle/60 opacity-95 hover:opacity-100",
+        variant === "compact" && "flex-row",
       )}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium", categoryClass)}>
-          {course.category}
-        </span>
-        <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium", levelClass)}>
-          {course.level}
-        </span>
-        {!enrolled ? (
-          <span className="ml-auto inline-flex items-center gap-1 text-xs text-textMuted">
-            <Lock className="h-3.5 w-3.5" />
-            Locked
-          </span>
-        ) : (
-          <BookOpen className="ml-auto h-5 w-5 shrink-0 text-brand" />
+      {/* Thumbnail */}
+      <div
+        className={cn(
+          "relative overflow-hidden bg-gradient-to-br",
+          courseThumbnailClass(course.category),
+          variant === "default" ? "h-36" : "h-auto w-28 shrink-0 sm:w-32",
         )}
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.08),_transparent_60%)]" />
+        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+          <span className="text-3xl opacity-90">{courseIcon(course.category)}</span>
+          <span className="rounded-md bg-black/30 px-2 py-0.5 text-xs font-bold text-white/90 backdrop-blur-sm">
+            {courseInitials(course.title)}
+          </span>
+        </div>
+        {enrolled && inProgress ? (
+          <div className="absolute left-0 top-0 h-1 bg-brand" style={{ width: `${progressPercent}%` }} />
+        ) : null}
       </div>
 
-<div className="mt-3 flex items-center justify-between">
-  <h3 className="text-lg font-semibold leading-snug">
-    {course.title}
-  </h3>
-
-  {enrolled ? (
-    progressPercent === 100 ? (
-      <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-xs font-medium text-emerald-400">
-        Completed
-      </span>
-    ) : (
-      <span className="rounded-full bg-brand/15 px-2 py-1 text-xs font-medium text-brand">
-        In Progress
-      </span>
-    )
-  ) : (
-    <span className="rounded-full bg-white/5 px-2 py-1 text-xs font-medium text-textMuted">
-      Locked
-    </span>
-  )}
-</div>      <p className="mt-2 line-clamp-2 text-sm text-textSecondary">{course.blurb}</p>
-
-      <p className="mt-3 text-xs text-textMuted">
-        Duration: {course.duration} · Modules: {moduleCount} · Lessons: {lessonCount}
-      </p>
-
-      <ul className="mt-4 flex-1 space-y-1.5 text-sm text-textSecondary">
-        {course.outcomes.slice(0, 3).map((outcome) => (
-          <li key={outcome} className="flex gap-2">
-            <span className="text-brand">•</span>
-            <span className="line-clamp-2">{outcome}</span>
-          </li>
-        ))}
-      </ul>
-
-      {enrolled && progressPercent !== undefined ? (
-        <div className="mt-4 rounded-lg bg-black/20 p-3">
-          <div className="mb-1 flex justify-between text-xs text-textMuted">
-  <span>Progress</span>
-  <span>{progressPercent}% Complete</span>
-</div>
-
-<div className="mb-2 text-xs text-textMuted">
-  {completedLessons}/{totalLessons} lessons completed
-</div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-borderSubtle">
-            <div className="h-full bg-brand transition-all" style={{ width: `${progressPercent}%` }} />
-          </div>
+      <div className={cn("flex flex-1 flex-col p-5", variant === "compact" && "py-4")}>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="brand">{course.category}</Badge>
+          <Badge>{course.level}</Badge>
+          <div className="ml-auto">{statusBadge}</div>
         </div>
-      ) : null}
 
-      <div className="mt-5">
-        {enrolled ? (
-<span
-  className="
-    inline-flex
-    w-full
-    items-center
-    justify-center
-    rounded-lg
-    bg-brand
-    px-4
-    py-2.5
-    text-sm
-    font-semibold
-    text-black
-    transition
-    hover:opacity-90
-  "
->            {progressPercent && progressPercent > 0
- ? "Resume Course →"
- : "Start Learning →"}
+        <h3 className="mt-3 text-lg font-semibold leading-snug text-textPrimary group-hover:text-brand transition-colors">
+          {course.title}
+        </h3>
+
+        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-textSecondary">
+          {course.blurb}
+        </p>
+
+        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-textMuted">
+          <span className="inline-flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
+            {course.duration}
           </span>
-        ) : (
-          <span className="inline-flex w-full items-center justify-center rounded-lg border border-dashed border-borderSubtle px-4 py-2.5 text-sm text-textMuted">
-            Enroll on Planitt to unlock
-          </span>
-        )}
+          <span>{course.modules.length} modules</span>
+          <span>{lessonCount} lessons</span>
+        </div>
+
+        {enrolled && lessonCount > 0 ? (
+          <div className="mt-4">
+            <ProgressBar
+              value={progressPercent}
+              showLabel
+              label={`${completedLessons}/${lessonCount} lessons`}
+              size="sm"
+            />
+          </div>
+        ) : null}
+
+        <div className="mt-5">
+          {enrolled ? (
+            <span
+              className={cn(
+                "inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition",
+                isComplete
+                  ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : "bg-brand text-black hover:brightness-110",
+              )}
+            >
+              {notStarted ? <Sparkles className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              {ctaLabel}
+              {!isComplete ? " →" : null}
+            </span>
+          ) : (
+            <a
+              href={planittCheckoutUrl(course.id)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-borderSubtle px-4 py-3 text-sm text-textMuted transition hover:border-brand/30 hover:text-brand"
+            >
+              <Lock className="h-4 w-4" />
+              {ctaLabel}
+            </a>
+          )}
+        </div>
       </div>
     </article>
   );

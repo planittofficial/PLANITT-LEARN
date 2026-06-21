@@ -253,3 +253,80 @@ export async function createCourse(input: {
     sortOrder: course.sortOrder,
   };
 }
+
+export type AdminCourseDetail = ApiAdminCourse & {
+  description: string;
+  thumbnailUrl: string | null;
+};
+
+export async function getAdminCourse(courseId: string): Promise<AdminCourseDetail | null> {
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    include: { modules: { include: { lessons: true } } },
+  });
+  if (!course) return null;
+
+  return {
+    id: course.id,
+    title: course.title,
+    category: course.category,
+    level: course.level,
+    duration: course.duration ?? "",
+    blurb: course.blurb ?? "",
+    outcomes: Array.isArray(course.outcomes) ? (course.outcomes as string[]) : [],
+    moduleCount: course.modules.length,
+    lessonCount: course.modules.reduce((sum, mod) => sum + mod.lessons.length, 0),
+    published: course.published,
+    sortOrder: course.sortOrder,
+    description: course.description ?? "",
+    thumbnailUrl: course.thumbnailUrl,
+  };
+}
+
+export async function updateCourse(
+  courseId: string,
+  input: import("@/validations/course.schema").UpdateCourseInput,
+): Promise<AdminCourseDetail | null> {
+  const existing = await prisma.course.findUnique({ where: { id: courseId } });
+  if (!existing) return null;
+
+  const course = await prisma.course.update({
+    where: { id: courseId },
+    data: {
+      title: input.title,
+      category: input.category,
+      level: input.level,
+      blurb: input.blurb,
+      description: input.description,
+      duration: input.duration,
+      thumbnailUrl: input.thumbnailUrl,
+      outcomes: input.outcomes,
+      published: input.published,
+      sortOrder: input.sortOrder,
+    },
+    include: { modules: { include: { lessons: true } } },
+  });
+
+  return {
+    id: course.id,
+    title: course.title,
+    category: course.category,
+    level: course.level,
+    duration: course.duration ?? "",
+    blurb: course.blurb ?? "",
+    outcomes: Array.isArray(course.outcomes) ? (course.outcomes as string[]) : [],
+    moduleCount: course.modules.length,
+    lessonCount: course.modules.reduce((sum, mod) => sum + mod.lessons.length, 0),
+    published: course.published,
+    sortOrder: course.sortOrder,
+    description: course.description ?? "",
+    thumbnailUrl: course.thumbnailUrl,
+  };
+}
+
+export async function deleteCourse(courseId: string): Promise<boolean> {
+  const existing = await prisma.course.findUnique({ where: { id: courseId } });
+  if (!existing) return false;
+  await prisma.course.delete({ where: { id: courseId } });
+  return true;
+}

@@ -47,8 +47,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const bootstrap = useCallback(async () => {
     try {
-      const res = await fetch(ROUTES.API.AUTH.ME, withApiCredentials());
-      if (!res.ok) {
+      const loadSession = async () => {
+        const res = await fetch(ROUTES.API.AUTH.ME, withApiCredentials());
+        if (!res.ok) return null;
+        const data = (await res.json()) as { user?: AuthUser };
+        return data.user?.id ? data.user : null;
+      };
+
+      let user = await loadSession();
+
+      if (!user && DEV_STANDALONE) {
+        const devRes = await fetch(
+          ROUTES.API.AUTH.DEV_LOGIN,
+          withApiCredentials({
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}",
+          }),
+        );
+        if (devRes.ok) {
+          user = await loadSession();
+        }
+      }
+
+      if (user) {
+        setState({ isAuthenticated: true, user });
+      } else {
         await fetch(
           ROUTES.API.AUTH.LOGOUT,
           withApiCredentials({
@@ -57,13 +81,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             body: "{}",
           }),
         );
-        setState(emptyState);
-        return;
-      }
-      const data = (await res.json()) as { user?: AuthUser };
-      if (data.user?.id) {
-        setState({ isAuthenticated: true, user: data.user });
-      } else {
         setState(emptyState);
       }
     } catch {

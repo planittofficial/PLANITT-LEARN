@@ -1,8 +1,10 @@
-export default function Page() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Module</h1>
-      <p className="mt-2 text-sm text-textSecondary">Admin scaffold — Gauri implements in Phase 2.</p>
-    </div>
-  );
+"use client";
+
+import { use } from "react";
+
+import { ModuleDetailAdminView } from "@/features/admin-lessons";
+
+export default function Page({ params }: { params: Promise<{ moduleId: string }> }) {
+  const { moduleId } = use(params);
+  return <ModuleDetailAdminView moduleId={moduleId} />;
 }

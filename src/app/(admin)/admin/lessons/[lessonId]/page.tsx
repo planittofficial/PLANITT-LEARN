@@ -1,8 +1,10 @@
-export default function Page() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Lesson</h1>
-      <p className="mt-2 text-sm text-textSecondary">Admin scaffold — Gauri implements in Phase 2.</p>
-    </div>
-  );
+"use client";
+
+import { use } from "react";
+
+import { LessonEditorView } from "@/features/admin-lessons";
+
+export default function Page({ params }: { params: Promise<{ lessonId: string }> }) {
+  const { lessonId } = use(params);
+  return <LessonEditorView lessonId={lessonId} />;
 }
