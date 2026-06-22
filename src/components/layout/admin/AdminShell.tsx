@@ -15,6 +15,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <Link href={ROUTES.ADMIN.COURSES} className="text-textSecondary hover:text-textPrimary">
             Courses
           </Link>
+          <span className="text-textMuted">·</span>
+          <span className="text-xs text-textMuted" title="Admin → Courses → Module → Lesson">
+            Video upload: lesson editor
+          </span>
           <Link href={ROUTES.ADMIN.STUDENTS} className="text-textSecondary hover:text-textPrimary">
             Students
           </Link>

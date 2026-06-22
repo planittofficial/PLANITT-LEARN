@@ -17,6 +17,7 @@ import {
   LessonNav,
   LessonSidebar,
 } from "@/features/lesson-player/components/LessonView";
+import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getLessonByPath } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
@@ -29,28 +30,17 @@ import {
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
   const { courseId, moduleId, lessonId } = params;
-  const resolved = getLessonByPath(courseId, moduleId, lessonId);
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
   const [progress, setProgress] = useState<CourseProgress>({});
+  const courseQuery = useCourseDetail(courseId);
 
   useEffect(() => {
     if (!user?.id) return;
     setProgress(loadCourseProgress(user.id, courseId));
   }, [courseId, user?.id]);
 
-  if (!resolved) notFound();
-  const { course, module, lesson } = resolved;
-
-  const allLessons = course.modules.flatMap((m) =>
-    m.lessons.map((l) => ({ lesson: l, moduleId: m.id })),
-  );
-  const currentIndex = allLessons.findIndex((item) => item.lesson.id === lesson.id);
-  const previousLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
-  const nextLesson =
-    currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
-
-  if (loading) {
+  if (loading || courseQuery.isLoading) {
     return (
       <LearnShell>
         <LessonPageSkeleton />
@@ -58,6 +48,7 @@ export default function LessonPage() {
     );
   }
 
+  // Enrollment gate (fast client-side check) — API also enforces enrollment.
   if (!isEnrolledInCourse(enrolledIds, courseId)) {
     return (
       <LearnShell>
@@ -74,6 +65,59 @@ export default function LessonPage() {
       </LearnShell>
     );
   }
+
+  // Prefer API course tree (DB-backed) so admin video edits reflect immediately.
+  // Fall back to static catalog only if API isn't available.
+  const apiCourse = courseQuery.data;
+  const fallback = getLessonByPath(courseId, moduleId, lessonId);
+  if (!apiCourse && !fallback) notFound();
+
+  const course = apiCourse
+    ? {
+        id: apiCourse.id,
+        title: apiCourse.title,
+        category: apiCourse.category,
+        level: apiCourse.level,
+        duration: apiCourse.duration,
+        blurb: apiCourse.blurb,
+        outcomes: apiCourse.outcomes,
+        modules: apiCourse.modules.map((m) => ({
+          id: m.id,
+          title: m.title,
+          summary: m.summary,
+          lessons: m.lessons.map((l) => ({
+            id: l.id,
+            title: l.title,
+            durationMinutes: l.durationMinutes,
+            kind: l.kind,
+            summary: l.summary,
+            content: {
+              markdown: l.content.markdown,
+              videoUrl: l.content.videoUrl,
+              externalUrl: l.content.externalUrl,
+            },
+          })),
+        })),
+      }
+    : fallback!.course;
+
+  const module = apiCourse
+    ? course.modules.find((m) => m.id === moduleId)
+    : fallback!.module;
+
+  const lesson = apiCourse
+    ? module?.lessons.find((l) => l.id === lessonId)
+    : fallback!.lesson;
+
+  if (!module || !lesson) notFound();
+
+  const allLessons = course.modules.flatMap((m) =>
+    m.lessons.map((l) => ({ lesson: l, moduleId: m.id })),
+  );
+  const currentIndex = allLessons.findIndex((item) => item.lesson.id === lesson.id);
+  const previousLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
+  const nextLesson =
+    currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
   const completed = progress[lesson.id]?.completed;
 

@@ -12,6 +12,7 @@ import {
   ContinueLearningCard,
   DashboardStats,
 } from "@/features/student-dashboard/components/DashboardHero";
+import { WelcomeHero } from "@/features/student-dashboard/components/WelcomeHero";
 import { useAuth } from "@/context/auth-context";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { COURSE_CATALOG } from "@/lib/catalog/courses";
@@ -86,12 +87,19 @@ export function MyCoursesSection() {
       {(isAuthenticated || devPreview) && enrolledCourses.length > 0 ? (
         <>
           {isAuthenticated ? (
-            <DashboardStats
-              enrolledCount={enrolledCourses.length}
-              lessonsCompleted={lessonsCompleted}
-              totalLessons={totalLessons}
-              avgProgress={avgProgress}
-            />
+            <>
+              <WelcomeHero
+                enrolledCount={enrolledCourses.length}
+                lessonsCompleted={lessonsCompleted}
+                avgProgress={avgProgress}
+              />
+              <DashboardStats
+                enrolledCount={enrolledCourses.length}
+                lessonsCompleted={lessonsCompleted}
+                totalLessons={totalLessons}
+                avgProgress={avgProgress}
+              />
+            </>
           ) : null}
 
           {isAuthenticated && continueCourse && user?.id ? (

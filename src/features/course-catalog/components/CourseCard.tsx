@@ -72,7 +72,7 @@ export function CourseCard({
       className={cn(
         "group flex h-full flex-col overflow-hidden rounded-2xl border bg-surface transition-all duration-300",
         enrolled
-          ? "border-borderSubtle hover:border-brand/40 hover:shadow-lg hover:shadow-brand/5"
+          ? "card-interactive border-borderSubtle hover:border-brand/40 hover:shadow-lg hover:shadow-brand/10"
           : "border-borderSubtle/60 opacity-95 hover:opacity-100",
         variant === "compact" && "flex-row",
       )}
@@ -93,7 +93,14 @@ export function CourseCard({
           </span>
         </div>
         {enrolled && inProgress ? (
-          <div className="absolute left-0 top-0 h-1 bg-brand" style={{ width: `${progressPercent}%` }} />
+          <div className="absolute left-0 top-0 h-1 bg-brand transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+        ) : null}
+        {enrolled && notStarted ? (
+          <div className="absolute right-3 top-3">
+            <span className="animate-pulse-glow rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase text-black">
+              New
+            </span>
+          </div>
         ) : null}
       </div>
 
