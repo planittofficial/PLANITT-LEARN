@@ -7,6 +7,8 @@ export const ROUTES = {
     lesson: (courseId: string, moduleId: string, lessonId: string) =>
       `/courses/${courseId}/${moduleId}/${lessonId}`,
     LEADERBOARD: "/leaderboard",
+    ANALYTICS: "/analytics",
+    ACHIEVEMENTS: "/achievements",
     PROFILE: "/profile",
   },
   ADMIN: {

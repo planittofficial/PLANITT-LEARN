@@ -17,9 +17,14 @@ import {
   LessonNav,
   LessonSidebar,
 } from "@/features/lesson-player/components/LessonView";
+import { LessonBookmarkButton } from "@/features/lesson-player/components/LessonBookmark";
+import { useGamification } from "@/features/gamification";
 import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getLessonByPath } from "@/lib/catalog/courses";
+import { recordRecentlyWatched } from "@/lib/learning/activity";
+import { recordLearningActivity, touchDailyActivity } from "@/lib/learning/gamification";
+import { syncAchievements } from "@/lib/learning/achievements";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import {
   loadCourseProgress,
@@ -34,11 +39,31 @@ export default function LessonPage() {
   const { enrolledIds, loading } = useEnrollment();
   const [progress, setProgress] = useState<CourseProgress>({});
   const courseQuery = useCourseDetail(courseId);
+  const gamification = useGamification(user?.id);
 
   useEffect(() => {
     if (!user?.id) return;
     setProgress(loadCourseProgress(user.id, courseId));
-  }, [courseId, user?.id]);
+    touchDailyActivity(user.id);
+
+    const fallback = getLessonByPath(courseId, moduleId, lessonId);
+    const apiMod = courseQuery.data?.modules.find((m) => m.id === moduleId);
+    const apiLesson = apiMod?.lessons.find((l) => l.id === lessonId);
+    const courseTitle = courseQuery.data?.title ?? fallback?.course.title;
+    const lessonTitle = apiLesson?.title ?? fallback?.lesson.title;
+    const kind = apiLesson?.kind ?? fallback?.lesson.kind ?? "article";
+
+    if (courseTitle && lessonTitle) {
+      recordRecentlyWatched(user.id, {
+        courseId,
+        courseTitle,
+        moduleId,
+        lessonId,
+        lessonTitle,
+        kind,
+      });
+    }
+  }, [courseId, moduleId, lessonId, user?.id, courseQuery.data]);
 
   if (loading || courseQuery.isLoading) {
     return (
@@ -124,6 +149,9 @@ export default function LessonPage() {
   const markComplete = () => {
     if (!user?.id) return;
     setProgress(saveLessonComplete(user.id, courseId, lesson.id));
+    recordLearningActivity(user.id);
+    syncAchievements(user.id);
+    gamification.refresh();
   };
 
   return (
@@ -171,6 +199,16 @@ export default function LessonPage() {
                 "Mark as complete"
               )}
             </button>
+            {user?.id ? (
+              <LessonBookmarkButton
+                userId={user.id}
+                courseId={courseId}
+                courseTitle={course.title}
+                moduleId={moduleId}
+                lessonId={lesson.id}
+                lessonTitle={lesson.title}
+              />
+            ) : null}
           </div>
         </div>
 
@@ -178,8 +216,10 @@ export default function LessonPage() {
           lesson={lesson}
           module={module}
           course={course}
+          courseId={courseId}
           progress={progress}
           completed={!!completed}
+          userId={user?.id}
         />
       </div>
 

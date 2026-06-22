@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { Lock } from "lucide-react";
 
 import { DashboardSkeleton } from "@/components/ui/skeletons";
@@ -8,24 +9,38 @@ import { NoCoursesEmpty } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
 import { CourseCard } from "@/features/course-catalog/components/CourseCard";
-import {
-  ContinueLearningCard,
-  DashboardStats,
-} from "@/features/student-dashboard/components/DashboardHero";
+import { ContinueLearningCard } from "@/features/student-dashboard/components/DashboardHero";
+import { LeaderboardRankCard } from "@/features/student-dashboard/components/LeaderboardRankCard";
+import { LearningStatsGrid } from "@/features/student-dashboard/components/LearningStatsGrid";
+import { RecentlyWatched } from "@/features/student-dashboard/components/RecentlyWatched";
+import { WeeklyProgressChart } from "@/features/student-dashboard/components/WeeklyProgressChart";
 import { WelcomeHero } from "@/features/student-dashboard/components/WelcomeHero";
+import { RecentAchievements } from "@/features/achievements";
+import { useGamification } from "@/features/gamification";
+import { useAchievements } from "@/hooks/achievements/use-achievements";
 import { useAuth } from "@/context/auth-context";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { COURSE_CATALOG } from "@/lib/catalog/courses";
+import { getRecentlyWatched, getWeeklyActivity } from "@/lib/learning/activity";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { getCourseProgressStats } from "@/lib/learning/course-progress";
 
 export function MyCoursesSection() {
   const { user } = useAuth();
   const { loading, enrolledIds, isAuthenticated, devPreview, devStandalone } = useEnrollment();
+  const gamification = useGamification(user?.id);
+  const achievements = useAchievements(user?.id);
 
-  if (loading) {
-    return <DashboardSkeleton />;
-  }
+  const weeklyDays = useMemo(
+    () => (user?.id ? getWeeklyActivity(user.id) : []),
+    [user?.id, gamification.xp, achievements.unlockedCount],
+  );
+  const recent = useMemo(
+    () => (user?.id ? getRecentlyWatched(user.id, 5) : []),
+    [user?.id],
+  );
+
+  if (loading) return <DashboardSkeleton />;
 
   const enrolledCourses = COURSE_CATALOG.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
   const lockedCourses = COURSE_CATALOG.filter((c) => !isEnrolledInCourse(enrolledIds, c.id));
@@ -42,12 +57,14 @@ export function MyCoursesSection() {
       ? Math.round(courseStats.reduce((s, c) => s + c.percent, 0) / courseStats.length)
       : 0;
 
-  const continueCourse = courseStats.find(
-    (c) => c.percent > 0 && c.percent < 100,
-  ) ?? courseStats.find((c) => c.percent === 0);
+  const continueCourse =
+    courseStats.find((c) => c.percent > 0 && c.percent < 100) ??
+    courseStats.find((c) => c.percent === 0);
+
+  const firstName = user?.name?.split(" ")[0] ?? "Learner";
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8 animate-in fade-in">
       {devPreview ? (
         <div className="rounded-xl border border-brand/30 bg-brand/5 px-4 py-3 text-sm text-textSecondary">
           <strong className="text-brand">Preview mode</strong> — showing mock enrollments.{" "}
@@ -89,15 +106,21 @@ export function MyCoursesSection() {
           {isAuthenticated ? (
             <>
               <WelcomeHero
+                firstName={firstName}
                 enrolledCount={enrolledCourses.length}
                 lessonsCompleted={lessonsCompleted}
                 avgProgress={avgProgress}
+                streak={gamification.streak}
+                xp={gamification.xp}
               />
-              <DashboardStats
+
+              <LearningStatsGrid
                 enrolledCount={enrolledCourses.length}
                 lessonsCompleted={lessonsCompleted}
                 totalLessons={totalLessons}
                 avgProgress={avgProgress}
+                streak={gamification.streak}
+                xp={gamification.xp}
               />
             </>
           ) : null}
@@ -112,6 +135,23 @@ export function MyCoursesSection() {
             />
           ) : null}
 
+          {isAuthenticated ? (
+            <div className="grid gap-5 lg:grid-cols-3">
+              <WeeklyProgressChart days={weeklyDays} className="lg:col-span-2" />
+              <LeaderboardRankCard />
+            </div>
+          ) : null}
+
+          {isAuthenticated && recent.length > 0 ? <RecentlyWatched items={recent} /> : null}
+
+          {isAuthenticated ? (
+            <RecentAchievements
+              recentUnlocks={achievements.recentUnlocks}
+              unlockedCount={achievements.unlockedCount}
+              totalCount={achievements.totalCount}
+            />
+          ) : null}
+
           <section>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-textPrimary">
@@ -120,8 +160,14 @@ export function MyCoursesSection() {
                   ({enrolledCourses.length})
                 </span>
               </h2>
+              <Link
+                href={ROUTES.STUDENT.ANALYTICS}
+                className="text-sm text-textSecondary hover:text-brand"
+              >
+                View analytics →
+              </Link>
             </div>
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {courseStats.map(({ course, percent, completed, total }) => (
                 <CourseCard
                   key={course.id}
@@ -140,9 +186,7 @@ export function MyCoursesSection() {
             <section>
               <div className="mb-4 flex items-center gap-2">
                 <Lock className="h-4 w-4 text-textMuted" />
-                <h2 className="text-lg font-semibold text-textPrimary">
-                  Explore more courses
-                </h2>
+                <h2 className="text-lg font-semibold text-textPrimary">Explore more courses</h2>
                 <span className="text-sm text-textMuted">({lockedCourses.length} locked)</span>
               </div>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

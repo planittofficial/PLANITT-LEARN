@@ -15,6 +15,9 @@ import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ROUTES } from "@/constants/routes";
 import { MarkdownLesson } from "@/features/lesson-player/components/MarkdownLesson";
+import { LessonCourseNav } from "@/features/lesson-player/components/LessonCourseNav";
+import { LessonNotes } from "@/features/lesson-player/components/LessonNotes";
+import { LessonResources } from "@/features/lesson-player/components/LessonResources";
 import { VideoPlayer } from "@/features/lesson-player/components/VideoPlayer";
 import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
 import { getModuleProgressStats } from "@/lib/learning/course-progress";
@@ -29,74 +32,90 @@ type LessonSidebarProps = {
   completed: boolean;
 };
 
-export function LessonSidebar({ lesson, module, course, progress, completed }: LessonSidebarProps) {
+export function LessonSidebar({
+  lesson,
+  module,
+  course,
+  courseId,
+  progress,
+  completed,
+  userId,
+}: LessonSidebarProps & { courseId: string; userId?: string }) {
   const moduleLessonIds = module.lessons.map((l) => l.id);
   const moduleStats = getModuleProgressStats(progress, moduleLessonIds);
 
   return (
-    <aside className="space-y-5 rounded-xl border border-borderSubtle bg-surface p-5 lg:sticky lg:top-24">
-      <div>
-        <p className="text-xs font-medium uppercase tracking-wider text-brand">Lesson overview</p>
-        <h3 className="mt-2 text-lg font-semibold">{lesson.title}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-textSecondary">{lesson.summary}</p>
-      </div>
+    <aside className="space-y-4 lg:sticky lg:top-24">
+      <LessonCourseNav
+        course={course}
+        courseId={courseId}
+        currentLessonId={lesson.id}
+        progress={progress}
+      />
 
-      <dl className="space-y-3 text-sm">
-        <div className="flex justify-between">
-          <dt className="text-textMuted">Duration</dt>
-          <dd className="font-medium">{lesson.durationMinutes} min</dd>
+      <div className="rounded-xl border border-borderSubtle bg-surface p-5">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-brand">This lesson</p>
+          <h3 className="mt-2 text-base font-semibold">{lesson.title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-textSecondary">{lesson.summary}</p>
         </div>
-        <div className="flex justify-between">
-          <dt className="text-textMuted">Type</dt>
-          <dd>
-            <Badge variant={lesson.kind === "video" ? "brand" : "default"}>
-              {lesson.kind === "video" ? (
-                <Video className="mr-1 h-3 w-3" />
-              ) : (
-                <FileText className="mr-1 h-3 w-3" />
-              )}
-              {lesson.kind}
-            </Badge>
-          </dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-textMuted">Module</dt>
-          <dd className="max-w-[140px] truncate text-right font-medium">{module.title}</dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-textMuted">Status</dt>
-          <dd>
-            {completed ? (
-              <Badge variant="success">
-                <CheckCircle2 className="mr-1 h-3 w-3" />
-                Completed
+
+        <dl className="mt-4 space-y-2 text-sm">
+          <div className="flex justify-between">
+            <dt className="text-textMuted">Duration</dt>
+            <dd className="font-medium">{lesson.durationMinutes} min</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-textMuted">Type</dt>
+            <dd>
+              <Badge variant={lesson.kind === "video" ? "brand" : "default"}>
+                {lesson.kind === "video" ? (
+                  <Video className="mr-1 h-3 w-3" />
+                ) : (
+                  <FileText className="mr-1 h-3 w-3" />
+                )}
+                {lesson.kind}
               </Badge>
-            ) : (
-              <Badge variant="warning">In progress</Badge>
-            )}
-          </dd>
-        </div>
-      </dl>
+            </dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-textMuted">Status</dt>
+            <dd>
+              {completed ? (
+                <Badge variant="success">
+                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                  Completed
+                </Badge>
+              ) : (
+                <Badge variant="warning">In progress</Badge>
+              )}
+            </dd>
+          </div>
+        </dl>
 
-      <div className="border-t border-borderSubtle pt-4">
-        <div className="mb-2 flex items-center gap-2 text-xs text-textMuted">
-          <Layers className="h-3.5 w-3.5" />
-          Module progress
+        <div className="mt-4 border-t border-borderSubtle pt-4">
+          <div className="mb-2 flex items-center gap-2 text-xs text-textMuted">
+            <Layers className="h-3.5 w-3.5" />
+            Module progress
+          </div>
+          <ProgressBar
+            value={moduleStats.percent}
+            showLabel
+            label={`${moduleStats.completed}/${moduleStats.total} lessons`}
+            size="sm"
+          />
         </div>
-        <ProgressBar
-          value={moduleStats.percent}
-          showLabel
-          label={`${moduleStats.completed}/${moduleStats.total} lessons`}
-          size="sm"
-        />
+
+        <Link
+          href={ROUTES.STUDENT.course(course.id)}
+          className="mt-4 block text-center text-xs text-brand hover:underline"
+        >
+          View course overview →
+        </Link>
       </div>
 
-      <Link
-        href={ROUTES.STUDENT.course(course.id)}
-        className="block text-center text-xs text-brand hover:underline"
-      >
-        View all modules →
-      </Link>
+      <LessonResources lesson={lesson} />
+      {userId ? <LessonNotes userId={userId} lessonId={lesson.id} /> : null}
     </aside>
   );
 }
@@ -159,7 +178,10 @@ type LessonContentProps = {
 export function LessonContent({ lesson, courseId, userId, onComplete }: LessonContentProps) {
   if (lesson.kind === "video") {
     return (
-      <div className="overflow-hidden rounded-xl border border-borderSubtle bg-black/40">
+      <div className="overflow-hidden rounded-2xl border border-borderSubtle bg-gradient-to-b from-white/5 to-black/40 shadow-2xl shadow-black/40">
+        <div className="border-b border-borderSubtle/50 px-4 py-2 text-xs text-textMuted">
+          Video lesson · watch {lesson.durationMinutes} min to complete
+        </div>
         {lesson.content.videoUrl && userId ? (
           <VideoPlayer
             lessonId={lesson.id}
@@ -170,14 +192,15 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
             onComplete={onComplete}
           />
         ) : lesson.content.videoUrl ? (
-          <iframe
+          <video
             src={lesson.content.videoUrl}
+            controls
+            className="aspect-video w-full bg-black"
             title={lesson.title}
-            className="aspect-video w-full"
-            allowFullScreen
           />
         ) : (
-          <div className="flex aspect-video items-center justify-center text-sm text-textMuted">
+          <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black/60 text-sm text-textMuted">
+            <Video className="h-10 w-10 opacity-30" />
             Video will be added by the instructor
           </div>
         )}
@@ -199,7 +222,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
   }
 
   return (
-    <div className="rounded-xl border border-borderSubtle bg-surface p-6 sm:p-8">
+    <div id="lesson-content" className="rounded-2xl border border-borderSubtle bg-surface p-6 sm:p-8">
       {lesson.content.markdown ? (
         <MarkdownLesson markdown={lesson.content.markdown} />
       ) : (

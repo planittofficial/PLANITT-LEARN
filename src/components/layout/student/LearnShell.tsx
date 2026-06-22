@@ -8,6 +8,7 @@ import { planittCheckoutUrl } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
 import { ROUTES } from "@/constants/routes";
 import { StudentLogo, StudentNav } from "@/components/layout/student/StudentNav";
+import { AchievementUnlockToast } from "@/features/achievements";
 
 export function LearnShell({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, authReady, user, logout } = useAuth();
@@ -60,6 +61,7 @@ export function LearnShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6 sm:py-8">{children}</main>
+      <AchievementUnlockToast />
     </div>
   );
 }
