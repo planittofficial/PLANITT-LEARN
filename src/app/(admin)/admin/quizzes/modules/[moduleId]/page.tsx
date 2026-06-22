@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { use } from "react";
+import { Target } from "lucide-react";
 
+import { AdminPageHeader, AdminPageSkeleton } from "@/features/admin-ui";
 import { QuizBuilder } from "@/features/admin-quizzes";
 import { useModuleTest, useSaveModuleTest } from "@/hooks/admin/use-admin-quizzes";
 
@@ -11,12 +13,19 @@ export default function Page({ params }: { params: Promise<{ moduleId: string }>
   const { data: test, isLoading } = useModuleTest(moduleId);
   const saveTest = useSaveModuleTest(moduleId);
 
-  if (isLoading) return <p>Loading module test…</p>;
+  if (isLoading) return <AdminPageSkeleton />;
 
   return (
-    <div className="space-y-6">
-      <Link href={`/admin/modules/${moduleId}`} className="text-sm text-brand">← Module</Link>
-      <h1 className="text-2xl font-bold">Module test builder</h1>
+    <div className="space-y-8">
+      <Link href={`/admin/modules/${moduleId}`} className="text-sm text-violet-400 hover:underline">
+        ← Module
+      </Link>
+      <AdminPageHeader
+        eyebrow="Assessment"
+        title="Module test builder"
+        description="Build an end-of-module assessment to validate learner understanding."
+        icon={Target}
+      />
       <QuizBuilder
         initial={test?.questions ?? []}
         passingScore={test?.passingScore ?? 60}

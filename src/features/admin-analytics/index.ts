@@ -1,1 +1,1 @@
-export { StatCard } from "@/features/admin-dashboard/components/StatCard";
+export { AnalyticsAdminView } from "./components/AnalyticsAdminView";

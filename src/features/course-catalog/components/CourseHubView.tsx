@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { CoursePageSkeleton } from "@/components/ui/skeletons";
 import { LockedCourseEmpty, NoLessonsEmpty } from "@/components/shared/EmptyState";
+import { NextLessonCTA } from "@/features/course-catalog/components/NextLessonCTA";
 import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
 import {
@@ -133,6 +134,34 @@ export function CourseHubView({
           />
         </div>
       </div>
+
+      <NextLessonCTA
+        course={course}
+        courseId={courseId}
+        userId={userId}
+        progress={progress}
+        stats={stats}
+      />
+
+      {/* Learning outcomes */}
+      {course.outcomes.length > 0 ? (
+        <section className="rounded-2xl border border-borderSubtle bg-surface/60 p-6">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-brand">
+            What you&apos;ll learn
+          </h2>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {course.outcomes.map((outcome) => (
+              <li
+                key={outcome}
+                className="flex items-start gap-2 text-sm text-textSecondary"
+              >
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                {outcome}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {/* Modules */}
       <div className="space-y-4">

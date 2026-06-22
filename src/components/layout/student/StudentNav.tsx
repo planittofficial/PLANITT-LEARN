@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, Home, Trophy, User } from "lucide-react";
+import { Award, BarChart3, GraduationCap, Home, Trophy, User } from "lucide-react";
 
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: ROUTES.STUDENT.HOME, label: "My Learning", icon: Home },
-  { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", icon: Trophy },
-  { href: ROUTES.STUDENT.PROFILE, label: "Profile", icon: User },
+  { href: ROUTES.STUDENT.HOME, label: "My Learning", shortLabel: "Learn", icon: Home },
+  { href: ROUTES.STUDENT.ANALYTICS, label: "Analytics", shortLabel: "Stats", icon: BarChart3 },
+  { href: ROUTES.STUDENT.ACHIEVEMENTS, label: "Achievements", shortLabel: "Badges", icon: Award },
+  { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", shortLabel: "Rank", icon: Trophy },
+  { href: ROUTES.STUDENT.PROFILE, label: "Profile", shortLabel: "Profile", icon: User },
 ] as const;
 
 export function StudentNav() {
@@ -55,7 +57,7 @@ export function StudentNav() {
                 )}
               >
                 <item.icon className="h-5 w-5" />
-                <span className="font-medium">{item.label.split(" ")[0]}</span>
+                <span className="font-medium">{item.shortLabel}</span>
               </Link>
             );
           })}

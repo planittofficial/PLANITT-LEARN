@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
+import {
+  AdminButton,
+  AdminCard,
+  AdminInput,
+  AdminPageHeader,
+  AdminTextarea,
+} from "@/features/admin-ui";
 import { useAdminCourse, useUpdateCourse } from "@/hooks/admin/use-admin-courses";
+import { ROUTES } from "@/constants/routes";
 
 export default function Page({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = use(params);
@@ -33,18 +41,44 @@ export default function Page({ params }: { params: Promise<{ courseId: string }>
   }
 
   return (
-    <div className="mx-auto max-w-xl space-y-6">
-      <Link href={`/admin/courses/${courseId}`} className="text-sm text-brand">← Course</Link>
-      <h1 className="text-2xl font-bold">Edit course</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-borderSubtle p-5">
-        <label className="block text-sm">Title<input className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" value={title} onChange={(e) => setTitle(e.target.value)} /></label>
-        <label className="block text-sm">Category<input className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" value={category} onChange={(e) => setCategory(e.target.value)} /></label>
-        <label className="block text-sm">Level<input className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" value={level} onChange={(e) => setLevel(e.target.value)} /></label>
-        <label className="block text-sm">Blurb<textarea className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" rows={2} value={blurb} onChange={(e) => setBlurb(e.target.value)} /></label>
-        <label className="block text-sm">Description<textarea className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} /></label>
-        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} /> Published</label>
-        <button type="submit" className="rounded-lg bg-brand px-4 py-2 text-sm text-white">Save changes</button>
-      </form>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <Link
+        href={`/admin/courses/${courseId}`}
+        className="text-sm text-violet-400 hover:underline"
+      >
+        ← Course
+      </Link>
+
+      <AdminPageHeader
+        eyebrow="Edit"
+        title="Edit course"
+        description="Update metadata and publish when the course is ready for students."
+      />
+
+      <AdminCard>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <AdminInput label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <AdminInput label="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+          <AdminInput label="Level" value={level} onChange={(e) => setLevel(e.target.value)} />
+          <AdminTextarea label="Blurb" rows={2} value={blurb} onChange={(e) => setBlurb(e.target.value)} />
+          <AdminTextarea
+            label="Description"
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <label className="flex items-center gap-2 text-sm text-textSecondary">
+            <input
+              type="checkbox"
+              className="rounded border-borderSubtle"
+              checked={published}
+              onChange={(e) => setPublished(e.target.checked)}
+            />
+            Published
+          </label>
+          <AdminButton type="submit">Save changes</AdminButton>
+        </form>
+      </AdminCard>
     </div>
   );
 }

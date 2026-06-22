@@ -3,8 +3,17 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Plus } from "lucide-react";
 
+import {
+  AdminButton,
+  AdminCard,
+  AdminInput,
+  AdminPageHeader,
+  AdminTextarea,
+} from "@/features/admin-ui";
 import { useCreateCourse } from "@/hooks/admin/use-admin-courses";
+import { ROUTES } from "@/constants/routes";
 
 export default function Page() {
   const router = useRouter();
@@ -22,35 +31,43 @@ export default function Page() {
   }
 
   return (
-    <div className="mx-auto max-w-xl space-y-6">
-      <Link href="/admin/courses" className="text-sm text-brand">← Courses</Link>
-      <h1 className="text-2xl font-bold">Add course</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-borderSubtle p-5">
-        <label className="block text-sm">
-          Course ID (learn-*)
-          <input className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" value={id} onChange={(e) => setId(e.target.value)} required />
-        </label>
-        <label className="block text-sm">
-          Title
-          <input className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        </label>
-        <label className="block text-sm">
-          Category
-          <input className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" value={category} onChange={(e) => setCategory(e.target.value)} required />
-        </label>
-        <label className="block text-sm">
-          Level
-          <input className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" value={level} onChange={(e) => setLevel(e.target.value)} required />
-        </label>
-        <label className="block text-sm">
-          Blurb
-          <textarea className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2" rows={3} value={blurb} onChange={(e) => setBlurb(e.target.value)} />
-        </label>
-        {createCourse.error ? <p className="text-sm text-danger">{(createCourse.error as Error).message}</p> : null}
-        <button type="submit" disabled={createCourse.isPending} className="rounded-lg bg-brand px-4 py-2 text-sm text-white">
-          {createCourse.isPending ? "Creating…" : "Create course"}
-        </button>
-      </form>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <Link href={ROUTES.ADMIN.COURSES} className="text-sm text-violet-400 hover:underline">
+        ← Courses
+      </Link>
+
+      <AdminPageHeader
+        eyebrow="New content"
+        title="Add course"
+        description="Create a new learning path. You can add modules and lessons after saving."
+        icon={Plus}
+      />
+
+      <AdminCard>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <AdminInput
+            label="Course ID (learn-*)"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+            required
+          />
+          <AdminInput label="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+          <AdminInput
+            label="Category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          />
+          <AdminInput label="Level" value={level} onChange={(e) => setLevel(e.target.value)} required />
+          <AdminTextarea label="Blurb" rows={3} value={blurb} onChange={(e) => setBlurb(e.target.value)} />
+          {createCourse.error ? (
+            <p className="text-sm text-rose-400">{(createCourse.error as Error).message}</p>
+          ) : null}
+          <AdminButton type="submit" disabled={createCourse.isPending}>
+            {createCourse.isPending ? "Creating…" : "Create course"}
+          </AdminButton>
+        </form>
+      </AdminCard>
     </div>
   );
 }

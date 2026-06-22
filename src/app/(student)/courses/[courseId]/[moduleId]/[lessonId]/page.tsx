@@ -17,8 +17,19 @@ import {
   LessonNav,
   LessonSidebar,
 } from "@/features/lesson-player/components/LessonView";
+import { LessonBookmarkButton } from "@/features/lesson-player/components/LessonBookmark";
+import { useGamification } from "@/features/gamification";
+import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getLessonByPath } from "@/lib/catalog/courses";
+import { recordRecentlyWatched } from "@/lib/learning/activity";
+import { recordLearningActivity, touchDailyActivity, loadGamification } from "@/lib/learning/gamification";
+import { syncAchievements } from "@/lib/learning/achievements";
+import {
+  checkLevelUpNotification,
+  notifyLessonComplete,
+  syncNotifications,
+} from "@/lib/learning/notifications";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import {
   loadCourseProgress,
@@ -29,28 +40,37 @@ import {
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
   const { courseId, moduleId, lessonId } = params;
-  const resolved = getLessonByPath(courseId, moduleId, lessonId);
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
   const [progress, setProgress] = useState<CourseProgress>({});
+  const courseQuery = useCourseDetail(courseId);
+  const gamification = useGamification(user?.id);
 
   useEffect(() => {
     if (!user?.id) return;
     setProgress(loadCourseProgress(user.id, courseId));
-  }, [courseId, user?.id]);
+    touchDailyActivity(user.id);
 
-  if (!resolved) notFound();
-  const { course, module, lesson } = resolved;
+    const fallback = getLessonByPath(courseId, moduleId, lessonId);
+    const apiMod = courseQuery.data?.modules.find((m) => m.id === moduleId);
+    const apiLesson = apiMod?.lessons.find((l) => l.id === lessonId);
+    const courseTitle = courseQuery.data?.title ?? fallback?.course.title;
+    const lessonTitle = apiLesson?.title ?? fallback?.lesson.title;
+    const kind = apiLesson?.kind ?? fallback?.lesson.kind ?? "article";
 
-  const allLessons = course.modules.flatMap((m) =>
-    m.lessons.map((l) => ({ lesson: l, moduleId: m.id })),
-  );
-  const currentIndex = allLessons.findIndex((item) => item.lesson.id === lesson.id);
-  const previousLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
-  const nextLesson =
-    currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+    if (courseTitle && lessonTitle) {
+      recordRecentlyWatched(user.id, {
+        courseId,
+        courseTitle,
+        moduleId,
+        lessonId,
+        lessonTitle,
+        kind,
+      });
+    }
+  }, [courseId, moduleId, lessonId, user?.id, courseQuery.data]);
 
-  if (loading) {
+  if (loading || courseQuery.isLoading) {
     return (
       <LearnShell>
         <LessonPageSkeleton />
@@ -58,6 +78,7 @@ export default function LessonPage() {
     );
   }
 
+  // Enrollment gate (fast client-side check) — API also enforces enrollment.
   if (!isEnrolledInCourse(enrolledIds, courseId)) {
     return (
       <LearnShell>
@@ -75,11 +96,77 @@ export default function LessonPage() {
     );
   }
 
+  // Prefer API course tree (DB-backed) so admin video edits reflect immediately.
+  // Fall back to static catalog only if API isn't available.
+  const apiCourse = courseQuery.data;
+  const fallback = getLessonByPath(courseId, moduleId, lessonId);
+  if (!apiCourse && !fallback) notFound();
+
+  const course = apiCourse
+    ? {
+        id: apiCourse.id,
+        title: apiCourse.title,
+        category: apiCourse.category,
+        level: apiCourse.level,
+        duration: apiCourse.duration,
+        blurb: apiCourse.blurb,
+        outcomes: apiCourse.outcomes,
+        modules: apiCourse.modules.map((m) => ({
+          id: m.id,
+          title: m.title,
+          summary: m.summary,
+          lessons: m.lessons.map((l) => ({
+            id: l.id,
+            title: l.title,
+            durationMinutes: l.durationMinutes,
+            kind: l.kind,
+            summary: l.summary,
+            content: {
+              markdown: l.content.markdown,
+              videoUrl: l.content.videoUrl,
+              externalUrl: l.content.externalUrl,
+            },
+          })),
+        })),
+      }
+    : fallback!.course;
+
+  const module = apiCourse
+    ? course.modules.find((m) => m.id === moduleId)
+    : fallback!.module;
+
+  const lesson = apiCourse
+    ? module?.lessons.find((l) => l.id === lessonId)
+    : fallback!.lesson;
+
+  if (!module || !lesson) notFound();
+
+  const allLessons = course.modules.flatMap((m) =>
+    m.lessons.map((l) => ({ lesson: l, moduleId: m.id })),
+  );
+  const currentIndex = allLessons.findIndex((item) => item.lesson.id === lesson.id);
+  const previousLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
+  const nextLesson =
+    currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+
   const completed = progress[lesson.id]?.completed;
 
   const markComplete = () => {
     if (!user?.id) return;
+    const xpBefore = gamification.xp;
     setProgress(saveLessonComplete(user.id, courseId, lesson.id));
+    recordLearningActivity(user.id);
+    syncAchievements(user.id);
+    const xpAfter = loadGamification(user.id).xp;
+    checkLevelUpNotification(user.id, xpBefore, xpAfter);
+    notifyLessonComplete(
+      user.id,
+      lesson.title,
+      course.title,
+      ROUTES.STUDENT.lesson(courseId, moduleId, lesson.id),
+    );
+    syncNotifications(user.id);
+    gamification.refresh();
   };
 
   return (
@@ -127,6 +214,16 @@ export default function LessonPage() {
                 "Mark as complete"
               )}
             </button>
+            {user?.id ? (
+              <LessonBookmarkButton
+                userId={user.id}
+                courseId={courseId}
+                courseTitle={course.title}
+                moduleId={moduleId}
+                lessonId={lesson.id}
+                lessonTitle={lesson.title}
+              />
+            ) : null}
           </div>
         </div>
 
@@ -134,8 +231,10 @@ export default function LessonPage() {
           lesson={lesson}
           module={module}
           course={course}
+          courseId={courseId}
           progress={progress}
           completed={!!completed}
+          userId={user?.id}
         />
       </div>
 

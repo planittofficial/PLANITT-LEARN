@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
 
+import {
+  AdminButton,
+  AdminCard,
+  AdminInput,
+  AdminTextarea,
+} from "@/features/admin-ui";
 import type { QuizQuestion } from "@/types/quiz.types";
 
 function newQuestion(): QuizQuestion {
@@ -19,12 +26,19 @@ export function QuizBuilder({
   initial: QuizQuestion[];
   passingScore: number;
   title?: string;
-  onSave: (payload: { title?: string; passingScore: number; questions: QuizQuestion[]; published: boolean }) => void;
+  onSave: (payload: {
+    title?: string;
+    passingScore: number;
+    questions: QuizQuestion[];
+    published: boolean;
+  }) => void;
   saving?: boolean;
 }) {
   const [title, setTitle] = useState(initialTitle ?? "");
   const [passingScore, setPassingScore] = useState(initialPassing);
-  const [questions, setQuestions] = useState<QuizQuestion[]>(initial.length ? initial : [newQuestion()]);
+  const [questions, setQuestions] = useState<QuizQuestion[]>(
+    initial.length ? initial : [newQuestion()],
+  );
   const [published, setPublished] = useState(false);
 
   function updateQuestion(index: number, patch: Partial<QuizQuestion>) {
@@ -43,48 +57,40 @@ export function QuizBuilder({
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block text-sm">
-          <span className="text-textSecondary">Title</span>
-          <input
-            className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="text-textSecondary">Passing score (%)</span>
-          <input
+      <AdminCard>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AdminInput label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <AdminInput
+            label="Passing score (%)"
             type="number"
             min={0}
             max={100}
-            className="mt-1 w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2"
             value={passingScore}
             onChange={(e) => setPassingScore(Number(e.target.value))}
           />
-        </label>
-      </div>
+        </div>
+      </AdminCard>
 
       {questions.map((question, qIndex) => (
-        <div key={question.id} className="rounded-xl border border-borderSubtle bg-surface p-4">
-          <div className="flex items-center justify-between gap-2">
-            <p className="font-medium">Question {qIndex + 1}</p>
-            <button
-              type="button"
-              className="text-sm text-danger"
+        <AdminCard key={question.id}>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <p className="font-semibold text-violet-300">Question {qIndex + 1}</p>
+            <AdminButton
+              variant="danger"
+              size="sm"
               onClick={() => setQuestions((prev) => prev.filter((_, i) => i !== qIndex))}
             >
+              <Trash2 className="h-3.5 w-3.5" />
               Remove
-            </button>
+            </AdminButton>
           </div>
-          <textarea
-            className="mt-2 w-full rounded-lg border border-borderSubtle bg-background px-3 py-2 text-sm"
+          <AdminTextarea
             rows={2}
+            placeholder="Question prompt"
             value={question.prompt}
             onChange={(e) => updateQuestion(qIndex, { prompt: e.target.value })}
-            placeholder="Question prompt"
           />
-          <div className="mt-3 space-y-2">
+          <div className="mt-4 space-y-2">
             {question.options.map((option, oIndex) => (
               <label key={oIndex} className="flex items-center gap-2 text-sm">
                 <input
@@ -92,9 +98,10 @@ export function QuizBuilder({
                   name={`correct-${question.id}`}
                   checked={question.correctIndex === oIndex}
                   onChange={() => updateQuestion(qIndex, { correctIndex: oIndex })}
+                  className="accent-violet-500"
                 />
                 <input
-                  className="flex-1 rounded-lg border border-borderSubtle bg-background px-3 py-2"
+                  className="flex-1 rounded-xl border border-borderSubtle bg-black/20 px-3 py-2 outline-none focus:border-violet-500/40"
                   value={option}
                   onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
                   placeholder={`Option ${oIndex + 1}`}
@@ -103,7 +110,7 @@ export function QuizBuilder({
             ))}
             <button
               type="button"
-              className="text-sm text-brand"
+              className="text-sm text-violet-400 hover:underline"
               onClick={() =>
                 updateQuestion(qIndex, { options: [...question.options, ""] })
               }
@@ -111,29 +118,29 @@ export function QuizBuilder({
               + Add option
             </button>
           </div>
-        </div>
+        </AdminCard>
       ))}
 
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          className="rounded-lg border border-borderSubtle px-4 py-2 text-sm"
-          onClick={() => setQuestions((prev) => [...prev, newQuestion()])}
-        >
+        <AdminButton variant="secondary" onClick={() => setQuestions((prev) => [...prev, newQuestion()])}>
+          <Plus className="h-4 w-4" />
           Add question
-        </button>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
+        </AdminButton>
+        <label className="flex items-center gap-2 text-sm text-textSecondary">
+          <input
+            type="checkbox"
+            className="rounded border-borderSubtle accent-violet-500"
+            checked={published}
+            onChange={(e) => setPublished(e.target.checked)}
+          />
           Published
         </label>
-        <button
-          type="button"
+        <AdminButton
           disabled={saving}
-          className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           onClick={() => onSave({ title, passingScore, questions, published })}
         >
           {saving ? "Saving…" : "Save assessment"}
-        </button>
+        </AdminButton>
       </div>
     </div>
   );
