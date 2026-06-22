@@ -8,6 +8,7 @@ import {
   syncAchievements,
   type AchievementsSnapshot,
 } from "@/lib/learning/achievements";
+import { markNotificationsReadByType } from "@/lib/learning/notifications";
 
 const EMPTY: AchievementsSnapshot = {
   achievements: [],
@@ -45,6 +46,7 @@ export function useAchievements(userId: string | undefined) {
   const dismissNotifications = useCallback(() => {
     if (!userId) return;
     dismissAchievementNotifications(userId);
+    markNotificationsReadByType(userId, "achievement");
     refresh();
   }, [userId, refresh]);
 

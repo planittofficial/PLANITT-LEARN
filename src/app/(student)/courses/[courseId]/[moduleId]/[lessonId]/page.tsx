@@ -23,8 +23,13 @@ import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { getLessonByPath } from "@/lib/catalog/courses";
 import { recordRecentlyWatched } from "@/lib/learning/activity";
-import { recordLearningActivity, touchDailyActivity } from "@/lib/learning/gamification";
+import { recordLearningActivity, touchDailyActivity, loadGamification } from "@/lib/learning/gamification";
 import { syncAchievements } from "@/lib/learning/achievements";
+import {
+  checkLevelUpNotification,
+  notifyLessonComplete,
+  syncNotifications,
+} from "@/lib/learning/notifications";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import {
   loadCourseProgress,
@@ -148,9 +153,19 @@ export default function LessonPage() {
 
   const markComplete = () => {
     if (!user?.id) return;
+    const xpBefore = gamification.xp;
     setProgress(saveLessonComplete(user.id, courseId, lesson.id));
     recordLearningActivity(user.id);
     syncAchievements(user.id);
+    const xpAfter = loadGamification(user.id).xp;
+    checkLevelUpNotification(user.id, xpBefore, xpAfter);
+    notifyLessonComplete(
+      user.id,
+      lesson.title,
+      course.title,
+      ROUTES.STUDENT.lesson(courseId, moduleId, lesson.id),
+    );
+    syncNotifications(user.id);
     gamification.refresh();
   };
 

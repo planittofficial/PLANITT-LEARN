@@ -9,6 +9,8 @@ export const ROUTES = {
     LEADERBOARD: "/leaderboard",
     ANALYTICS: "/analytics",
     ACHIEVEMENTS: "/achievements",
+    NOTIFICATIONS: "/notifications",
+    SEARCH: "/search",
     PROFILE: "/profile",
   },
   ADMIN: {

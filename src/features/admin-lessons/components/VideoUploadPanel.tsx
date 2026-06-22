@@ -57,10 +57,10 @@ export function VideoUploadPanel({
   );
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/5 via-surface to-base">
+    <section className="overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/5 via-surface to-base">
       <div className="border-b border-borderSubtle/60 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/15 text-brand">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-400">
             <Video className="h-5 w-5" />
           </div>
           <div>
@@ -93,8 +93,8 @@ export function VideoUploadPanel({
           className={cn(
             "flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-all",
             dragOver
-              ? "border-brand bg-brand/10 scale-[1.01]"
-              : "border-borderSubtle hover:border-brand/40 hover:bg-white/[0.02]",
+              ? "border-violet-500 bg-violet-500/10 scale-[1.01]"
+              : "border-borderSubtle hover:border-violet-500/40 hover:bg-white/[0.02]",
             uploading && "pointer-events-none opacity-60",
           )}
         >
@@ -110,13 +110,13 @@ export function VideoUploadPanel({
           />
           {uploading ? (
             <>
-              <Loader2 className="h-10 w-10 animate-spin text-brand" />
+              <Loader2 className="h-10 w-10 animate-spin text-violet-400" />
               <p className="mt-3 text-sm font-medium">Uploading video…</p>
             </>
           ) : (
             <>
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10">
-                <Upload className="h-7 w-7 text-brand" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500/10">
+                <Upload className="h-7 w-7 text-violet-400" />
               </div>
               <p className="mt-4 text-sm font-medium text-textPrimary">
                 Drag & drop your video here
@@ -175,7 +175,7 @@ export function VideoUploadPanel({
             </label>
             <div className="flex flex-col justify-end">
               <p className="text-xs text-textMuted">Display duration</p>
-              <p className="text-lg font-semibold text-brand">
+              <p className="text-lg font-semibold text-violet-400">
                 {typeof durationSeconds === "number" && durationSeconds > 0
                   ? formatDuration(durationSeconds)
                   : "—"}

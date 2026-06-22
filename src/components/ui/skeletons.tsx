@@ -53,6 +53,38 @@ export function LessonPageSkeleton() {
   );
 }
 
+export function SearchPageSkeleton() {
+  return (
+    <div className="space-y-6 animate-in fade-in">
+      <Skeleton className="h-44 rounded-2xl" />
+      <div className="flex gap-2">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-8 w-20 rounded-full" />
+        ))}
+      </div>
+      {[1, 2, 3].map((i) => (
+        <Skeleton key={i} className="h-24 rounded-2xl" />
+      ))}
+    </div>
+  );
+}
+
+export function NotificationsPageSkeleton() {
+  return (
+    <div className="space-y-6 animate-in fade-in">
+      <Skeleton className="h-36 rounded-2xl" />
+      <div className="flex gap-2">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-8 w-20 rounded-full" />
+        ))}
+      </div>
+      {[1, 2, 3, 4].map((i) => (
+        <Skeleton key={i} className="h-20 rounded-2xl" />
+      ))}
+    </div>
+  );
+}
+
 export function AchievementsPageSkeleton() {
   return (
     <div className="space-y-8 animate-in fade-in">

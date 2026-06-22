@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Layers, Plus, Trash2 } from "lucide-react";
 
+import {
+  AdminButton,
+  AdminCard,
+  AdminInput,
+  AdminPageHeader,
+  AdminSection,
+} from "@/features/admin-ui";
 import {
   useAdminModules,
   useCreateModule,
@@ -28,47 +36,90 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <Link href="/admin/courses" className="text-sm text-brand">← Courses</Link>
-        <h1 className="mt-2 text-2xl font-bold">{course?.title ?? courseId}</h1>
-        <p className="text-sm text-textSecondary">{course?.blurb}</p>
-      </div>
+    <div className="space-y-8">
+      <AdminPageHeader
+        eyebrow="Course"
+        title={course?.title ?? courseId}
+        description={course?.blurb ?? "Manage modules and lesson structure for this course."}
+        icon={Layers}
+        action={
+          <Link href={`/admin/courses/${courseId}/edit`}>
+            <AdminButton variant="secondary">Edit course</AdminButton>
+          </Link>
+        }
+      />
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Modules</h2>
-        <button
-          type="button"
-          className="rounded-lg bg-brand px-3 py-2 text-sm text-white"
-          onClick={() => setShowForm((v) => !v)}
-        >
-          Add module
-        </button>
-      </div>
+      <AdminSection
+        title="Modules"
+        description="Each module groups related lessons. Open a module to add lessons and upload videos."
+        action={
+          <AdminButton onClick={() => setShowForm((v) => !v)}>
+            <Plus className="h-4 w-4" />
+            Add module
+          </AdminButton>
+        }
+      >
+        {showForm ? (
+          <AdminCard highlight>
+            <form onSubmit={handleCreate} className="grid gap-4 sm:grid-cols-3">
+              <AdminInput
+                label="Module ID"
+                placeholder="e.g. fx-module-1"
+                value={id}
+                onChange={(e) => setId(e.target.value)}
+                required
+              />
+              <div className="sm:col-span-2">
+                <AdminInput
+                  label="Title"
+                  placeholder="Module title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="sm:col-span-3">
+                <AdminButton type="submit">Create module</AdminButton>
+              </div>
+            </form>
+          </AdminCard>
+        ) : null}
 
-      {showForm ? (
-        <form onSubmit={handleCreate} className="grid gap-3 rounded-xl border border-borderSubtle p-4 sm:grid-cols-3">
-          <input className="rounded-lg border border-borderSubtle bg-surface px-3 py-2" placeholder="Module id" value={id} onChange={(e) => setId(e.target.value)} required />
-          <input className="rounded-lg border border-borderSubtle bg-surface px-3 py-2 sm:col-span-2" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-          <button type="submit" className="rounded-lg bg-brand px-3 py-2 text-sm text-white sm:col-span-3">Create module</button>
-        </form>
-      ) : null}
+        {isLoading ? <p className="text-textSecondary">Loading modules…</p> : null}
 
-      {isLoading ? <p>Loading…</p> : null}
-      <div className="space-y-2">
-        {(modules ?? []).map((mod) => (
-          <div key={mod.id} className="flex items-center justify-between rounded-xl border border-borderSubtle p-4">
-            <div>
-              <Link href={`/admin/modules/${mod.id}`} className="font-medium text-brand">{mod.title}</Link>
-              <p className="text-xs text-textMuted">{mod.id} · {mod.lessonCount} lessons</p>
-            </div>
-            <div className="flex gap-3">
-              <Link href={`/admin/quizzes/modules/${mod.id}`} className="text-sm text-textSecondary">Module test</Link>
-              <button type="button" className="text-sm text-danger" onClick={() => deleteModule.mutate(mod.id)}>Delete</button>
-            </div>
-          </div>
-        ))}
-      </div>
+        <div className="space-y-3">
+          {(modules ?? []).map((mod) => (
+            <AdminCard key={mod.id} className="flex flex-wrap items-center justify-between gap-4 !p-4">
+              <div>
+                <Link
+                  href={`/admin/modules/${mod.id}`}
+                  className="font-semibold text-violet-400 hover:underline"
+                >
+                  {mod.title}
+                </Link>
+                <p className="mt-1 text-xs text-textMuted">
+                  {mod.id} · {mod.lessonCount} lesson{mod.lessonCount !== 1 ? "s" : ""}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link href={`/admin/quizzes/modules/${mod.id}`}>
+                  <AdminButton variant="secondary" size="sm">
+                    Module test
+                  </AdminButton>
+                </Link>
+                <AdminButton
+                  variant="danger"
+                  size="sm"
+                  onClick={() => deleteModule.mutate(mod.id)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete
+                </AdminButton>
+              </div>
+            </AdminCard>
+          ))}
+        </div>
+      </AdminSection>
     </div>
   );
 }
