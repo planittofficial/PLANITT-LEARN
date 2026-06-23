@@ -26,6 +26,7 @@ type AuthState = {
 type AuthContextValue = AuthState & {
   authReady: boolean;
   devStandalone: boolean;
+  loginWithCredentials: (email: string, password: string) => Promise<void>;
   loginWithGoogleIdToken: (googleIdToken: string) => Promise<void>;
   loginAsDevUser: () => Promise<void>;
   logout: () => void;
@@ -94,6 +95,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     void bootstrap();
   }, [bootstrap]);
 
+  const loginWithCredentials = useCallback(async (email: string, password: string) => {
+    const res = await fetch(
+      ROUTES.API.AUTH.LOGIN,
+      withApiCredentials({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      }),
+    );
+    if (!res.ok) {
+      const data = (await res.json().catch(() => null)) as { detail?: string } | null;
+      throw new Error(data?.detail ?? "Sign-in failed.");
+    }
+    await bootstrap();
+  }, [bootstrap]);
+
   const loginWithGoogleIdToken = useCallback(async (googleIdToken: string) => {
     const res = await fetch(
       ROUTES.API.AUTH.GOOGLE,
@@ -133,11 +150,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ...state,
       authReady,
       devStandalone: DEV_STANDALONE,
+      loginWithCredentials,
       loginWithGoogleIdToken,
       loginAsDevUser,
       logout,
     }),
-    [authReady, loginAsDevUser, loginWithGoogleIdToken, logout, state],
+    [authReady, loginAsDevUser, loginWithCredentials, loginWithGoogleIdToken, logout, state],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
