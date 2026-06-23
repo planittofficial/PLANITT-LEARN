@@ -161,6 +161,8 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
       lessons: mod.lessons.map(lessonFromDb),
     }));
 
+    if (modules.length === 0) return courseDetailFromStatic(normalized);
+
     const lessonCount = modules.reduce((sum, mod) => sum + mod.lessons.length, 0);
 
     return {

@@ -21,7 +21,7 @@ import { LessonBookmarkButton } from "@/features/lesson-player/components/Lesson
 import { useGamification } from "@/features/gamification";
 import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
-import { getLessonByPath } from "@/lib/catalog/courses";
+import { getCourseById, getLessonByPath } from "@/lib/catalog/courses";
 import { recordRecentlyWatched } from "@/lib/learning/activity";
 import { recordLearningActivity, touchDailyActivity, loadGamification } from "@/lib/learning/gamification";
 import { syncAchievements } from "@/lib/learning/achievements";
@@ -36,6 +36,42 @@ import {
   saveLessonComplete,
   type CourseProgress,
 } from "@/lib/learning/progress";
+
+import type { ApiCourseDetail, ApiLesson } from "@/types/course.types";
+import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
+
+function mapApiLesson(lesson: ApiLesson): Lesson {
+  return {
+    id: lesson.id,
+    title: lesson.title,
+    durationMinutes: lesson.durationMinutes,
+    kind: lesson.kind,
+    summary: lesson.summary,
+    content: {
+      markdown: lesson.content.markdown,
+      videoUrl: lesson.content.videoUrl,
+      externalUrl: lesson.content.externalUrl,
+    },
+  };
+}
+
+function mapApiCourse(apiCourse: ApiCourseDetail): CourseDefinition {
+  return {
+    id: apiCourse.id,
+    title: apiCourse.title,
+    category: apiCourse.category,
+    level: apiCourse.level,
+    duration: apiCourse.duration,
+    blurb: apiCourse.blurb,
+    outcomes: apiCourse.outcomes,
+    modules: apiCourse.modules.map((m) => ({
+      id: m.id,
+      title: m.title,
+      summary: m.summary,
+      lessons: m.lessons.map(mapApiLesson),
+    })),
+  };
+}
 
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
@@ -70,6 +106,14 @@ export default function LessonPage() {
     }
   }, [courseId, moduleId, lessonId, user?.id, courseQuery.data]);
 
+  if (!courseId || !moduleId || !lessonId) {
+    return (
+      <LearnShell>
+        <LessonPageSkeleton />
+      </LearnShell>
+    );
+  }
+
   if (loading || courseQuery.isLoading) {
     return (
       <LearnShell>
@@ -97,51 +141,39 @@ export default function LessonPage() {
   }
 
   // Prefer API course tree (DB-backed) so admin video edits reflect immediately.
-  // Fall back to static catalog only if API isn't available.
+  // Fall back to static catalog when API isn't available or doesn't include this lesson.
   const apiCourse = courseQuery.data;
   const fallback = getLessonByPath(courseId, moduleId, lessonId);
-  if (!apiCourse && !fallback) notFound();
+  const staticCourse = getCourseById(courseId);
+  if (!apiCourse && !fallback && !staticCourse) notFound();
 
-  const course = apiCourse
-    ? {
-        id: apiCourse.id,
-        title: apiCourse.title,
-        category: apiCourse.category,
-        level: apiCourse.level,
-        duration: apiCourse.duration,
-        blurb: apiCourse.blurb,
-        outcomes: apiCourse.outcomes,
-        modules: apiCourse.modules.map((m) => ({
-          id: m.id,
-          title: m.title,
-          summary: m.summary,
-          lessons: m.lessons.map((l) => ({
-            id: l.id,
-            title: l.title,
-            durationMinutes: l.durationMinutes,
-            kind: l.kind,
-            summary: l.summary,
-            content: {
-              markdown: l.content.markdown,
-              videoUrl: l.content.videoUrl,
-              externalUrl: l.content.externalUrl,
-            },
-          })),
-        })),
-      }
-    : fallback!.course;
+  const course =
+    apiCourse && apiCourse.modules.length > 0
+      ? mapApiCourse(apiCourse)
+      : (staticCourse ?? fallback!.course);
 
-  const module = apiCourse
-    ? course.modules.find((m) => m.id === moduleId)
-    : fallback!.module;
+  const apiLesson = apiCourse?.modules
+    .find((m) => m.id === moduleId)
+    ?.lessons.find((l) => l.id === lessonId);
 
-  const lesson = apiCourse
-    ? module?.lessons.find((l) => l.id === lessonId)
-    : fallback!.lesson;
+  let module: CourseModule | undefined = course.modules.find((m) => m.id === moduleId);
+  let lesson: Lesson | undefined = module?.lessons.find((l) => l.id === lessonId);
+
+  if (apiLesson) {
+    lesson = mapApiLesson(apiLesson);
+  }
+
+  if ((!module || !lesson) && fallback) {
+    module = fallback.module;
+    lesson = apiLesson ? mapApiLesson(apiLesson) : fallback.lesson;
+  }
 
   if (!module || !lesson) notFound();
 
-  const allLessons = course.modules.flatMap((m) =>
+  const navCourse =
+    staticCourse && staticCourse.modules.length > course.modules.length ? staticCourse : course;
+
+  const allLessons = navCourse.modules.flatMap((m) =>
     m.lessons.map((l) => ({ lesson: l, moduleId: m.id })),
   );
   const currentIndex = allLessons.findIndex((item) => item.lesson.id === lesson.id);
@@ -230,7 +262,7 @@ export default function LessonPage() {
         <LessonSidebar
           lesson={lesson}
           module={module}
-          course={course}
+          course={navCourse}
           courseId={courseId}
           progress={progress}
           completed={!!completed}

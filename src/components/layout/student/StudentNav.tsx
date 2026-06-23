@@ -35,15 +35,16 @@ export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
 
   return (
     <nav className={cn("items-stretch", className)} aria-label="Main">
-      <div className="flex h-full min-w-0 items-stretch gap-0 overflow-x-auto">
+      <div className="flex h-full items-stretch">
         {STUDENT_NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
+              title={item.label}
               className={cn(
-                "relative inline-flex shrink-0 items-center px-3 text-sm font-medium transition-colors lg:px-4",
+                "relative inline-flex shrink-0 items-center justify-center px-2.5 text-sm font-medium transition-colors lg:justify-start lg:px-4",
                 active
                   ? "text-brand"
                   : "text-textSecondary hover:text-textPrimary",
@@ -51,14 +52,14 @@ export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
             >
               <item.icon
                 className={cn(
-                  "mr-0 hidden h-4 w-4 shrink-0 lg:mr-2 lg:inline",
+                  "h-4 w-4 shrink-0 lg:mr-2",
                   active && "text-brand",
                 )}
                 strokeWidth={active ? 2.25 : 2}
               />
-              <span className="whitespace-nowrap">{item.label}</span>
+              <span className="hidden whitespace-nowrap lg:inline">{item.label}</span>
               {active ? (
-                <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-brand lg:inset-x-3" />
+                <span className="absolute inset-x-1.5 bottom-0 h-0.5 rounded-full bg-brand lg:inset-x-3" />
               ) : null}
             </Link>
           );
