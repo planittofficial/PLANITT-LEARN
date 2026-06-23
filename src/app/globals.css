@@ -5,20 +5,22 @@
 /* Light theme (default when .dark is not on <html>) */
 :root {
   color-scheme: light;
-  --bg-base: #f4f4f5;
+  /* Slightly cool neutrals to avoid warm/pink tint on white theme */
+  --bg-base: #f8fafc;
   --bg-surface: #ffffff;
-  --border-subtle: #e4e4e7;
-  --text-primary: #18181b;
-  --text-secondary: #52525b;
-  --text-muted: #a1a1aa;
-  --brand: #00a884;
-  --overlay-subtle: rgba(0, 0, 0, 0.04);
-  --overlay-medium: rgba(0, 0, 0, 0.06);
-  --overlay-strong: rgba(0, 0, 0, 0.08);
-  --overlay-hover: rgba(0, 0, 0, 0.05);
-  --overlay-faint: rgba(0, 0, 0, 0.02);
-  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
-  --scrollbar-thumb-hover: #a1a1aa;
+  --border-subtle: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  /* Primary accent (emerald/teal) with strong contrast on white */
+  --brand: #10b981;
+  --overlay-subtle: rgba(15, 23, 42, 0.04);
+  --overlay-medium: rgba(15, 23, 42, 0.06);
+  --overlay-strong: rgba(15, 23, 42, 0.10);
+  --overlay-hover: rgba(15, 23, 42, 0.06);
+  --overlay-faint: rgba(15, 23, 42, 0.025);
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.10);
+  --scrollbar-thumb-hover: #94a3b8;
 }
 
 .dark {

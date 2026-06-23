@@ -6,7 +6,6 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
   StudentHeaderNav,
   StudentLogo,
-  StudentNav,
 } from "@/components/layout/student/StudentNav";
 import { StudentUserMenu } from "@/components/layout/student/StudentUserMenu";
 import { NotificationBell } from "@/features/notifications";
@@ -18,35 +17,39 @@ export function StudentHeader() {
   const { isAuthenticated, authReady, user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-borderSubtle bg-surface shadow-sm shadow-black/[0.04] dark:shadow-none">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6">
-        {/* Brand */}
-        <StudentLogo />
+    <header className="sticky top-0 z-40 border-b border-borderSubtle bg-surface/95 shadow-sm shadow-black/[0.03] backdrop-blur-md dark:shadow-none">
+      <div className="mx-auto flex h-14 max-w-7xl items-stretch px-4 sm:h-16 sm:px-6 lg:px-8">
+        {/* Brand + primary navigation */}
+        <div className="flex min-w-0 shrink-0 items-stretch gap-4 lg:gap-5">
+          <div className="flex items-center">
+            <StudentLogo />
+          </div>
+          <div className="hidden w-px self-center bg-borderSubtle md:block md:h-5" aria-hidden />
+          <StudentHeaderNav className="hidden md:flex" />
+        </div>
 
-        {/* Primary nav — desktop */}
-        <StudentHeaderNav className="hidden min-w-0 flex-1 md:flex" />
+        {/* Centered search — Coursera / Udemy style */}
+        <div className="flex min-w-0 flex-1 items-center justify-center px-2 sm:px-4 lg:px-8">
+          <GlobalSearch className="hidden w-full max-w-[220px] md:flex lg:max-w-[260px] xl:max-w-[300px]" />
+        </div>
 
-        {/* Utilities */}
-        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5">
+        {/* Account utilities */}
+        <div className="flex shrink-0 items-center gap-1 self-center sm:gap-1.5">
           <GlobalSearch className="md:hidden" compact />
-          <GlobalSearch className="hidden w-[10.5rem] shrink-0 md:flex lg:w-[12.5rem]" />
 
-          <div
-            className="mx-0.5 hidden h-5 w-px bg-borderSubtle md:block"
-            aria-hidden
-          />
+          <div className="hidden h-5 w-px bg-borderSubtle sm:block" aria-hidden />
 
-          <ThemeToggle />
+          <div className="flex items-center gap-0.5">
+            <ThemeToggle />
+            {authReady && isAuthenticated ? <NotificationBell /> : null}
+          </div>
 
           {authReady && isAuthenticated ? (
-            <>
-              <NotificationBell />
-              <StudentUserMenu
-                name={user?.name ?? "Learner"}
-                email={user?.email}
-                onLogout={logout}
-              />
-            </>
+            <StudentUserMenu
+              name={user?.name ?? "Learner"}
+              email={user?.email}
+              onLogout={logout}
+            />
           ) : null}
 
           {authReady && !isAuthenticated ? (

@@ -7,14 +7,11 @@ import {
   BarChart3,
   GraduationCap,
   Home,
-  LogOut,
-  ShoppingBag,
   Trophy,
   User,
 } from "lucide-react";
 
 import { ROUTES } from "@/constants/routes";
-import { planittCheckoutUrl } from "@/constants/urls";
 import { cn } from "@/lib/utils";
 
 export const STUDENT_NAV_ITEMS = [
@@ -24,6 +21,11 @@ export const STUDENT_NAV_ITEMS = [
   { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", shortLabel: "Rank", icon: Trophy },
   { href: ROUTES.STUDENT.PROFILE, label: "Profile", shortLabel: "Profile", icon: User },
 ] as const;
+
+/** Header tabs — Profile lives in the avatar menu to avoid crowding search. */
+export const STUDENT_HEADER_NAV_ITEMS = STUDENT_NAV_ITEMS.filter(
+  (item) => item.href !== ROUTES.STUDENT.PROFILE,
+);
 
 type StudentHeaderNavProps = {
   className?: string;
@@ -35,8 +37,8 @@ export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
 
   return (
     <nav className={cn("items-stretch", className)} aria-label="Main">
-      <div className="flex h-full items-stretch">
-        {STUDENT_NAV_ITEMS.map((item) => {
+      <div className="-mb-px flex h-full items-stretch gap-0.5">
+        {STUDENT_HEADER_NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
           return (
             <Link
@@ -44,23 +46,17 @@ export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
               href={item.href}
               title={item.label}
               className={cn(
-                "relative inline-flex shrink-0 items-center justify-center px-2.5 text-sm font-medium transition-colors lg:justify-start lg:px-4",
+                "relative inline-flex h-full shrink-0 items-center gap-2 border-b-2 px-2.5 text-sm font-medium transition-colors sm:px-3",
                 active
-                  ? "text-brand"
-                  : "text-textSecondary hover:text-textPrimary",
+                  ? "border-brand text-brand"
+                  : "border-transparent text-textSecondary hover:border-borderSubtle hover:text-textPrimary",
               )}
             >
               <item.icon
-                className={cn(
-                  "h-4 w-4 shrink-0 lg:mr-2",
-                  active && "text-brand",
-                )}
+                className={cn("h-4 w-4 shrink-0", active && "text-brand")}
                 strokeWidth={active ? 2.25 : 2}
               />
               <span className="hidden whitespace-nowrap lg:inline">{item.label}</span>
-              {active ? (
-                <span className="absolute inset-x-1.5 bottom-0 h-0.5 rounded-full bg-brand lg:inset-x-3" />
-              ) : null}
             </Link>
           );
         })}
@@ -110,10 +106,10 @@ export function StudentLogo({ className }: StudentLogoProps) {
       href={ROUTES.STUDENT.HOME}
       className={cn("inline-flex shrink-0 items-center gap-2", className)}
     >
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-black shadow-sm">
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-black shadow-sm ring-1 ring-black/5">
         <GraduationCap className="h-4 w-4" />
       </div>
-      <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary sm:inline">
+      <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary md:inline">
         Planitt<span className="text-brand"> Learn</span>
       </span>
     </Link>
