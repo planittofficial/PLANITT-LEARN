@@ -16,12 +16,13 @@ export type CourseProgressStats = {
 export function getCourseProgressStats(
   userId: string | undefined,
   course: CourseDefinition,
+  progressOverride?: CourseProgress,
 ): CourseProgressStats {
   const lessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
   if (!userId || lessonIds.length === 0) {
     return { completed: 0, total: lessonIds.length, percent: 0 };
   }
-  const progress = loadCourseProgress(userId, course.id);
+  const progress = progressOverride ?? loadCourseProgress(userId, course.id);
   const stats = countCompletedLessons(progress, lessonIds);
   const percent =
     stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
@@ -42,10 +43,11 @@ export function getModuleProgressStats(
 export function getContinueLessonUrl(
   userId: string | undefined,
   course: CourseDefinition,
+  progressOverride?: CourseProgress,
 ): string | null {
   if (!course.modules.length) return null;
 
-  const progress = userId ? loadCourseProgress(userId, course.id) : {};
+  const progress = progressOverride ?? (userId ? loadCourseProgress(userId, course.id) : {});
 
   for (const mod of course.modules) {
     for (const lesson of mod.lessons) {

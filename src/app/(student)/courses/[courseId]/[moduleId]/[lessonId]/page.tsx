@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 
 import { LearnShell } from "@/components/layout/student";
@@ -18,10 +18,15 @@ import {
   LessonSidebar,
 } from "@/features/lesson-player/components/LessonView";
 import { LessonBookmarkButton } from "@/features/lesson-player/components/LessonBookmark";
+import { LessonQuizPanel } from "@/features/quizzes";
 import { useGamification } from "@/features/gamification";
 import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
+import { useCourseProgress } from "@/hooks/progress/use-course-progress";
+import { useLessonQuiz } from "@/hooks/quizzes/use-lesson-quiz";
+import { apiCourseDetailToDefinition } from "@/lib/catalog/map-api-course";
 import { getCourseById, getLessonByPath } from "@/lib/catalog/courses";
+import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
 import { recordRecentlyWatched } from "@/lib/learning/activity";
 import { recordLearningActivity, touchDailyActivity, loadGamification } from "@/lib/learning/gamification";
 import { syncAchievements } from "@/lib/learning/achievements";
@@ -31,14 +36,7 @@ import {
   syncNotifications,
 } from "@/lib/learning/notifications";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
-import {
-  loadCourseProgress,
-  saveLessonComplete,
-  type CourseProgress,
-} from "@/lib/learning/progress";
-
-import type { ApiCourseDetail, ApiLesson } from "@/types/course.types";
-import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
+import type { ApiLesson } from "@/types/course.types";
 
 function mapApiLesson(lesson: ApiLesson): Lesson {
   return {
@@ -55,36 +53,23 @@ function mapApiLesson(lesson: ApiLesson): Lesson {
   };
 }
 
-function mapApiCourse(apiCourse: ApiCourseDetail): CourseDefinition {
-  return {
-    id: apiCourse.id,
-    title: apiCourse.title,
-    category: apiCourse.category,
-    level: apiCourse.level,
-    duration: apiCourse.duration,
-    blurb: apiCourse.blurb,
-    outcomes: apiCourse.outcomes,
-    modules: apiCourse.modules.map((m) => ({
-      id: m.id,
-      title: m.title,
-      summary: m.summary,
-      lessons: m.lessons.map(mapApiLesson),
-    })),
-  };
-}
-
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
   const { courseId, moduleId, lessonId } = params;
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
-  const [progress, setProgress] = useState<CourseProgress>({});
   const courseQuery = useCourseDetail(courseId);
+  const {
+    progress,
+    markLessonComplete,
+    isMarking,
+    isLoading: progressLoading,
+  } = useCourseProgress(courseId);
+  const lessonQuiz = useLessonQuiz(lessonId, Boolean(user?.id));
   const gamification = useGamification(user?.id);
 
   useEffect(() => {
     if (!user?.id) return;
-    setProgress(loadCourseProgress(user.id, courseId));
     touchDailyActivity(user.id);
 
     const fallback = getLessonByPath(courseId, moduleId, lessonId);
@@ -114,7 +99,7 @@ export default function LessonPage() {
     );
   }
 
-  if (loading || courseQuery.isLoading) {
+  if (loading || courseQuery.isLoading || progressLoading) {
     return (
       <LearnShell>
         <LessonPageSkeleton />
@@ -149,7 +134,7 @@ export default function LessonPage() {
 
   const course =
     apiCourse && apiCourse.modules.length > 0
-      ? mapApiCourse(apiCourse)
+      ? apiCourseDetailToDefinition(apiCourse)
       : (staticCourse ?? fallback!.course);
 
   const apiLesson = apiCourse?.modules
@@ -183,10 +168,10 @@ export default function LessonPage() {
 
   const completed = progress[lesson.id]?.completed;
 
-  const markComplete = () => {
-    if (!user?.id) return;
+  const markComplete = async () => {
+    if (!user?.id || completed) return;
     const xpBefore = gamification.xp;
-    setProgress(saveLessonComplete(user.id, courseId, lesson.id));
+    await markLessonComplete(lesson.id);
     recordLearningActivity(user.id);
     syncAchievements(user.id);
     const xpAfter = loadGamification(user.id).xp;
@@ -227,14 +212,14 @@ export default function LessonPage() {
             lesson={lesson}
             courseId={courseId}
             userId={user?.id}
-            onComplete={markComplete}
+            onComplete={() => void markComplete()}
           />
 
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={markComplete}
-              disabled={completed}
+              onClick={() => void markComplete()}
+              disabled={completed || isMarking}
               className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-50"
             >
               {completed ? (
@@ -257,6 +242,15 @@ export default function LessonPage() {
               />
             ) : null}
           </div>
+
+          {lessonQuiz.hasQuiz && lessonQuiz.quiz ? (
+            <LessonQuizPanel
+              quiz={lessonQuiz.quiz}
+              onSubmit={lessonQuiz.submitQuiz}
+              isSubmitting={lessonQuiz.isSubmitting}
+              result={lessonQuiz.result}
+            />
+          ) : null}
         </div>
 
         <LessonSidebar

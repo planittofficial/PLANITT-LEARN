@@ -12,7 +12,7 @@ import {
 import { useLeaderboard } from "@/hooks/leaderboard/use-leaderboard";
 
 export function LeaderboardAdminView() {
-  const { entries, isLoading, isMock } = useLeaderboard("learn-forex-master-track");
+  const { entries, isLoading } = useLeaderboard("learn-forex-master-track");
 
   if (isLoading) return <AdminPageSkeleton />;
 
@@ -25,14 +25,13 @@ export function LeaderboardAdminView() {
         icon={Trophy}
       />
 
-      {isMock ? (
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
-          Showing fallback data — no live rankings yet.
-        </div>
-      ) : null}
-
-      <div className="space-y-3">
-        {entries.map((row) => (
+      {entries.length === 0 ? (
+        <AdminCard className="text-center text-sm text-textMuted">
+          No leaderboard entries yet. Learners appear after completing lessons and quizzes.
+        </AdminCard>
+      ) : (
+        <div className="space-y-3">
+          {entries.map((row) => (
           <AdminCard
             key={row.userId}
             className="flex flex-wrap items-center justify-between gap-4 !p-4"
@@ -58,7 +57,8 @@ export function LeaderboardAdminView() {
             </Badge>
           </AdminCard>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

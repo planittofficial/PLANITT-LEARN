@@ -20,16 +20,13 @@ import { LockedCourseEmpty, NoLessonsEmpty } from "@/components/shared/EmptyStat
 import { NextLessonCTA } from "@/features/course-catalog/components/NextLessonCTA";
 import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
+import { useCourseProgress } from "@/hooks/progress/use-course-progress";
 import {
   courseIcon,
   courseThumbnailClass,
 } from "@/lib/catalog/course-visuals";
 import type { CourseDefinition } from "@/lib/catalog/courses";
 import { getModuleProgressStats, getCourseProgressStats } from "@/lib/learning/course-progress";
-import {
-  loadCourseProgress,
-  type CourseProgress,
-} from "@/lib/learning/progress";
 import { cn } from "@/lib/utils";
 
 const LESSON_ICONS = {
@@ -43,7 +40,6 @@ type CourseHubViewProps = {
   courseId: string;
   userId?: string;
   enrolled: boolean;
-  loading?: boolean;
 };
 
 export function CourseHubView({
@@ -51,15 +47,9 @@ export function CourseHubView({
   courseId,
   userId,
   enrolled,
-  loading,
 }: CourseHubViewProps) {
-  const [progress, setProgress] = useState<CourseProgress>({});
+  const { progress, isLoading: progressLoading } = useCourseProgress(courseId);
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!userId) return;
-    setProgress(loadCourseProgress(userId, courseId));
-  }, [courseId, userId]);
 
   useEffect(() => {
     if (course.modules.length) {
@@ -67,7 +57,10 @@ export function CourseHubView({
     }
   }, [course.modules]);
 
-  const stats = useMemo(() => getCourseProgressStats(userId, course), [userId, course]);
+  const stats = useMemo(
+    () => getCourseProgressStats(userId, course, progress),
+    [userId, course, progress],
+  );
 
   const toggleModule = (moduleId: string) => {
     setExpandedModules((prev) =>
@@ -75,7 +68,7 @@ export function CourseHubView({
     );
   };
 
-  if (loading) {
+  if (progressLoading && enrolled) {
     return <CoursePageSkeleton />;
   }
 

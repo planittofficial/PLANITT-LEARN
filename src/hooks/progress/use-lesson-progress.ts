@@ -57,6 +57,9 @@ export function useLessonProgress(lessonId: string, enabled = true) {
         completedAt: result.completed ? new Date().toISOString() : null,
       };
       queryClient.setQueryData(["progress", lessonId], next);
+      if (result.completed) {
+        queryClient.invalidateQueries({ queryKey: ["progress", "course"] });
+      }
     },
   });
 

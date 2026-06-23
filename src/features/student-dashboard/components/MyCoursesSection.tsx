@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { Lock } from "lucide-react";
 
 import { DashboardSkeleton } from "@/components/ui/skeletons";
@@ -19,17 +20,49 @@ import { RecentAchievements } from "@/features/achievements";
 import { useGamification } from "@/features/gamification";
 import { useAchievements } from "@/hooks/achievements/use-achievements";
 import { useAuth } from "@/context/auth-context";
+import { useCourses } from "@/hooks/courses/use-courses";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
+import { fetchCourseProgress } from "@/hooks/progress/use-course-progress";
+import { apiCourseListItemToDefinition } from "@/lib/catalog/map-api-course";
 import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { getRecentlyWatched, getWeeklyActivity } from "@/lib/learning/activity";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { getCourseProgressStats } from "@/lib/learning/course-progress";
+import type { CourseProgress } from "@/lib/learning/progress";
 
 export function MyCoursesSection() {
   const { user } = useAuth();
   const { loading, enrolledIds, isAuthenticated, devPreview, devStandalone } = useEnrollment();
+  const { data: apiCourses, isLoading: coursesLoading } = useCourses();
   const gamification = useGamification(user?.id);
   const achievements = useAchievements(user?.id);
+
+  const catalog = useMemo(() => {
+    if (apiCourses.length > 0) {
+      return apiCourses.map(apiCourseListItemToDefinition);
+    }
+    return COURSE_CATALOG;
+  }, [apiCourses]);
+
+  const enrolledCourses = catalog.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
+  const lockedCourses = catalog.filter((c) => !isEnrolledInCourse(enrolledIds, c.id));
+
+  const progressQueries = useQueries({
+    queries: enrolledCourses.map((course) => ({
+      queryKey: ["progress", "course", course.id, user?.id],
+      queryFn: () => fetchCourseProgress(course.id, user!.id),
+      enabled: Boolean(user?.id) && isAuthenticated,
+      staleTime: 30_000,
+    })),
+  });
+
+  const progressByCourseId = useMemo(() => {
+    const map = new Map<string, CourseProgress>();
+    enrolledCourses.forEach((course, index) => {
+      map.set(course.id, progressQueries[index]?.data ?? {});
+    });
+    return map;
+  }, [enrolledCourses, progressQueries]);
 
   const weeklyDays = useMemo(
     () => (user?.id ? getWeeklyActivity(user.id) : []),
@@ -40,14 +73,11 @@ export function MyCoursesSection() {
     [user?.id],
   );
 
-  if (loading) return <DashboardSkeleton />;
-
-  const enrolledCourses = COURSE_CATALOG.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
-  const lockedCourses = COURSE_CATALOG.filter((c) => !isEnrolledInCourse(enrolledIds, c.id));
+  if (loading || coursesLoading) return <DashboardSkeleton />;
 
   const courseStats = enrolledCourses.map((course) => ({
     course,
-    ...getCourseProgressStats(user?.id, course),
+    ...getCourseProgressStats(user?.id, course, progressByCourseId.get(course.id)),
   }));
 
   const totalLessons = courseStats.reduce((s, c) => s + c.total, 0);

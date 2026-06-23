@@ -23,7 +23,7 @@ export function NextLessonCTA({
   progress,
   stats,
 }: NextLessonCTAProps) {
-  const continueUrl = userId ? getContinueLessonUrl(userId, course) : null;
+  const continueUrl = userId ? getContinueLessonUrl(userId, course, progress) : null;
 
   // Find first incomplete lesson for label
   let nextTitle = "Start your first lesson";

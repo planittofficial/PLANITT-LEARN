@@ -9,10 +9,11 @@ import {
 } from "@/services/enrollment/enrollment.service";
 import {
   getLessonProgress,
+  markLessonManuallyComplete,
   ProgressError,
   recordWatchHeartbeat,
 } from "@/services/progress/progress.service";
-import { parseWatchHeartbeat } from "@/validations/progress.schema";
+import { parseMarkComplete, parseWatchHeartbeat } from "@/validations/progress.schema";
 
 type RouteContext = { params: Promise<{ lessonId: string }> };
 
@@ -57,6 +58,17 @@ export async function POST(request: Request, context: RouteContext) {
   }
 
   const body = await parseJsonBody(request);
+
+  if (parseMarkComplete(body)) {
+    try {
+      const progress = await markLessonManuallyComplete(auth.user.id, lessonId);
+      return ok({ ok: true, progress });
+    } catch (error) {
+      if (error instanceof ProgressError) return fail(error.message, error.status);
+      return fail("Failed to save progress", 500);
+    }
+  }
+
   const payload = parseWatchHeartbeat(body);
   if (!payload) return fail("Invalid progress payload", 400);
 

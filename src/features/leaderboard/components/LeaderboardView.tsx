@@ -72,7 +72,7 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
 }
 
 export function LeaderboardView() {
-  const { entries, isLoading, isMock } = useLeaderboard();
+  const { entries, isLoading } = useLeaderboard();
 
   if (isLoading) {
     return (
@@ -94,13 +94,6 @@ export function LeaderboardView() {
 
   return (
     <div className="space-y-8">
-      {isMock ? (
-        <p className="rounded-lg border border-brand/20 bg-brand/5 px-4 py-2 text-xs text-textSecondary">
-          <Trophy className="mr-1 inline h-3.5 w-3.5 text-brand" />
-          Showing sample rankings — live data appears when the leaderboard API is connected.
-        </p>
-      ) : null}
-
       {/* Top 3 podium */}
       <div className="grid gap-4 sm:grid-cols-3">
         {top3[1] ? <PodiumCard entry={top3[1]} place={1} /> : null}

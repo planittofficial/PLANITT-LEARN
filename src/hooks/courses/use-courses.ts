@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { ROUTES } from "@/constants/routes";
+import { useAuth } from "@/context/auth-context";
 import { withApiCredentials } from "@/lib/security/client-auth";
 import type { ApiCourseListItem } from "@/types/course.types";
 
@@ -17,16 +18,20 @@ async function fetchCourses(): Promise<ApiCourseListItem[]> {
 
 /** Published course catalog from GET /api/v1/courses (DB or static fallback). */
 export function useCourses() {
+  const { isAuthenticated, authReady } = useAuth();
+
   const query = useQuery({
     queryKey: ["courses", "list"],
     queryFn: fetchCourses,
+    enabled: authReady,
     staleTime: 60_000,
   });
 
   return {
     data: query.data ?? [],
-    isLoading: query.isLoading,
+    isLoading: authReady && query.isLoading,
     error: query.error,
     refetch: query.refetch,
+    isAuthenticated,
   };
 }

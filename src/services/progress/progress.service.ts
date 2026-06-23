@@ -94,3 +94,82 @@ export async function recordWatchHeartbeat(
     minWatchPercent,
   };
 }
+
+/** Mark a lesson complete without video watch data (articles, external, YouTube). */
+export async function markLessonManuallyComplete(
+  userId: string,
+  lessonId: string,
+): Promise<LessonProgressState> {
+  if (!getDatabaseUrl()) {
+    throw new ProgressError("Progress tracking requires DATABASE_URL", 503);
+  }
+
+  const ctx = await getLessonContext(lessonId);
+  if (!ctx) throw new ProgressError("Lesson not found", 404);
+
+  const existing = await prisma.lessonProgress.findUnique({
+    where: { userId_lessonId: { userId, lessonId } },
+  });
+
+  const now = new Date();
+  const row = await prisma.lessonProgress.upsert({
+    where: { userId_lessonId: { userId, lessonId } },
+    create: {
+      userId,
+      lessonId,
+      watchedSeconds: 0,
+      watchPercent: 100,
+      completed: true,
+      completedAt: now,
+      lastWatchedAt: now,
+    },
+    update: {
+      completed: true,
+      completedAt: existing?.completedAt ?? now,
+      watchPercent: 100,
+      lastWatchedAt: now,
+    },
+  });
+
+  return {
+    lessonId: row.lessonId,
+    watchedSeconds: row.watchedSeconds,
+    watchPercent: row.watchPercent,
+    completed: row.completed,
+    completedAt: row.completedAt?.toISOString() ?? null,
+  };
+}
+
+export type CourseProgressMap = Record<
+  string,
+  { completed: boolean; completedAt?: string }
+>;
+
+/** All lesson progress for a user within one course. */
+export async function getCourseProgressForUser(
+  userId: string,
+  courseId: string,
+): Promise<CourseProgressMap> {
+  if (!getDatabaseUrl()) return {};
+
+  const lessons = await prisma.lesson.findMany({
+    where: { module: { courseId, published: true }, published: true },
+    select: { id: true },
+  });
+
+  if (lessons.length === 0) return {};
+
+  const lessonIds = lessons.map((lesson) => lesson.id);
+  const rows = await prisma.lessonProgress.findMany({
+    where: { userId, lessonId: { in: lessonIds } },
+  });
+
+  const progress: CourseProgressMap = {};
+  for (const row of rows) {
+    progress[row.lessonId] = {
+      completed: row.completed,
+      completedAt: row.completedAt?.toISOString(),
+    };
+  }
+  return progress;
+}
