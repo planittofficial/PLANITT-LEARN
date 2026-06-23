@@ -1,8 +1,9 @@
 "use client";
 
-import { Film, Loader2, Upload, Video } from "lucide-react";
+import { ExternalLink, Film, Link2, Loader2, Upload, Video } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
+import { isYoutubeUrl, toYoutubeEmbedUrl } from "@/lib/video/video-url";
 import { cn } from "@/lib/utils";
 
 type VideoUploadPanelProps = {
@@ -30,6 +31,8 @@ export function VideoUploadPanel({
 }: VideoUploadPanelProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const youtubeEmbedUrl = toYoutubeEmbedUrl(videoUrl);
+  const isYoutube = isYoutubeUrl(videoUrl);
 
   const readDurationFromFile = useCallback(
     (file: File) => {
@@ -66,7 +69,7 @@ export function VideoUploadPanel({
           <div>
             <h2 className="font-semibold text-textPrimary">Video content</h2>
             <p className="text-xs text-textSecondary">
-              Upload MP4/WebM or paste a hosted URL. Duration is auto-detected from the file.
+              Upload MP4/WebM, or paste a YouTube or hosted video link.
             </p>
           </div>
         </div>
@@ -129,7 +132,16 @@ export function VideoUploadPanel({
         {/* Preview + metadata */}
         <div className="space-y-4">
           <div className="overflow-hidden rounded-xl border border-borderSubtle bg-black/60">
-            {videoUrl ? (
+            {youtubeEmbedUrl ? (
+              <iframe
+                key={youtubeEmbedUrl}
+                src={youtubeEmbedUrl}
+                title="YouTube preview"
+                className="aspect-video w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : videoUrl ? (
               <video
                 key={videoUrl}
                 src={videoUrl}
@@ -145,20 +157,44 @@ export function VideoUploadPanel({
             ) : (
               <div className="flex aspect-video flex-col items-center justify-center gap-2 text-textMuted">
                 <Film className="h-10 w-10 opacity-40" />
-                <p className="text-xs">No video yet — upload to preview</p>
+                <p className="text-xs">No video yet — upload or paste a link to preview</p>
               </div>
             )}
           </div>
 
           <label className="block text-sm">
-            <span className="text-textSecondary">Video URL (hosted link)</span>
+            <span className="flex items-center gap-2 text-textSecondary">
+              <Link2 className="h-4 w-4 shrink-0 text-violet-400" />
+              YouTube or hosted video URL
+            </span>
             <input
               className="mt-1 w-full rounded-lg border border-borderSubtle bg-background px-3 py-2 text-sm"
               value={videoUrl}
               onChange={(e) => onVideoUrlChange(e.target.value)}
-              placeholder="https://…"
+              placeholder="https://www.youtube.com/watch?v=… or https://youtu.be/…"
             />
+            <p className="mt-1.5 text-xs text-textMuted">
+              Supports YouTube watch, share, and Shorts links, or any direct MP4/WebM URL.
+            </p>
           </label>
+
+          {isYoutube && videoUrl.trim() ? (
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2.5">
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-textPrimary">YouTube link attached</p>
+                <p className="truncate text-xs text-textMuted">{videoUrl.trim()}</p>
+              </div>
+              <a
+                href={videoUrl.trim()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-red-500 hover:underline"
+              >
+                Open
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          ) : null}
 
           <div className="grid grid-cols-2 gap-3">
             <label className="block text-sm">

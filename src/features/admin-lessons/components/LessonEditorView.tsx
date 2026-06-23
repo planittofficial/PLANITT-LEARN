@@ -30,7 +30,7 @@ const LESSON_TYPES: Array<{
   {
     kind: "video",
     label: "Video",
-    description: "Upload or link a video lecture",
+    description: "Upload, YouTube link, or hosted video",
     icon: Video,
   },
   {

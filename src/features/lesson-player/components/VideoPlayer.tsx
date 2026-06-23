@@ -4,6 +4,7 @@ import { useCallback, useRef } from "react";
 
 import { useLessonProgress } from "@/hooks/progress/use-lesson-progress";
 import { saveLessonComplete } from "@/lib/learning/progress";
+import { toYoutubeEmbedUrl } from "@/lib/video/video-url";
 
 type VideoPlayerProps = {
   lessonId: string;
@@ -63,14 +64,9 @@ export function VideoPlayer({
     });
   };
 
-  const isYoutube =
-    videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
+  const embedUrl = toYoutubeEmbedUrl(videoUrl);
 
-  if (isYoutube) {
-    const embedUrl = videoUrl.includes("embed")
-      ? videoUrl
-      : videoUrl.replace("watch?v=", "embed/");
-
+  if (embedUrl) {
     return (
       <iframe
         src={embedUrl}
