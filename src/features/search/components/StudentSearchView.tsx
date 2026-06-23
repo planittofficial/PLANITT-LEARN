@@ -79,14 +79,14 @@ export function StudentSearchView() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Try forex, psychology, risk management…"
-            className="w-full rounded-xl border border-borderSubtle bg-black/30 py-3.5 pl-12 pr-12 text-sm text-textPrimary outline-none ring-brand/30 placeholder:text-textMuted focus:border-brand/40 focus:ring-2"
+            className="w-full rounded-xl border border-borderSubtle bg-overlay-medium py-3.5 pl-12 pr-12 text-sm text-textPrimary outline-none ring-brand/30 placeholder:text-textMuted focus:border-brand/40 focus:ring-2"
             autoFocus
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-textMuted hover:bg-white/5 hover:text-textPrimary"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-textMuted hover:bg-overlay-hover hover:text-textPrimary"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
@@ -122,7 +122,7 @@ export function StudentSearchView() {
                   setQuery(term);
                   submitSearch(term);
                 }}
-                className="rounded-full border border-borderSubtle bg-black/20 px-3 py-1.5 text-sm text-textSecondary hover:border-brand/30 hover:text-brand"
+                className="rounded-full border border-borderSubtle bg-overlay-subtle px-3 py-1.5 text-sm text-textSecondary hover:border-brand/30 hover:text-brand"
               >
                 {term}
               </button>
@@ -150,7 +150,7 @@ export function StudentSearchView() {
                     "rounded-full px-3 py-1.5 text-xs font-medium transition",
                     filter === f
                       ? "bg-brand/15 text-brand"
-                      : "bg-white/5 text-textMuted hover:text-textSecondary",
+                      : "bg-overlay-hover text-textMuted hover:text-textSecondary",
                   )}
                 >
                   {label}

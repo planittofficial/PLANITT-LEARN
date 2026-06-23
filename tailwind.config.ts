@@ -13,6 +13,13 @@ const config: Config = {
         textPrimary: "var(--text-primary)",
         textSecondary: "var(--text-secondary)",
         textMuted: "var(--text-muted)",
+        overlay: {
+          subtle: "var(--overlay-subtle)",
+          medium: "var(--overlay-medium)",
+          strong: "var(--overlay-strong)",
+          hover: "var(--overlay-hover)",
+          faint: "var(--overlay-faint)",
+        },
       },
     },
   },

@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export function DashboardSkeleton() {
   return (
     <div className="space-y-8 animate-in fade-in">
-      <div className="h-48 rounded-2xl bg-white/5" />
+      <div className="h-48 rounded-2xl bg-overlay-hover" />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
           <Skeleton key={i} className="h-24 rounded-2xl" />

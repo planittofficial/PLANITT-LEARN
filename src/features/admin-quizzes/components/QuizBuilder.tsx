@@ -101,7 +101,7 @@ export function QuizBuilder({
                   className="accent-violet-500"
                 />
                 <input
-                  className="flex-1 rounded-xl border border-borderSubtle bg-black/20 px-3 py-2 outline-none focus:border-violet-500/40"
+                  className="flex-1 rounded-xl border border-borderSubtle bg-overlay-subtle px-3 py-2 outline-none focus:border-violet-500/40"
                   value={option}
                   onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
                   placeholder={`Option ${oIndex + 1}`}

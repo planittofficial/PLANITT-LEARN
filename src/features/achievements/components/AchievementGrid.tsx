@@ -54,7 +54,7 @@ export function AchievementGrid({ achievements, className }: AchievementGridProp
                 "rounded-full px-3 py-1.5 text-xs font-medium transition",
                 filter === cat
                   ? "bg-brand/15 text-brand"
-                  : "bg-white/5 text-textMuted hover:text-textSecondary",
+                  : "bg-overlay-hover text-textMuted hover:text-textSecondary",
               )}
             >
               {cat === "all" ? "All" : CATEGORY_LABELS[cat]} ({count})

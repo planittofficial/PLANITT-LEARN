@@ -103,7 +103,7 @@ export function CourseCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
           <span className="text-3xl drop-shadow-lg">{courseIcon(course.category)}</span>
-          <span className="rounded-md bg-black/40 px-2 py-0.5 text-xs font-bold text-white/95 backdrop-blur-sm">
+          <span className="rounded-md bg-overlay-medium px-2 py-0.5 text-xs font-bold text-white/95 backdrop-blur-sm">
             {courseInitials(course.title)}
           </span>
         </div>

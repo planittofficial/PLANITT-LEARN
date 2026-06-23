@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 
 import { AdminSidebar } from "@/components/layout/admin/AdminSidebar";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -22,14 +23,15 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={() => setMobileNavOpen(true)}
-              className="rounded-lg p-2 text-textSecondary hover:bg-white/5 hover:text-textPrimary"
+              className="rounded-lg p-2 text-textSecondary hover:bg-overlay-hover hover:text-textPrimary"
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <p className="text-sm font-semibold">
+            <p className="flex-1 text-sm font-semibold">
               Planitt <span className="text-violet-400">Console</span>
             </p>
+            <ThemeToggle />
           </div>
         </header>
 

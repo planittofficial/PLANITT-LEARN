@@ -156,7 +156,7 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
                   "flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition",
                   selected
                     ? "border-violet-500 bg-violet-500/10 ring-1 ring-violet-500/30"
-                    : "border-borderSubtle hover:border-violet-500/30 hover:bg-white/[0.02]",
+                    : "border-borderSubtle hover:border-violet-500/30 hover:bg-overlay-faint",
                 )}
               >
                 <Icon className={cn("h-5 w-5", selected ? "text-violet-400" : "text-textMuted")} />

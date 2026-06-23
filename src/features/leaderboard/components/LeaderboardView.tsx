@@ -47,7 +47,7 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
       <span
         className={cn(
           "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold",
-          entry.rank <= 3 ? "bg-brand/15 text-brand" : "bg-white/5 text-textMuted",
+          entry.rank <= 3 ? "bg-brand/15 text-brand" : "bg-overlay-hover text-textMuted",
         )}
       >
         {entry.rank}

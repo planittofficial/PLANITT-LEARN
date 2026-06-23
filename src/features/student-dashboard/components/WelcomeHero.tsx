@@ -76,7 +76,7 @@ export function WelcomeHero({
           </div>
         </div>
 
-        <div className="rounded-xl border border-borderSubtle/80 bg-black/20 p-4 backdrop-blur-sm">
+        <div className="rounded-xl border border-borderSubtle/80 bg-overlay-subtle p-4 backdrop-blur-sm">
           <XpBar xp={xp} />
         </div>
       </div>

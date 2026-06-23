@@ -23,7 +23,7 @@ export function RecentlyWatched({ items, className }: RecentlyWatchedProps) {
           <li key={item.lessonId}>
             <Link
               href={ROUTES.STUDENT.lesson(item.courseId, item.moduleId, item.lessonId)}
-              className="group flex items-center gap-3 rounded-xl border border-transparent p-3 transition hover:border-borderSubtle hover:bg-white/[0.02]"
+              className="group flex items-center gap-3 rounded-xl border border-transparent p-3 transition hover:border-borderSubtle hover:bg-overlay-faint"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
                 <Play className="h-4 w-4" />

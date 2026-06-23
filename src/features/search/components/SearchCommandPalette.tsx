@@ -96,7 +96,7 @@ export function SearchCommandPalette({ open, onClose }: SearchCommandPaletteProp
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-textMuted hover:bg-white/5 hover:text-textPrimary"
+            className="rounded-lg p-1 text-textMuted hover:bg-overlay-hover hover:text-textPrimary"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -119,7 +119,7 @@ export function SearchCommandPalette({ open, onClose }: SearchCommandPaletteProp
                       setQuery(term);
                       submitSearch(term);
                     }}
-                    className="rounded-full border border-borderSubtle bg-black/20 px-3 py-1 text-xs text-textSecondary hover:border-brand/30 hover:text-brand"
+                    className="rounded-full border border-borderSubtle bg-overlay-subtle px-3 py-1 text-xs text-textSecondary hover:border-brand/30 hover:text-brand"
                   >
                     {term}
                   </button>
@@ -173,8 +173,8 @@ export function SearchCommandPalette({ open, onClose }: SearchCommandPaletteProp
 
         <div className="flex items-center justify-between border-t border-borderSubtle px-4 py-2.5 text-[10px] text-textMuted">
           <span>
-            <kbd className="rounded border border-borderSubtle bg-black/30 px-1">↑↓</kbd> navigate{" "}
-            <kbd className="ml-1 rounded border border-borderSubtle bg-black/30 px-1">↵</kbd> open
+            <kbd className="rounded border border-borderSubtle bg-overlay-medium px-1">↑↓</kbd> navigate{" "}
+            <kbd className="ml-1 rounded border border-borderSubtle bg-overlay-medium px-1">↵</kbd> open
           </span>
           <Link
             href={`${ROUTES.STUDENT.SEARCH}?q=${encodeURIComponent(query)}`}

@@ -33,7 +33,7 @@ const TYPE_COLORS: Record<NotificationType, string> = {
   lesson_complete: "text-emerald-400 bg-emerald-500/15",
   reminder: "text-sky-400 bg-sky-500/15",
   leaderboard: "text-brand bg-brand/15",
-  system: "text-textSecondary bg-white/10",
+  system: "text-textSecondary bg-overlay-strong",
 };
 
 type NotificationItemProps = {
@@ -106,7 +106,7 @@ export function NotificationItem({
       <Link
         href={notification.href}
         onClick={handleClick}
-        className="block hover:bg-white/[0.02]"
+        className="block hover:bg-overlay-faint"
       >
         {content}
       </Link>
@@ -117,7 +117,7 @@ export function NotificationItem({
     <button
       type="button"
       onClick={handleClick}
-      className="block w-full text-left hover:bg-white/[0.02]"
+      className="block w-full text-left hover:bg-overlay-faint"
     >
       {content}
     </button>

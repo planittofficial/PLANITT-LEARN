@@ -42,7 +42,7 @@ export function LeaderboardAdminView() {
                 className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold ${
                   row.rank <= 3
                     ? "bg-gradient-to-br from-amber-500/20 to-violet-500/20 text-amber-300"
-                    : "bg-white/5 text-textMuted"
+                    : "bg-overlay-hover text-textMuted"
                 }`}
               >
                 #{row.rank}

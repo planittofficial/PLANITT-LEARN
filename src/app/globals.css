@@ -2,7 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light theme (default when .dark is not on <html>) */
 :root {
+  color-scheme: light;
+  --bg-base: #f4f4f5;
+  --bg-surface: #ffffff;
+  --border-subtle: #e4e4e7;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  --brand: #00a884;
+  --overlay-subtle: rgba(0, 0, 0, 0.04);
+  --overlay-medium: rgba(0, 0, 0, 0.06);
+  --overlay-strong: rgba(0, 0, 0, 0.08);
+  --overlay-hover: rgba(0, 0, 0, 0.05);
+  --overlay-faint: rgba(0, 0, 0, 0.02);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --scrollbar-thumb-hover: #a1a1aa;
+}
+
+.dark {
+  color-scheme: dark;
   --bg-base: #0a0a0b;
   --bg-surface: #141416;
   --border-subtle: #27272a;
@@ -10,10 +30,18 @@
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --brand: #00d09c;
+  --overlay-subtle: rgba(0, 0, 0, 0.3);
+  --overlay-medium: rgba(0, 0, 0, 0.4);
+  --overlay-strong: rgba(255, 255, 255, 0.1);
+  --overlay-hover: rgba(255, 255, 255, 0.05);
+  --overlay-faint: rgba(255, 255, 255, 0.02);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --scrollbar-thumb-hover: #3f3f46;
 }
 
 body {
   @apply bg-base text-textPrimary antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 @layer utilities {
@@ -23,6 +51,10 @@ body {
 
   .fade-in {
     animation-name: fadeIn;
+  }
+
+  .shadow-theme {
+    box-shadow: var(--shadow-soft);
   }
 }
 
@@ -94,7 +126,6 @@ body {
   @apply mb-4 list-inside list-disc space-y-1 text-sm text-textSecondary;
 }
 
-/* Custom scrollbar for dark theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -110,5 +141,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--scrollbar-thumb-hover);
 }

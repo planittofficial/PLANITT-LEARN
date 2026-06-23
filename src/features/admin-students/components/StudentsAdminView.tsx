@@ -47,7 +47,7 @@ export function StudentsAdminView() {
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-textMuted" />
           <input
-            className="w-full rounded-xl border border-borderSubtle bg-black/20 py-2.5 pl-10 pr-3 text-sm outline-none focus:border-violet-500/40 focus:ring-2 focus:ring-violet-500/20"
+            className="w-full rounded-xl border border-borderSubtle bg-overlay-subtle py-2.5 pl-10 pr-3 text-sm outline-none focus:border-violet-500/40 focus:ring-2 focus:ring-violet-500/20"
             placeholder="Search by name or email"
             value={q}
             onChange={(e) => setQ(e.target.value)}

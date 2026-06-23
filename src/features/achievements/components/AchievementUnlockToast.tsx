@@ -39,7 +39,7 @@ export function AchievementUnlockToast() {
               dismissNotifications();
               setVisible(false);
             }}
-            className="rounded-lg p-1 text-textMuted hover:bg-white/5 hover:text-textPrimary"
+            className="rounded-lg p-1 text-textMuted hover:bg-overlay-hover hover:text-textPrimary"
             aria-label="Dismiss"
           >
             <X className="h-4 w-4" />

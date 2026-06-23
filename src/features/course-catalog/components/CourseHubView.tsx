@@ -107,7 +107,7 @@ export function CourseHubView({
           )}
         />
         <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:p-8">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-black/30 text-4xl backdrop-blur-sm">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-overlay-medium text-4xl backdrop-blur-sm">
             {courseIcon(course.category)}
           </div>
           <div className="flex-1">
@@ -188,7 +188,7 @@ export function CourseHubView({
                 <button
                   type="button"
                   onClick={() => toggleModule(module.id)}
-                  className="flex w-full items-start gap-4 p-5 text-left transition hover:bg-white/[0.02]"
+                  className="flex w-full items-start gap-4 p-5 text-left transition hover:bg-overlay-faint"
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-sm font-bold text-brand">
                     {moduleIndex + 1}
@@ -222,7 +222,7 @@ export function CourseHubView({
                         <li key={lesson.id}>
                           <Link
                             href={ROUTES.STUDENT.lesson(courseId, module.id, lesson.id)}
-                            className="group flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-white/5"
+                            className="group flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-overlay-hover"
                           >
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center text-xs text-textMuted">
                               {lessonIndex + 1}

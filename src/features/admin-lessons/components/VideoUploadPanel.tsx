@@ -94,7 +94,7 @@ export function VideoUploadPanel({
             "flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-all",
             dragOver
               ? "border-violet-500 bg-violet-500/10 scale-[1.01]"
-              : "border-borderSubtle hover:border-violet-500/40 hover:bg-white/[0.02]",
+              : "border-borderSubtle hover:border-violet-500/40 hover:bg-overlay-faint",
             uploading && "pointer-events-none opacity-60",
           )}
         >

@@ -3,12 +3,12 @@ import { cn } from "@/lib/utils";
 type BadgeVariant = "default" | "brand" | "success" | "warning" | "muted" | "locked";
 
 const VARIANTS: Record<BadgeVariant, string> = {
-  default: "bg-white/10 text-textSecondary",
+  default: "bg-overlay-strong text-textSecondary",
   brand: "bg-brand/15 text-brand",
   success: "bg-emerald-500/15 text-emerald-400",
   warning: "bg-amber-500/15 text-amber-400",
-  muted: "bg-white/5 text-textMuted",
-  locked: "bg-white/5 text-textMuted border border-borderSubtle",
+  muted: "bg-overlay-hover text-textMuted",
+  locked: "bg-overlay-hover text-textMuted border border-borderSubtle",
 };
 
 type BadgeProps = {

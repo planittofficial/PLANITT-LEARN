@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { ROUTES } from "@/constants/routes";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -54,7 +55,7 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
           <button
             type="button"
             onClick={onMobileClose}
-            className="rounded-lg p-2 text-textMuted hover:bg-white/5 lg:hidden"
+            className="rounded-lg p-2 text-textMuted hover:bg-overlay-hover lg:hidden"
             aria-label="Close menu"
           >
             <X className="h-5 w-5" />
@@ -74,7 +75,7 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
                 active
                   ? "bg-violet-500/15 text-violet-300 shadow-sm shadow-violet-500/10"
-                  : "text-textSecondary hover:bg-white/5 hover:text-textPrimary",
+                  : "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
               )}
             >
               <item.icon className={cn("h-4 w-4", active ? "text-violet-400" : "")} />
@@ -84,8 +85,12 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
         })}
       </nav>
 
-      <div className="border-t border-borderSubtle p-4">
-        <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-widest text-textMuted">
+      <div className="border-t border-borderSubtle p-4 space-y-3">
+        <div className="flex items-center justify-between rounded-xl border border-borderSubtle bg-overlay-subtle px-3 py-2">
+          <span className="text-xs text-textMuted">Theme</span>
+          <ThemeToggle showLabel />
+        </div>
+        <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-textMuted">
           Quick tip
         </p>
         <p className="rounded-xl border border-violet-500/15 bg-violet-500/5 px-3 py-2.5 text-xs leading-relaxed text-textMuted">

@@ -29,7 +29,7 @@ export function WeeklyProgressChart({ days, className }: WeeklyProgressChartProp
                   "w-full max-w-[2rem] rounded-t-lg transition-all duration-500",
                   day.lessonsCompleted > 0
                     ? "bg-gradient-to-t from-brand to-emerald-400"
-                    : "bg-white/5",
+                    : "bg-overlay-hover",
                 )}
                 style={{ height: `${Math.max(8, (day.lessonsCompleted / max) * 100)}%` }}
                 title={`${day.lessonsCompleted} lessons`}

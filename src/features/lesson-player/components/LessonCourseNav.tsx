@@ -83,7 +83,7 @@ export function LessonCourseNav({
               <button
                 type="button"
                 onClick={() => toggle(mod.id)}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-left text-sm transition hover:bg-white/5"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-left text-sm transition hover:bg-overlay-hover"
               >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand/10 text-xs font-bold text-brand">
                   {modIndex + 1}
@@ -114,7 +114,7 @@ export function LessonCourseNav({
                             "group flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition",
                             active
                               ? "bg-brand/10 text-brand"
-                              : "hover:bg-white/5",
+                              : "hover:bg-overlay-hover",
                           )}
                         >
                           {done ? (

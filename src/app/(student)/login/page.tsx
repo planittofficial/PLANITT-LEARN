@@ -6,7 +6,9 @@ import Script from "next/script";
 import { Suspense, useEffect, useRef, useState } from "react";
 
 import { ROUTES } from "@/constants/routes";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/context/auth-context";
+import { useTheme } from "@/context/theme-context";
 
 type GoogleCredentialResponse = { credential?: string };
 
@@ -34,6 +36,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const { loginWithGoogleIdToken, loginAsDevUser, authReady, isAuthenticated, devStandalone } =
     useAuth();
+  const { theme, mounted } = useTheme();
   const buttonHostRef = useRef<HTMLDivElement | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [error, setError] = useState("");
@@ -68,11 +71,11 @@ function LoginForm() {
       },
     });
     window.google.accounts.id.renderButton(buttonHostRef.current, {
-      theme: "filled_black",
+      theme: mounted && theme === "light" ? "outline" : "filled_black",
       size: "large",
       width: 320,
     });
-  }, [devStandalone, loginWithGoogleIdToken, router, safeNext, scriptReady]);
+  }, [devStandalone, loginWithGoogleIdToken, router, safeNext, scriptReady, theme, mounted]);
 
   const clientConfigured = Boolean(process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID);
 
@@ -94,7 +97,11 @@ function LoginForm() {
           onReady={() => setScriptReady(true)}
         />
       ) : null}
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4">
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-8">
+        <div className="absolute right-4 top-4">
+          <ThemeToggle />
+        </div>
+        <div className="rounded-2xl border border-borderSubtle bg-surface p-6 shadow-theme sm:p-8">
         <h1 className="text-2xl font-bold">Sign in to Planitt Learn</h1>
 
         {devStandalone ? (
@@ -138,6 +145,7 @@ function LoginForm() {
         <Link href={ROUTES.STUDENT.HOME} className="mt-8 text-sm text-textMuted hover:text-brand">
           ← Back
         </Link>
+        </div>
       </div>
     </>
   );

@@ -102,8 +102,8 @@ export function AchievementBadge({
             "flex shrink-0 items-center justify-center rounded-xl border",
             compact ? "h-10 w-10" : "h-12 w-12",
             unlocked
-              ? "border-white/10 bg-black/30 text-brand"
-              : "border-borderSubtle bg-black/40 text-textMuted",
+              ? "border-white/10 bg-overlay-medium text-brand"
+              : "border-borderSubtle bg-overlay-medium text-textMuted",
           )}
         >
           {unlocked ? (

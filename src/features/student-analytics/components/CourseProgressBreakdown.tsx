@@ -35,7 +35,7 @@ export function CourseProgressBreakdown({ courses }: CourseProgressBreakdownProp
           <li key={course.courseId}>
             <Link
               href={ROUTES.STUDENT.course(course.courseId)}
-              className="group block rounded-xl border border-transparent p-3 transition hover:border-borderSubtle hover:bg-white/[0.02]"
+              className="group block rounded-xl border border-transparent p-3 transition hover:border-borderSubtle hover:bg-overlay-faint"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">

@@ -11,7 +11,7 @@ const VARIANTS = {
   secondary:
     "border border-borderSubtle bg-surface text-textSecondary hover:border-violet-500/30 hover:text-textPrimary",
   danger: "border border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500/15",
-  ghost: "text-textSecondary hover:bg-white/5 hover:text-textPrimary",
+  ghost: "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
 };
 
 const SIZES = {
