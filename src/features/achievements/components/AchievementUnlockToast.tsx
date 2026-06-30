@@ -8,7 +8,7 @@ import { ACHIEVEMENT_ICONS } from "@/features/achievements/components/Achievemen
 import { ROUTES } from "@/constants/routes";
 import { useAchievements } from "@/hooks/achievements/use-achievements";
 import { useAuth } from "@/context/auth-context";
-import type { AchievementRarity } from "@/lib/learning/achievements";
+import type { AchievementProgress, AchievementRarity } from "@/lib/learning/achievements";
 import { cn } from "@/lib/utils";
 
 const AUTO_DISMISS_MS = 6500;
@@ -75,7 +75,7 @@ export function AchievementUnlockToast() {
   const [progress, setProgress] = useState(100);
   const [extraCount, setExtraCount] = useState(0);
 
-  const displayedRef = useRef(pendingNotifications[0] ?? null);
+  const displayedRef = useRef<AchievementProgress | null>(pendingNotifications[0] ?? null);
   const remainingMsRef = useRef(AUTO_DISMISS_MS);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

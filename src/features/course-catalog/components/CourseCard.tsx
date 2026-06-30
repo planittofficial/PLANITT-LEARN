@@ -82,12 +82,24 @@ export function CourseCard({
         ? "Continue Learning"
         : "Start Learning";
 
+  const getTradingTag = (category: string) => {
+    switch (category) {
+      case "Indian Stocks": return { label: "Liquidity: High 💸", color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" };
+      case "Forex": return { label: "Spread: Tight 💱", color: "text-sky-400 border-sky-500/20 bg-sky-500/5" };
+      case "F&O": return { label: "Leverage: Active 📊", color: "text-violet-400 border-violet-500/20 bg-violet-500/5" };
+      case "Crypto": return { label: "Volatility: High ⚡", color: "text-amber-400 border-amber-500/20 bg-amber-500/5" };
+      case "Psychology": return { label: "Risk Management 🧠", color: "text-rose-400 border-rose-500/20 bg-rose-500/5" };
+      default: return { label: "Execution: Live ⚡", color: "text-brand border-brand/20 bg-brand/5" };
+    }
+  };
+  const tradingTag = getTradingTag(course.category);
+
   const inner = (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface transition-all duration-300",
+        "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface transition-all duration-300 card-trading",
         enrolled
-          ? "card-interactive border-borderSubtle hover:border-brand/40 hover:shadow-xl hover:shadow-brand/10"
+          ? "border-borderSubtle hover:border-brand/40 hover:shadow-xl hover:shadow-brand/10"
           : "border-borderSubtle/60 opacity-95 hover:opacity-100",
         variant === "compact" && "flex-row",
       )}
@@ -134,6 +146,9 @@ export function CourseCard({
           <Badge variant="brand">{course.category}</Badge>
           <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase", levelStyle)}>
             {course.level}
+          </span>
+          <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase", tradingTag.color)}>
+            {tradingTag.label}
           </span>
           <div className="ml-auto">{statusBadge}</div>
         </div>

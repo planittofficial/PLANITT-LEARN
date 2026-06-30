@@ -12,6 +12,7 @@ export type PaymentTransaction = {
 
 export function expandComboEnrollments(planIds: Set<string>): Set<string> {
   if (planIds.has(COMBO_PLAN_ID)) {
+    planIds.delete(COMBO_PLAN_ID);
     for (const id of ALL_COURSE_IDS) {
       planIds.add(id);
     }
