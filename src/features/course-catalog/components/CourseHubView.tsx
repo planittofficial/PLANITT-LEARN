@@ -240,6 +240,16 @@ export function CourseHubView({
                         </li>
                       );
                     })}
+                    {moduleStats.total > 0 && moduleStats.completed === moduleStats.total ? (
+                      <li className="px-3 pb-3 pt-2">
+                        <Link
+                          href={ROUTES.STUDENT.moduleTest(courseId, module.id)}
+                          className="inline-flex w-full items-center justify-center rounded-xl border border-brand/30 bg-brand/10 px-4 py-2.5 text-sm font-semibold text-brand transition hover:border-brand/40 hover:bg-brand/15"
+                        >
+                          Take module test →
+                        </Link>
+                      </li>
+                    ) : null}
                   </ul>
                 ) : null}
               </section>

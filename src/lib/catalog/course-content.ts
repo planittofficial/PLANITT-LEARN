@@ -54,12 +54,37 @@ export const COURSE_CATALOG_DATA: CourseDefinition[] = [
       "Portfolio and swing-trading execution discipline",
     ],
     modules: [
-      moduleWithIntro(
-        "in-m1",
-        "Stock Market Foundations",
-        "NSE/BSE structure, indices, and how equities trade in India.",
-        "Welcome to Indian equities",
-      ),
+      {
+        id: "in-m1",
+        title: "Stock Market Foundations",
+        summary: "NSE/BSE structure, indices, and how equities trade in India.",
+        lessons: [
+          articleLesson(
+            "in-m1-l1",
+            "Welcome to Indian equities",
+            "What you’ll learn and how to approach this course",
+            "## Welcome\n\nIn this module we build the *mental model* for how Indian stocks trade.\n\n### In this lesson\n- What NSE vs BSE means\n- How orders reach the exchange\n- Why liquidity and spread matter\n\n### Outcome\nBy the end, you’ll be able to describe the flow: **broker → exchange → trade**.",
+          ),
+          articleLesson(
+            "in-m1-l2",
+            "NSE vs BSE and market structure",
+            "How Indian exchanges are organized and how trades match",
+            "## NSE vs BSE\n\nBoth are exchanges where orders match, but liquidity and active symbols vary.\n\n### Key concepts\n- Order book (bid/ask)\n- Market makers vs natural liquidity\n- Trading hours and auction sessions\n\n### Quick check\nExplain the difference between **exchange** and **broker** in one line.",
+          ),
+          articleLesson(
+            "in-m1-l3",
+            "Index basics: NIFTY, BANKNIFTY, SENSEX",
+            "What indices represent and how they’re used by traders",
+            "## Indices\n\nAn index is a basket of stocks meant to represent a segment of the market.\n\n### Why indices matter\n- Benchmarking performance\n- Sector strength signals\n- Derivatives liquidity around index products\n\n### Practical\nTrack daily move of NIFTY and one sector index for a week.",
+          ),
+          articleLesson(
+            "in-m1-l4",
+            "Order types: Market, Limit, Stop-loss",
+            "The three order types you must master before trading",
+            "## Order types\n\n### Market\nExecutes immediately at best available price.\n\n### Limit\nExecutes at your price *or better*.\n\n### Stop-loss (SL)\nBecomes a market/limit order after trigger.\n\n### Rule of thumb\nUse **limit** for planned entries, and **stop-loss** for risk control.",
+          ),
+        ],
+      },
       moduleWithIntro(
         "in-m2",
         "Chart Reading & Candlesticks",

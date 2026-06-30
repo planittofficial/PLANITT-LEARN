@@ -42,7 +42,7 @@ const RARITY_STYLES: Record<
 > = {
   common: {
     ring: "border-borderSubtle",
-    bg: "from-white/5 to-white/[0.02]",
+    bg: "from-overlay-faint to-overlay-subtle",
     glow: "",
   },
   rare: {
@@ -89,7 +89,7 @@ export function AchievementBadge({
       className={cn(
         "group relative overflow-hidden rounded-2xl border bg-gradient-to-br transition",
         unlocked ? rarity.ring : "border-borderSubtle/80",
-        unlocked ? rarity.bg : "from-surface to-black/20",
+        unlocked ? rarity.bg : "from-surface to-overlay-faint",
         unlocked && rarity.glow,
         unlocked ? "shadow-lg" : "opacity-90",
         compact ? "p-3" : "p-4",
@@ -102,7 +102,7 @@ export function AchievementBadge({
             "flex shrink-0 items-center justify-center rounded-xl border",
             compact ? "h-10 w-10" : "h-12 w-12",
             unlocked
-              ? "border-white/10 bg-overlay-medium text-brand"
+              ? "border-borderSubtle bg-brand/10 text-brand"
               : "border-borderSubtle bg-overlay-medium text-textMuted",
           )}
         >
@@ -125,7 +125,7 @@ export function AchievementBadge({
               {def.title}
             </p>
             {unlocked ? (
-              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-400">
+              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
                 Unlocked
               </span>
             ) : null}
