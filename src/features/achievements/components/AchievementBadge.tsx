@@ -21,7 +21,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import type { AchievementDef, AchievementRarity } from "@/lib/learning/achievements";
 import { cn } from "@/lib/utils";
 
-const ICONS: Record<AchievementDef["icon"], LucideIcon> = {
+export const ACHIEVEMENT_ICONS: Record<AchievementDef["icon"], LucideIcon> = {
   flame: Flame,
   book: BookOpen,
   star: Star,
@@ -81,7 +81,7 @@ export function AchievementBadge({
   compact = false,
   className,
 }: AchievementBadgeProps) {
-  const Icon = ICONS[def.icon];
+  const Icon = ACHIEVEMENT_ICONS[def.icon];
   const rarity = RARITY_STYLES[def.rarity];
 
   return (

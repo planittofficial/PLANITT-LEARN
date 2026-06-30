@@ -112,6 +112,55 @@ body {
   animation: shimmer 3s ease-in-out infinite;
 }
 
+@keyframes achievementMedallionPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  65% {
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes achievementModalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes achievementSparkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.1);
+  }
+}
+
+.achievement-medallion-pop {
+  animation: achievementMedallionPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.achievement-modal-enter {
+  animation: achievementModalEnter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.achievement-sparkle {
+  animation: achievementSparkle 2.4s ease-in-out infinite;
+}
+
 .prose-lesson h2 {
   @apply mb-3 mt-6 text-lg font-semibold text-textPrimary;
 }
