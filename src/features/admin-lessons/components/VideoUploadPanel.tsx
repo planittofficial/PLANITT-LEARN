@@ -60,7 +60,7 @@ export function VideoUploadPanel({
   );
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/5 via-surface to-base">
+    <section className="overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/5 via-surface to-appBase">
       <div className="border-b border-borderSubtle/60 px-5 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-400">

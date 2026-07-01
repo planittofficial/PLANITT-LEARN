@@ -6,7 +6,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        base: "var(--bg-base)",
+        appBase: "var(--bg-base)",
         surface: "var(--bg-surface)",
         brand: "var(--brand)",
         borderSubtle: "var(--border-subtle)",

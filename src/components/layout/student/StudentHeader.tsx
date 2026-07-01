@@ -34,7 +34,7 @@ function StockTicker() {
         {tickerItems.map((item, index) => (
           <span key={index} className="ticker-item">
             <span className="font-bold text-textPrimary">{item.name}</span>
-            <span className="text-emerald-400 font-bold">
+            <span className="text-emerald-600 dark:text-emerald-400 font-bold">
               {item.change}
             </span>
           </span>

@@ -42,7 +42,7 @@
 }
 
 body {
-  @apply bg-base text-textPrimary antialiased;
+  @apply bg-appBase text-textPrimary antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -298,6 +298,24 @@ body {
   100% {
     transform: translate3d(-100%, 0, 0);
   }
+}
+
+/* Premium Trading Indicators & Glows */
+.trading-glow-green {
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.dark .trading-glow-green {
+  box-shadow: 0 0 16px rgba(0, 208, 156, 0.2);
+  border-color: rgba(0, 208, 156, 0.3);
+}
+
+.trading-grid-bg {
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, var(--overlay-faint) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--overlay-faint) 1px, transparent 1px);
 }
 
 

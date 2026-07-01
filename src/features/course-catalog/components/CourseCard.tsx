@@ -24,9 +24,9 @@ import { countCourseLessons } from "@/lib/catalog/courses";
 import { cn } from "@/lib/utils";
 
 const LEVEL_STYLES: Record<string, string> = {
-  Beginner: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-  Intermediate: "bg-amber-500/15 text-amber-400 border-amber-500/20",
-  Advanced: "bg-rose-500/15 text-rose-400 border-rose-500/20",
+  Beginner: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-400",
+  Intermediate: "bg-amber-500/10 text-amber-800 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-400",
+  Advanced: "bg-rose-500/10 text-rose-700 border-rose-500/20 dark:bg-rose-500/15 dark:text-rose-400",
 };
 
 function estimateLearners(courseId: string): string {
@@ -84,12 +84,12 @@ export function CourseCard({
 
   const getTradingTag = (category: string) => {
     switch (category) {
-      case "Indian Stocks": return { label: "Liquidity: High 💸", color: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5" };
-      case "Forex": return { label: "Spread: Tight 💱", color: "text-sky-400 border-sky-500/20 bg-sky-500/5" };
-      case "F&O": return { label: "Leverage: Active 📊", color: "text-violet-400 border-violet-500/20 bg-violet-500/5" };
-      case "Crypto": return { label: "Volatility: High ⚡", color: "text-amber-400 border-amber-500/20 bg-amber-500/5" };
-      case "Psychology": return { label: "Risk Management 🧠", color: "text-rose-400 border-rose-500/20 bg-rose-500/5" };
-      default: return { label: "Execution: Live ⚡", color: "text-brand border-brand/20 bg-brand/5" };
+      case "Indian Stocks": return { label: "Liquidity: High 💸", color: "text-emerald-700 border-emerald-500/20 bg-emerald-500/5 dark:text-emerald-400" };
+      case "Forex": return { label: "Spread: Tight 💱", color: "text-sky-700 border-sky-500/20 bg-sky-500/5 dark:text-sky-400" };
+      case "F&O": return { label: "Leverage: Active 📊", color: "text-violet-700 border-violet-500/20 bg-violet-500/5 dark:text-violet-400" };
+      case "Crypto": return { label: "Volatility: High ⚡", color: "text-amber-800 border-amber-500/20 bg-amber-500/5 dark:text-amber-400" };
+      case "Psychology": return { label: "Risk Management 🧠", color: "text-rose-700 border-rose-500/20 bg-rose-500/5 dark:text-rose-400" };
+      default: return { label: "Execution: Live ⚡", color: "text-emerald-700 border-brand/20 bg-brand/5 dark:text-brand" };
     }
   };
   const tradingTag = getTradingTag(course.category);
@@ -115,7 +115,7 @@ export function CourseCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
           <span className="text-3xl drop-shadow-lg">{courseIcon(course.category)}</span>
-          <span className="rounded-md bg-overlay-medium px-2 py-0.5 text-xs font-bold text-white/95 backdrop-blur-sm">
+          <span className="rounded-md bg-black/60 px-2 py-0.5 text-xs font-bold text-white/95 backdrop-blur-sm">
             {courseInitials(course.title)}
           </span>
         </div>
@@ -193,7 +193,7 @@ export function CourseCard({
               className={cn(
                 "inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition",
                 isComplete
-                  ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
                   : "bg-gradient-to-r from-brand to-emerald-400 text-black shadow-lg shadow-brand/20 group-hover:brightness-110",
               )}
             >

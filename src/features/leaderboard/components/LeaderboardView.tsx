@@ -88,7 +88,7 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
           {entry.isCurrentUser ? (
             <span className="text-[10px] bg-brand/20 text-brand px-1.5 py-0.5 rounded font-bold">YOU</span>
           ) : null}
-          <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center gap-0.5 animate-pulse">
+          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center gap-0.5 animate-pulse">
             ▲ +{trend}%
           </span>
         </p>

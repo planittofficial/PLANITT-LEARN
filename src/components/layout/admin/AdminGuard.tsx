@@ -48,7 +48,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-base">
+      <div className="flex min-h-screen items-center justify-center bg-appBase">
         <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
       </div>
     );
@@ -56,7 +56,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   if (status === "denied") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-base px-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-appBase px-6 text-center">
         <ShieldAlert className="h-10 w-10 text-rose-400" />
         <p className="text-sm text-textSecondary">Admin access required. Redirecting…</p>
       </div>

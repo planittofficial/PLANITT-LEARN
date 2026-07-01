@@ -50,8 +50,8 @@ export function WelcomeHero({
       <div className="relative grid gap-6 lg:grid-cols-2 lg:items-center">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <TrendingUp className="h-4.5 w-4.5 text-brand animate-pulse" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-brand">
+            <TrendingUp className="h-4.5 w-4.5 text-emerald-600 dark:text-brand animate-pulse" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700 dark:text-brand">
               {getGreeting()}
             </span>
             <StreakBadge streak={streak} size="sm" />
@@ -59,7 +59,7 @@ export function WelcomeHero({
 
           <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
             Hey {firstName},{" "}
-            <span className="bg-gradient-to-r from-brand via-emerald-300 to-sky-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 dark:from-brand dark:via-emerald-300 dark:to-sky-400 bg-clip-text text-transparent">
               let&apos;s trade knowledge!
             </span>
           </h1>
@@ -70,7 +70,7 @@ export function WelcomeHero({
               : "Choose a course below to place your first learning order — let's build your portfolio!"}
           </p>
 
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs text-brand">
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs text-emerald-700 dark:text-brand">
             <Sparkles className="h-3.5 w-3.5" />
             Daily goal: complete 1 lesson
           </div>
@@ -86,8 +86,8 @@ export function WelcomeHero({
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-xl font-extrabold text-brand">BULLISH</span>
-              <span className="text-xs text-emerald-400 font-bold">▲ +15.4%</span>
+              <span className="text-xl font-extrabold text-emerald-700 dark:text-brand">BULLISH</span>
+              <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">▲ +15.4%</span>
             </div>
             <p className="text-[9px] text-textMuted mt-1">Your learning yield is outperforming the index today!</p>
           </div>

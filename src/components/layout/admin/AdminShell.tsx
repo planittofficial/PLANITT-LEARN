@@ -11,14 +11,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-base">
+    <div className="flex min-h-screen bg-appBase">
       <AdminSidebar
         mobileOpen={mobileNavOpen}
         onMobileClose={() => setMobileNavOpen(false)}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-borderSubtle bg-base/80 backdrop-blur-lg lg:hidden">
+        <header className="sticky top-0 z-30 border-b border-borderSubtle bg-appBase/80 backdrop-blur-lg lg:hidden">
           <div className="flex items-center gap-3 px-4 py-3">
             <button
               type="button"

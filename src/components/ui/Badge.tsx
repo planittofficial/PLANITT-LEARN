@@ -4,9 +4,9 @@ type BadgeVariant = "default" | "brand" | "success" | "warning" | "muted" | "loc
 
 const VARIANTS: Record<BadgeVariant, string> = {
   default: "bg-overlay-strong text-textSecondary",
-  brand: "bg-brand/15 text-brand",
-  success: "bg-emerald-500/15 text-emerald-400",
-  warning: "bg-amber-500/15 text-amber-400",
+  brand: "bg-brand/10 text-emerald-700 dark:bg-brand/15 dark:text-brand",
+  success: "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+  warning: "bg-amber-500/10 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400",
   muted: "bg-overlay-hover text-textMuted",
   locked: "bg-overlay-hover text-textMuted border border-borderSubtle",
 };

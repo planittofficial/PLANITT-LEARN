@@ -29,7 +29,7 @@ export function ContinueLearningCard({
   if (!continueUrl) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/10 via-surface to-base p-6 sm:p-8">
+    <div className="relative overflow-hidden rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/10 via-surface to-appBase p-6 sm:p-8">
       <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-brand/10 blur-3xl" />
       <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-4">

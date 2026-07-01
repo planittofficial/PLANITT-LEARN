@@ -16,6 +16,7 @@ import { LearningStatsGrid } from "@/features/student-dashboard/components/Learn
 import { RecentlyWatched } from "@/features/student-dashboard/components/RecentlyWatched";
 import { WeeklyProgressChart } from "@/features/student-dashboard/components/WeeklyProgressChart";
 import { WelcomeHero } from "@/features/student-dashboard/components/WelcomeHero";
+import { TradingTerminalWidget } from "@/features/student-dashboard/components/TradingTerminalWidget";
 import { RecentAchievements } from "@/features/achievements";
 import { useGamification } from "@/features/gamification";
 import { useAchievements } from "@/hooks/achievements/use-achievements";
@@ -151,6 +152,12 @@ export function MyCoursesSection() {
                 avgProgress={avgProgress}
                 streak={gamification.streak}
                 xp={gamification.xp}
+              />
+
+              <TradingTerminalWidget
+                courseStats={courseStats}
+                totalXp={gamification.xp}
+                streak={gamification.streak}
               />
             </>
           ) : null}
