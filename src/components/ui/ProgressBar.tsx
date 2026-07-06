@@ -38,8 +38,8 @@ export function ProgressBar({
       >
         <div
           className={cn(
-            "h-full rounded-full bg-gradient-to-r from-brand to-brandBright transition-all duration-500 dark:to-emerald-400",
-            pct === 100 && "from-brandBright to-brand dark:from-emerald-500 dark:to-emerald-300",
+            "h-full rounded-full bg-gradient-to-r from-brand to-accent transition-all duration-500 dark:to-emerald-400",
+            pct === 100 && "from-accent to-brandBright dark:from-emerald-500 dark:to-emerald-300",
           )}
           style={{ width: `${pct}%` }}
         />

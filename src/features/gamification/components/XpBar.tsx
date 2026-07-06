@@ -26,7 +26,7 @@ export function XpBar({ xp, className, showLabel = true }: XpBarProps) {
       ) : null}
       <div className="h-2 overflow-hidden rounded-full bg-overlay-hover">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-brand to-brandBright transition-all duration-500 dark:to-emerald-400"
+          className="h-full rounded-full bg-gradient-to-r from-brand to-accent transition-all duration-500 dark:to-emerald-400"
           style={{ width: `${level.progressToNext}%` }}
         />
       </div>

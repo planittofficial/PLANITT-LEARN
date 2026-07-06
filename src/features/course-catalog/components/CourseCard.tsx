@@ -115,7 +115,7 @@ export function CourseCard({
         ) : null}
         {enrolled && notStarted ? (
           <div className="absolute right-3 top-3">
-            <span className="animate-pulse-glow rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase text-black">
+            <span className="animate-pulse-glow rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase text-brandForeground dark:text-black">
               New
             </span>
           </div>
@@ -179,7 +179,7 @@ export function CourseCard({
                 "inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition",
                 isComplete
                   ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                  : "bg-brand text-black group-hover:brightness-110",
+                  : "bg-brand text-brandForeground group-hover:bg-brandHover dark:text-black dark:group-hover:brightness-110",
               )}
             >
               {notStarted ? <Sparkles className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}

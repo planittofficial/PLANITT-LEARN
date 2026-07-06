@@ -214,7 +214,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
         href={lesson.content.externalUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-black"
+        className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-brandForeground hover:bg-brandHover dark:text-black"
       >
         Open external resource →
       </a>

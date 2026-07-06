@@ -143,7 +143,7 @@ export function LoginPageView() {
         </div>
 
         <div className="mb-8 flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-black shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-brandForeground shadow-sm dark:text-black">
             <GraduationCap className="h-5 w-5" />
           </div>
           <span className="text-xl font-semibold tracking-tight text-textPrimary">
@@ -217,7 +217,7 @@ export function LoginPageView() {
               type="submit"
               disabled={submitting}
               className={cn(
-                "flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-60",
+                "flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-60 dark:text-black dark:hover:brightness-110",
               )}
             >
               {submitting ? (

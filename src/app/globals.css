@@ -2,21 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme only — aligned with app.planitt.in (gold accent, cool neutrals) */
+/* Light theme — emerald green + teal accent (Planitt LMS palette) */
 :root {
   color-scheme: light;
   --bg-base: #f8f9fb;
   --bg-surface: #ffffff;
-  --bg-elevated: #f3f6fb;
+  --bg-elevated: #f0fdf9;
   --border-subtle: #d9dfeb;
   --text-primary: #101828;
   --text-secondary: #334155;
   --text-muted: #667085;
-  --brand: #b8941f;
-  --brand-hover: #9a7b1a;
-  --brand-bright: #d4af37;
-  --brand-foreground: #101828;
-  --brand-subtle: rgba(184, 148, 31, 0.1);
+  --brand: #059669;
+  --brand-hover: #047857;
+  --brand-bright: #10b981;
+  --brand-foreground: #ffffff;
+  --brand-subtle: rgba(5, 150, 105, 0.1);
+  --accent: #0d9488;
+  --accent-bright: #2dd4bf;
+  --accent-subtle: rgba(13, 148, 136, 0.12);
   --overlay-subtle: rgba(15, 23, 42, 0.035);
   --overlay-medium: rgba(15, 23, 42, 0.055);
   --overlay-strong: rgba(15, 23, 42, 0.08);
@@ -25,8 +28,9 @@
   --shadow-soft: 0 8px 28px rgba(15, 23, 42, 0.08);
   --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.06);
   --scrollbar-thumb-hover: #94a3b8;
-  --page-gradient: radial-gradient(80% 50% at 0 0, rgba(212, 175, 55, 0.07), transparent 55%),
-    linear-gradient(165deg, #f8f9fb 0%, #f3f6fc 50%, #eef3fa 100%);
+  --page-gradient: radial-gradient(80% 50% at 0 0, rgba(5, 150, 105, 0.09), transparent 55%),
+    radial-gradient(60% 45% at 100% 0, rgba(13, 148, 136, 0.07), transparent 50%),
+    linear-gradient(165deg, #f8f9fb 0%, #f3f8f7 50%, #eef3fa 100%);
 }
 
 /* Dark theme — unchanged */
@@ -43,6 +47,9 @@
   --brand-bright: #00d09c;
   --brand-foreground: #000000;
   --brand-subtle: rgba(0, 208, 156, 0.15);
+  --accent: #00b88a;
+  --accent-bright: #34d399;
+  --accent-subtle: rgba(0, 208, 156, 0.12);
   --bg-elevated: #141416;
   --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
   --page-gradient: var(--bg-base);
@@ -85,6 +92,14 @@ body {
 
   .bg-brand-subtle {
     background-color: var(--brand-subtle);
+  }
+
+  .bg-accent-subtle {
+    background-color: var(--accent-subtle);
+  }
+
+  .text-accent {
+    color: var(--accent);
   }
 }
 
@@ -241,8 +256,8 @@ body {
 
 /* Glowing Animations & Shadows */
 .glow-brand {
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.18);
-  border-color: rgba(184, 148, 31, 0.28);
+  box-shadow: 0 0 15px rgba(5, 150, 105, 0.18);
+  border-color: rgba(5, 150, 105, 0.28);
 }
 
 .dark .glow-brand {

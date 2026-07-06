@@ -52,7 +52,7 @@ export function StudentHeader() {
           {authReady && !isAuthenticated ? (
             <Link
               href={ROUTES.STUDENT.LOGIN}
-              className="ml-1 rounded-lg bg-brand px-3.5 py-2 text-xs font-semibold text-black shadow-sm transition hover:brightness-110 sm:text-sm"
+              className="ml-1 rounded-lg bg-brand px-3.5 py-2 text-xs font-semibold text-brandForeground shadow-sm transition hover:bg-brandHover dark:text-black dark:hover:brightness-110 sm:text-sm"
             >
               Sign in
             </Link>

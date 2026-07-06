@@ -115,7 +115,7 @@ export default function LessonPage() {
           action={
             <a
               href={planittCheckoutUrl(courseId)}
-              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black"
+              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
             >
               Buy course on Planitt →
             </a>
@@ -216,7 +216,7 @@ export default function LessonPage() {
               type="button"
               onClick={() => void markComplete()}
               disabled={completed || isMarking}
-              className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50 dark:text-black dark:hover:brightness-110"
             >
               {completed ? (
                 <>

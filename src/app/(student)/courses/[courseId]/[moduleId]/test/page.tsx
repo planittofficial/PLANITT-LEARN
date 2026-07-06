@@ -48,7 +48,7 @@ export default function ModuleTestPage() {
           action={
             <a
               href={planittCheckoutUrl(courseId)}
-              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black"
+              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
             >
               Buy course on Planitt →
             </a>

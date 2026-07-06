@@ -122,7 +122,7 @@ export function MyCoursesSection() {
               href={planittCheckoutUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black hover:brightness-110"
+              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
             >
               Browse courses on Planitt →
             </a>

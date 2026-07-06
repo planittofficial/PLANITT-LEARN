@@ -57,7 +57,7 @@ export function ContinueLearningCard({
         </div>
         <Link
           href={continueUrl}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-black transition hover:brightness-110"
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
         >
           Resume
           <ArrowRight className="h-4 w-4" />

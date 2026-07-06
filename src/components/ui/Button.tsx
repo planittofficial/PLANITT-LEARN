@@ -9,7 +9,9 @@ export function Button({ className, variant = "primary", ...props }: ButtonProps
     <button
       className={cn(
         "rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-50",
-        variant === "primary" ? "bg-brand text-black" : "border border-borderSubtle text-textPrimary",
+        variant === "primary"
+          ? "bg-brand text-brandForeground hover:bg-brandHover dark:text-black"
+          : "border border-borderSubtle bg-surface text-textPrimary hover:bg-overlay-hover",
         className,
       )}
       {...props}

@@ -103,7 +103,7 @@ export function StudentLogo({ className }: StudentLogoProps) {
       href={ROUTES.STUDENT.HOME}
       className={cn("inline-flex shrink-0 items-center gap-2", className)}
     >
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-black shadow-sm ring-1 ring-black/5 transition hover:scale-105">
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brandForeground shadow-sm ring-1 ring-brand/20 transition hover:scale-105 dark:text-black dark:ring-black/5">
         <GraduationCap className="h-4.5 w-4.5" />
       </div>
       <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary md:inline">

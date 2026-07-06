@@ -18,7 +18,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
 
   return (
     <nav aria-label="Breadcrumb" className={cn("mb-6", className)}>
-      <ol className="flex flex-wrap items-center gap-1 rounded-xl border border-borderSubtle bg-surface/90 px-3 py-2 text-sm shadow-card backdrop-blur-sm dark:bg-surface/70 sm:gap-1.5 sm:px-4 sm:py-2.5">
+      <ol className="flex flex-wrap items-center gap-1 rounded-xl border border-borderSubtle bg-surface/90 px-3 py-2 text-sm shadow-card backdrop-blur-sm dark:bg-surface/70 sm:gap-1.5 sm:px-4 sm:py-2.5 ring-1 ring-brand/5 dark:ring-transparent">
         {items.map((item, index) => {
           const isFirst = index === 0;
           const isLast = index === items.length - 1;

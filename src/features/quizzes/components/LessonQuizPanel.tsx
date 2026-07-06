@@ -119,7 +119,7 @@ export function LessonQuizPanel({
             type="button"
             onClick={() => void handleSubmit()}
             disabled={!allAnswered || isSubmitting}
-            className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50 dark:text-black dark:hover:brightness-110"
           >
             {isSubmitting ? (
               <>
