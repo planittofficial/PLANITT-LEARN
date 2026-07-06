@@ -12,7 +12,7 @@ type StatCardProps = {
 };
 
 const ACCENTS = {
-  brand: "text-emerald-700 bg-brand/10 dark:text-brand",
+  brand: "text-brand bg-brand/10",
   emerald: "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400",
   sky: "text-sky-600 bg-sky-500/10 dark:text-sky-400",
   amber: "text-amber-800 bg-amber-500/10 dark:text-amber-400",
@@ -23,7 +23,7 @@ export function StatCard({ label, value, hint, icon: Icon, accent = "brand", cla
   return (
     <div
       className={cn(
-        "rounded-2xl border border-borderSubtle bg-surface/80 p-4 backdrop-blur-sm transition hover:border-borderSubtle/80",
+        "rounded-2xl border border-borderSubtle bg-surface p-4 shadow-card transition hover:border-brand/20 dark:shadow-none dark:hover:border-borderSubtle/80",
         className,
       )}
     >

@@ -2,27 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme (default when .dark is not on <html>) */
+/* Light theme only — aligned with app.planitt.in (gold accent, cool neutrals) */
 :root {
   color-scheme: light;
-  /* Slightly cool neutrals to avoid warm/pink tint on white theme */
-  --bg-base: #f8fafc;
+  --bg-base: #f8f9fb;
   --bg-surface: #ffffff;
-  --border-subtle: #e2e8f0;
-  --text-primary: #0f172a;
+  --bg-elevated: #f3f6fb;
+  --border-subtle: #d9dfeb;
+  --text-primary: #101828;
   --text-secondary: #334155;
-  --text-muted: #64748b;
-  /* Primary accent (emerald/teal) with strong contrast on white */
-  --brand: #10b981;
-  --overlay-subtle: rgba(15, 23, 42, 0.04);
-  --overlay-medium: rgba(15, 23, 42, 0.06);
-  --overlay-strong: rgba(15, 23, 42, 0.10);
-  --overlay-hover: rgba(15, 23, 42, 0.06);
-  --overlay-faint: rgba(15, 23, 42, 0.025);
-  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.10);
+  --text-muted: #667085;
+  --brand: #b8941f;
+  --brand-hover: #9a7b1a;
+  --brand-bright: #d4af37;
+  --brand-foreground: #101828;
+  --brand-subtle: rgba(184, 148, 31, 0.1);
+  --overlay-subtle: rgba(15, 23, 42, 0.035);
+  --overlay-medium: rgba(15, 23, 42, 0.055);
+  --overlay-strong: rgba(15, 23, 42, 0.08);
+  --overlay-hover: rgba(15, 23, 42, 0.045);
+  --overlay-faint: rgba(15, 23, 42, 0.02);
+  --shadow-soft: 0 8px 28px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.06);
   --scrollbar-thumb-hover: #94a3b8;
+  --page-gradient: radial-gradient(80% 50% at 0 0, rgba(212, 175, 55, 0.07), transparent 55%),
+    linear-gradient(165deg, #f8f9fb 0%, #f3f6fc 50%, #eef3fa 100%);
 }
 
+/* Dark theme — unchanged */
 .dark {
   color-scheme: dark;
   --bg-base: #0a0a0b;
@@ -32,6 +39,13 @@
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --brand: #00d09c;
+  --brand-hover: #00b88a;
+  --brand-bright: #00d09c;
+  --brand-foreground: #000000;
+  --brand-subtle: rgba(0, 208, 156, 0.15);
+  --bg-elevated: #141416;
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --page-gradient: var(--bg-base);
   --overlay-subtle: rgba(0, 0, 0, 0.3);
   --overlay-medium: rgba(0, 0, 0, 0.4);
   --overlay-strong: rgba(255, 255, 255, 0.1);
@@ -43,6 +57,8 @@
 
 body {
   @apply bg-appBase text-textPrimary antialiased;
+  background: var(--page-gradient);
+  min-height: 100vh;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -57,6 +73,18 @@ body {
 
   .shadow-theme {
     box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .bg-elevated {
+    background-color: var(--bg-elevated);
+  }
+
+  .bg-brand-subtle {
+    background-color: var(--brand-subtle);
   }
 }
 
@@ -95,6 +123,7 @@ body {
 
 .card-interactive:hover {
   transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
 }
 
 .animate-pulse-glow {
@@ -212,6 +241,11 @@ body {
 
 /* Glowing Animations & Shadows */
 .glow-brand {
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.18);
+  border-color: rgba(184, 148, 31, 0.28);
+}
+
+.dark .glow-brand {
   box-shadow: 0 0 15px rgba(0, 208, 156, 0.15);
   border-color: rgba(0, 208, 156, 0.25);
 }
@@ -239,10 +273,6 @@ body {
   transform: scale(0.97);
 }
 
-.card-interactive:hover {
-  transform: translateY(-3px);
-}
-
 /* Premium Trading Indicators & Glows */
 .trading-glow-green {
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.12);
@@ -260,5 +290,6 @@ body {
     linear-gradient(to right, var(--overlay-faint) 1px, transparent 1px),
     linear-gradient(to bottom, var(--overlay-faint) 1px, transparent 1px);
 }
+
 
 

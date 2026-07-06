@@ -68,7 +68,7 @@ export function WelcomeHero({
   return (
     <section
       className={cn(
-        "rounded-2xl border border-borderSubtle bg-surface p-6 shadow-sm sm:p-8",
+        "rounded-2xl border border-borderSubtle bg-surface p-6 shadow-card sm:p-8",
         className,
       )}
     >
@@ -93,7 +93,7 @@ export function WelcomeHero({
           </div>
         </div>
 
-        <div className="w-full max-w-sm rounded-xl border border-borderSubtle bg-overlay-faint p-4">
+        <div className="w-full max-w-sm rounded-xl border border-borderSubtle bg-elevated p-4">
           <XpBar xp={xp} />
           <p className="mt-2 text-xs text-textMuted">
             {level.progressToNext}% to level {level.level + 1}
@@ -105,7 +105,7 @@ export function WelcomeHero({
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl border border-borderSubtle bg-overlay-faint px-4 py-3"
+            className="rounded-xl border border-borderSubtle bg-elevated px-4 py-3"
           >
             <div className="flex items-center gap-2 text-textMuted">
               <stat.icon className="h-4 w-4 shrink-0 text-brand" />
