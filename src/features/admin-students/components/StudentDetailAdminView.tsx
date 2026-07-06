@@ -14,6 +14,7 @@ import {
 } from "@/features/admin-ui";
 import { useAdminStudent } from "@/hooks/admin/use-admin-students";
 import { ROUTES } from "@/constants/routes";
+import { COURSE_CATALOG, countCourseLessons } from "@/lib/catalog/courses";
 
 export function StudentDetailAdminView({ userId }: { userId: string }) {
   const { data: student, isLoading, error } = useAdminStudent(userId);
@@ -28,11 +29,14 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
   }
   if (!student) return <p>Student not found.</p>;
 
+  const totalLessons = student.enrollments.reduce((sum, e) => {
+    const course = COURSE_CATALOG.find((c) => c.id === e.courseId);
+    return sum + (course ? countCourseLessons(course) : 0);
+  }, 0);
+
   const progressPercent =
-    student.progress.length > 0
-      ? Math.round(
-          (student.progress.filter((p) => p.completed).length / student.progress.length) * 100,
-        )
+    totalLessons > 0
+      ? Math.round((student.lessonsCompleted / totalLessons) * 100)
       : 0;
 
   return (

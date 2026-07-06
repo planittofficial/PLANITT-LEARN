@@ -136,6 +136,38 @@ export async function ensureUserProfile(user: {
       ...(user.name !== undefined ? { name: user.name } : {}),
     },
   });
+
+  // Sync dev mock enrollments to database if standalone/dev-preview is active
+  try {
+    const mockPlans = devMockEnrollments();
+    if (mockPlans.length > 0) {
+      const courseIds = new Set<string>();
+      for (const planId of mockPlans) {
+        for (const courseId of courseIdsForPlan(planId)) {
+          courseIds.add(courseId);
+        }
+      }
+      for (const courseId of courseIds) {
+        const courseExists = await prisma.course.findUnique({ where: { id: courseId } });
+        if (courseExists) {
+          await prisma.enrollment.upsert({
+            where: { userId_courseId: { userId: user.id, courseId } },
+            create: {
+              userId: user.id,
+              courseId,
+              planId: mockPlans[0],
+              source: "dev_mock",
+            },
+            update: {
+              source: "dev_mock",
+            },
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Failed to sync dev mock enrollments to database:", err);
+  }
 }
 
 export type EnrollmentSnapshot = {

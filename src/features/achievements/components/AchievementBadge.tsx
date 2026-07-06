@@ -21,7 +21,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import type { AchievementDef, AchievementRarity } from "@/lib/learning/achievements";
 import { cn } from "@/lib/utils";
 
-const ICONS: Record<AchievementDef["icon"], LucideIcon> = {
+export const ACHIEVEMENT_ICONS: Record<AchievementDef["icon"], LucideIcon> = {
   flame: Flame,
   book: BookOpen,
   star: Star,
@@ -38,27 +38,31 @@ const ICONS: Record<AchievementDef["icon"], LucideIcon> = {
 
 const RARITY_STYLES: Record<
   AchievementRarity,
-  { ring: string; bg: string; glow: string }
+  { ring: string; bg: string; glow: string; text: string }
 > = {
   common: {
-    ring: "border-borderSubtle",
-    bg: "from-white/5 to-white/[0.02]",
-    glow: "",
+    ring: "border-slate-500/20",
+    bg: "from-slate-500/5 via-surface to-slate-500/5",
+    glow: "shadow-sm",
+    text: "text-slate-400 border-slate-500/20 bg-slate-500/10",
   },
   rare: {
     ring: "border-sky-500/30",
-    bg: "from-sky-500/10 to-sky-500/5",
-    glow: "shadow-sky-500/10",
+    bg: "from-sky-500/10 via-surface to-sky-500/5",
+    glow: "shadow-lg shadow-sky-500/5 hover:border-sky-500/50 glow-brand",
+    text: "text-sky-400 border-sky-500/20 bg-sky-500/10",
   },
   epic: {
     ring: "border-violet-500/40",
-    bg: "from-violet-500/15 to-violet-500/5",
-    glow: "shadow-violet-500/15",
+    bg: "from-violet-500/15 via-surface to-violet-500/5",
+    glow: "shadow-lg shadow-violet-500/5 hover:border-violet-500/60 glow-purple",
+    text: "text-violet-400 border-violet-500/20 bg-violet-500/10",
   },
   legendary: {
-    ring: "border-amber-500/50",
-    bg: "from-amber-500/20 via-orange-500/10 to-amber-500/5",
-    glow: "shadow-amber-500/20",
+    ring: "border-amber-500/60 animate-pulse-glow",
+    bg: "from-amber-500/25 via-surface to-orange-500/10",
+    glow: "shadow-xl shadow-amber-500/10 hover:border-amber-500 glow-amber",
+    text: "text-amber-400 border-amber-500/30 bg-amber-500/20",
   },
 };
 
@@ -81,7 +85,7 @@ export function AchievementBadge({
   compact = false,
   className,
 }: AchievementBadgeProps) {
-  const Icon = ICONS[def.icon];
+  const Icon = ACHIEVEMENT_ICONS[def.icon];
   const rarity = RARITY_STYLES[def.rarity];
 
   return (
@@ -89,7 +93,7 @@ export function AchievementBadge({
       className={cn(
         "group relative overflow-hidden rounded-2xl border bg-gradient-to-br transition",
         unlocked ? rarity.ring : "border-borderSubtle/80",
-        unlocked ? rarity.bg : "from-surface to-black/20",
+        unlocked ? rarity.bg : "from-surface to-overlay-faint",
         unlocked && rarity.glow,
         unlocked ? "shadow-lg" : "opacity-90",
         compact ? "p-3" : "p-4",
@@ -102,8 +106,8 @@ export function AchievementBadge({
             "flex shrink-0 items-center justify-center rounded-xl border",
             compact ? "h-10 w-10" : "h-12 w-12",
             unlocked
-              ? "border-white/10 bg-black/30 text-brand"
-              : "border-borderSubtle bg-black/40 text-textMuted",
+              ? "border-borderSubtle bg-brand/10 text-brand"
+              : "border-borderSubtle bg-overlay-medium text-textMuted",
           )}
         >
           {unlocked ? (
@@ -125,8 +129,8 @@ export function AchievementBadge({
               {def.title}
             </p>
             {unlocked ? (
-              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-400">
-                Unlocked
+              <span className={cn("rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider", rarity.text)}>
+                {def.rarity}
               </span>
             ) : null}
           </div>

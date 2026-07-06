@@ -1,3 +1,5 @@
+import { StudentAppShell } from "@/components/layout/student/StudentAppShell";
+
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <StudentAppShell>{children}</StudentAppShell>;
 }

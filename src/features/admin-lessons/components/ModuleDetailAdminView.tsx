@@ -89,7 +89,7 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
             <label className="block text-sm">
               <span className="text-textSecondary">Type</span>
               <select
-                className="mt-1.5 w-full rounded-xl border border-borderSubtle bg-black/20 px-3 py-2.5 text-sm outline-none focus:border-violet-500/40 focus:ring-2 focus:ring-violet-500/20"
+                className="mt-1.5 w-full rounded-xl border border-borderSubtle bg-overlay-subtle px-3 py-2.5 text-sm outline-none focus:border-violet-500/40 focus:ring-2 focus:ring-violet-500/20"
                 value={kind}
                 onChange={(e) => setKind(e.target.value as typeof kind)}
               >
@@ -125,7 +125,7 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
                     className={`flex h-11 w-11 items-center justify-center rounded-xl ${
                       lesson.kind === "video"
                         ? "bg-violet-500/15 text-violet-400"
-                        : "bg-white/5 text-textMuted"
+                        : "bg-overlay-hover text-textMuted"
                     }`}
                   >
                     <Icon className="h-5 w-5" />

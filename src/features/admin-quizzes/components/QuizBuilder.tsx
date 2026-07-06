@@ -11,6 +11,8 @@ import {
 } from "@/features/admin-ui";
 import type { QuizQuestion } from "@/types/quiz.types";
 
+import { QuizSmartPaste } from "./QuizSmartPaste";
+
 function newQuestion(): QuizQuestion {
   const id = `q-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   return { id, prompt: "", options: ["", ""], correctIndex: 0 };
@@ -55,8 +57,25 @@ export function QuizBuilder({
     );
   }
 
+  function isEmptyQuestion(q: QuizQuestion) {
+    return !q.prompt.trim() && q.options.every((opt) => !opt.trim());
+  }
+
+  function handleSmartPaste(imported: QuizQuestion[], mode: "replace" | "append") {
+    if (mode === "replace") {
+      setQuestions(imported);
+      return;
+    }
+    setQuestions((prev) => {
+      const kept = prev.filter((q) => !isEmptyQuestion(q));
+      return [...kept, ...imported];
+    });
+  }
+
   return (
     <div className="space-y-6">
+      <QuizSmartPaste onImport={handleSmartPaste} />
+
       <AdminCard>
         <div className="grid gap-4 sm:grid-cols-2">
           <AdminInput label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -101,7 +120,7 @@ export function QuizBuilder({
                   className="accent-violet-500"
                 />
                 <input
-                  className="flex-1 rounded-xl border border-borderSubtle bg-black/20 px-3 py-2 outline-none focus:border-violet-500/40"
+                  className="flex-1 rounded-xl border border-borderSubtle bg-overlay-subtle px-3 py-2 outline-none focus:border-violet-500/40"
                   value={option}
                   onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
                   placeholder={`Option ${oIndex + 1}`}

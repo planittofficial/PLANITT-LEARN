@@ -48,15 +48,15 @@ export function NotificationBell() {
           });
         }}
         className={cn(
-          "relative inline-flex items-center justify-center rounded-lg p-2 transition",
-          open ? "bg-brand/10 text-brand" : "text-textSecondary hover:bg-white/5 hover:text-textPrimary",
+          "relative inline-flex h-9 w-9 items-center justify-center rounded-lg outline-none transition focus-visible:ring-2 focus-visible:ring-brand/30",
+          open ? "bg-brand/10 text-brand" : "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
         )}
         aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
         aria-expanded={open}
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 ? (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-black">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-brandForeground dark:text-black">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         ) : null}

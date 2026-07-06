@@ -2,79 +2,112 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BarChart3, GraduationCap, Home, Trophy, User } from "lucide-react";
+import {
+  Award,
+  BarChart3,
+  GraduationCap,
+  Home,
+  Trophy,
+  User,
+} from "lucide-react";
 
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+export const STUDENT_NAV_ITEMS = [
   { href: ROUTES.STUDENT.HOME, label: "My Learning", shortLabel: "Learn", icon: Home },
-  { href: ROUTES.STUDENT.ANALYTICS, label: "Analytics", shortLabel: "Stats", icon: BarChart3 },
+  { href: ROUTES.STUDENT.ANALYTICS, label: "Progress", shortLabel: "Progress", icon: BarChart3 },
   { href: ROUTES.STUDENT.ACHIEVEMENTS, label: "Achievements", shortLabel: "Badges", icon: Award },
-  { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", shortLabel: "Rank", icon: Trophy },
   { href: ROUTES.STUDENT.PROFILE, label: "Profile", shortLabel: "Profile", icon: User },
 ] as const;
+
+export const STUDENT_HEADER_NAV_ITEMS = [
+  ...STUDENT_NAV_ITEMS.filter((item) => item.href !== ROUTES.STUDENT.PROFILE),
+  { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", shortLabel: "Rank", icon: Trophy },
+] as const;
+
+type StudentHeaderNavProps = {
+  className?: string;
+};
+
+export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
+  const pathname = usePathname();
+
+  return (
+    <nav className={cn("items-stretch", className)} aria-label="Main">
+      <div className="-mb-px flex h-full items-stretch gap-0.5">
+        {STUDENT_HEADER_NAV_ITEMS.map((item) => {
+          const active = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              title={item.label}
+              className={cn(
+                "relative inline-flex h-full shrink-0 items-center gap-2 border-b-2 px-2.5 text-sm font-medium transition-colors sm:px-3",
+                active
+                  ? "border-brand text-brand"
+                  : "border-transparent text-textSecondary hover:border-borderSubtle hover:text-textPrimary",
+              )}
+            >
+              <item.icon
+                className={cn("h-4 w-4 shrink-0", active && "text-brand")}
+                strokeWidth={active ? 2.25 : 2}
+              />
+              <span className="hidden whitespace-nowrap lg:inline">{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
 
 export function StudentNav() {
   const pathname = usePathname();
 
   return (
-    <>
-      {/* Desktop nav */}
-      <nav className="hidden items-center gap-1 md:flex">
-        {NAV_ITEMS.map((item) => {
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/95 backdrop-blur-md md:hidden"
+      aria-label="Main"
+    >
+      <div className="mx-auto flex h-[3.25rem] max-w-lg items-stretch">
+        {STUDENT_NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition",
-                active
-                  ? "bg-brand/10 font-medium text-brand"
-                  : "text-textSecondary hover:bg-white/5 hover:text-textPrimary",
+                "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] transition",
+                active ? "text-brand" : "text-textMuted",
               )}
             >
-              <item.icon className="h-4 w-4" />
-              {item.label}
+              <item.icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.25 : 2} />
+              <span className="truncate font-medium leading-none">{item.shortLabel}</span>
             </Link>
           );
         })}
-      </nav>
-
-      {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/95 backdrop-blur md:hidden">
-        <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-2">
-          {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex flex-col items-center gap-0.5 rounded-lg px-4 py-2 text-xs transition",
-                  active ? "text-brand" : "text-textMuted",
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span className="font-medium">{item.shortLabel}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-    </>
+      </div>
+    </nav>
   );
 }
 
-export function StudentLogo() {
+type StudentLogoProps = {
+  className?: string;
+};
+
+export function StudentLogo({ className }: StudentLogoProps) {
   return (
-    <Link href={ROUTES.STUDENT.HOME} className="inline-flex items-center gap-2">
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/15">
-        <GraduationCap className="h-4 w-4 text-brand" />
+    <Link
+      href={ROUTES.STUDENT.HOME}
+      className={cn("inline-flex shrink-0 items-center gap-2", className)}
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brandForeground shadow-sm ring-1 ring-brand/20 transition hover:scale-105 dark:text-black dark:ring-black/5">
+        <GraduationCap className="h-4.5 w-4.5" />
       </div>
-      <span className="font-semibold text-textPrimary">
-        Planitt <span className="text-brand">Learn</span>
+      <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary md:inline">
+        Planitt<span className="text-brand"> Learn</span>
       </span>
     </Link>
   );

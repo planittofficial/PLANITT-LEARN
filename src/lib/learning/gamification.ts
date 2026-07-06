@@ -11,12 +11,12 @@ export type GamificationState = {
 };
 
 const LEVELS = [
-  { level: 1, title: "Beginner", minXp: 0 },
-  { level: 2, title: "Learner", minXp: 100 },
-  { level: 3, title: "Scholar", minXp: 300 },
-  { level: 4, title: "Expert", minXp: 600 },
-  { level: 5, title: "Master", minXp: 1000 },
-  { level: 6, title: "Legend", minXp: 2000 },
+  { level: 1, title: "Paper Trader 🧸", minXp: 0 },
+  { level: 2, title: "Market Intern 📈", minXp: 100 },
+  { level: 3, title: "Stock Explorer 🧭", minXp: 300 },
+  { level: 4, title: "Trend Rider 🏄‍♂️", minXp: 600 },
+  { level: 5, title: "Alpha Wizard 🧙‍♂️", minXp: 1000 },
+  { level: 6, title: "Hedge Fund Legend 👑", minXp: 2000 },
 ];
 
 function todayKey(): string {

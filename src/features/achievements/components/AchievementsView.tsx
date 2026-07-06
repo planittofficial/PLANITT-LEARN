@@ -16,11 +16,11 @@ export function AchievementsView() {
   if (isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-32 rounded-2xl bg-white/5" />
-        <div className="h-40 rounded-2xl bg-white/5" />
+        <div className="h-32 rounded-2xl bg-overlay-hover" />
+        <div className="h-40 rounded-2xl bg-overlay-hover" />
         <div className="grid gap-3 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-28 rounded-2xl bg-white/5" />
+            <div key={i} className="h-28 rounded-2xl bg-overlay-hover" />
           ))}
         </div>
       </div>
@@ -57,14 +57,14 @@ export function AchievementsView() {
               <span>Collection progress</span>
               <span>{completionPct}%</span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-black/30">
+            <div className="h-2 overflow-hidden rounded-full bg-overlay-medium">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400 transition-all"
                 style={{ width: `${completionPct}%` }}
               />
             </div>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-borderSubtle bg-black/20 px-4 py-2">
+          <div className="flex items-center gap-2 rounded-xl border border-borderSubtle bg-overlay-subtle px-4 py-2">
             <Medal className="h-5 w-5 text-brand" />
             <div>
               <p className="text-xs text-textMuted">XP earned</p>

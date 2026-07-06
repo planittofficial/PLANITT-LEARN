@@ -46,7 +46,7 @@ export function AnalyticsStatCard({
           </p>
           {hint ? <p className="mt-1 text-xs text-textSecondary">{hint}</p> : null}
         </div>
-        <div className={cn("rounded-xl bg-black/20 p-2.5", ACCENTS[accent].split(" ")[2])}>
+        <div className={cn("rounded-xl bg-overlay-subtle p-2.5", ACCENTS[accent].split(" ")[2])}>
           <Icon className="h-5 w-5" />
         </div>
       </div>

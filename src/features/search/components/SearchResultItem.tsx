@@ -44,7 +44,7 @@ export function SearchResultItem({ result, compact = false, onSelect }: SearchRe
   const content = (
     <div
       className={cn(
-        "flex items-start gap-3 rounded-xl border border-transparent transition hover:border-borderSubtle hover:bg-white/[0.03]",
+        "flex items-start gap-3 rounded-xl border border-transparent transition hover:border-borderSubtle hover:bg-overlay-faint",
         compact ? "p-2.5" : "p-3",
       )}
     >

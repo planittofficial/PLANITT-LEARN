@@ -54,7 +54,7 @@ export function StreakMilestones({
                   "flex h-9 w-9 items-center justify-center rounded-full border text-xs font-bold transition",
                   reached
                     ? "border-orange-400/50 bg-orange-500/20 text-orange-300"
-                    : "border-borderSubtle bg-black/30 text-textMuted",
+                    : "border-borderSubtle bg-overlay-medium text-textMuted",
                 )}
               >
                 {milestone}

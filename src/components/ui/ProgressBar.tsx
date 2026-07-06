@@ -30,7 +30,7 @@ export function ProgressBar({
         </div>
       )}
       <div
-        className={cn("overflow-hidden rounded-full bg-borderSubtle/80", heights[size])}
+        className={cn("overflow-hidden rounded-full bg-overlay-medium dark:bg-borderSubtle/80", heights[size])}
         role="progressbar"
         aria-valuenow={pct}
         aria-valuemin={0}
@@ -38,8 +38,8 @@ export function ProgressBar({
       >
         <div
           className={cn(
-            "h-full rounded-full bg-gradient-to-r from-brand to-emerald-400 transition-all duration-500",
-            pct === 100 && "from-emerald-500 to-emerald-300",
+            "h-full rounded-full bg-gradient-to-r from-brand to-accent transition-all duration-500 dark:to-emerald-400",
+            pct === 100 && "from-accent to-brandBright dark:from-emerald-500 dark:to-emerald-300",
           )}
           style={{ width: `${pct}%` }}
         />

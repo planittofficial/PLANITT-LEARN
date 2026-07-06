@@ -14,7 +14,7 @@ export function AdminTableElement({ children }: { children: React.ReactNode }) {
 
 export function AdminTableHead({ children }: { children: React.ReactNode }) {
   return (
-    <thead className="border-b border-borderSubtle bg-black/20 text-xs font-semibold uppercase tracking-wide text-textMuted">
+    <thead className="border-b border-borderSubtle bg-overlay-subtle text-xs font-semibold uppercase tracking-wide text-textMuted">
       {children}
     </thead>
   );
@@ -32,7 +32,7 @@ export function AdminTableRow({
   className?: string;
 }) {
   return (
-    <tr className={cn("transition hover:bg-white/[0.02]", className)}>{children}</tr>
+    <tr className={cn("transition hover:bg-overlay-faint", className)}>{children}</tr>
   );
 }
 

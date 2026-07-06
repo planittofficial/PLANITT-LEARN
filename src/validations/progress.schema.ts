@@ -1,5 +1,11 @@
 import type { WatchHeartbeatInput } from "@/types/progress.types";
 
+export function parseMarkComplete(body: unknown): boolean {
+  if (!body || typeof body !== "object") return false;
+  const record = body as Record<string, unknown>;
+  return record.markComplete === true || record.completed === true;
+}
+
 export function parseWatchHeartbeat(body: unknown): WatchHeartbeatInput | null {
   if (!body || typeof body !== "object") return null;
 

@@ -24,9 +24,9 @@ export function XpBar({ xp, className, showLabel = true }: XpBarProps) {
           <span className="text-textMuted">{xp} XP</span>
         </div>
       ) : null}
-      <div className="h-2 overflow-hidden rounded-full bg-white/5">
+      <div className="h-2 overflow-hidden rounded-full bg-overlay-hover">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-brand to-emerald-400 transition-all duration-500"
+          className="h-full rounded-full bg-gradient-to-r from-brand to-accent transition-all duration-500 dark:to-emerald-400"
           style={{ width: `${level.progressToNext}%` }}
         />
       </div>

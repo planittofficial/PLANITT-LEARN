@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { Lock } from "lucide-react";
 
 import { DashboardSkeleton } from "@/components/ui/skeletons";
@@ -11,7 +12,6 @@ import { planittCheckoutUrl } from "@/constants/urls";
 import { CourseCard } from "@/features/course-catalog/components/CourseCard";
 import { ContinueLearningCard } from "@/features/student-dashboard/components/DashboardHero";
 import { LeaderboardRankCard } from "@/features/student-dashboard/components/LeaderboardRankCard";
-import { LearningStatsGrid } from "@/features/student-dashboard/components/LearningStatsGrid";
 import { RecentlyWatched } from "@/features/student-dashboard/components/RecentlyWatched";
 import { WeeklyProgressChart } from "@/features/student-dashboard/components/WeeklyProgressChart";
 import { WelcomeHero } from "@/features/student-dashboard/components/WelcomeHero";
@@ -19,17 +19,49 @@ import { RecentAchievements } from "@/features/achievements";
 import { useGamification } from "@/features/gamification";
 import { useAchievements } from "@/hooks/achievements/use-achievements";
 import { useAuth } from "@/context/auth-context";
+import { useCourses } from "@/hooks/courses/use-courses";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
+import { fetchCourseProgress } from "@/hooks/progress/use-course-progress";
+import { apiCourseListItemToDefinition } from "@/lib/catalog/map-api-course";
 import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { getRecentlyWatched, getWeeklyActivity } from "@/lib/learning/activity";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { getCourseProgressStats } from "@/lib/learning/course-progress";
+import type { CourseProgress } from "@/lib/learning/progress";
 
 export function MyCoursesSection() {
   const { user } = useAuth();
   const { loading, enrolledIds, isAuthenticated, devPreview, devStandalone } = useEnrollment();
+  const { data: apiCourses, isLoading: coursesLoading } = useCourses();
   const gamification = useGamification(user?.id);
   const achievements = useAchievements(user?.id);
+
+  const catalog = useMemo(() => {
+    if (apiCourses.length > 0) {
+      return apiCourses.map(apiCourseListItemToDefinition);
+    }
+    return COURSE_CATALOG;
+  }, [apiCourses]);
+
+  const enrolledCourses = catalog.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
+  const lockedCourses = catalog.filter((c) => !isEnrolledInCourse(enrolledIds, c.id));
+
+  const progressQueries = useQueries({
+    queries: enrolledCourses.map((course) => ({
+      queryKey: ["progress", "course", course.id, user?.id],
+      queryFn: () => fetchCourseProgress(course.id, user!.id),
+      enabled: Boolean(user?.id) && isAuthenticated,
+      staleTime: 30_000,
+    })),
+  });
+
+  const progressByCourseId = useMemo(() => {
+    const map = new Map<string, CourseProgress>();
+    enrolledCourses.forEach((course, index) => {
+      map.set(course.id, progressQueries[index]?.data ?? {});
+    });
+    return map;
+  }, [enrolledCourses, progressQueries]);
 
   const weeklyDays = useMemo(
     () => (user?.id ? getWeeklyActivity(user.id) : []),
@@ -40,14 +72,11 @@ export function MyCoursesSection() {
     [user?.id],
   );
 
-  if (loading) return <DashboardSkeleton />;
-
-  const enrolledCourses = COURSE_CATALOG.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
-  const lockedCourses = COURSE_CATALOG.filter((c) => !isEnrolledInCourse(enrolledIds, c.id));
+  if (loading || coursesLoading) return <DashboardSkeleton />;
 
   const courseStats = enrolledCourses.map((course) => ({
     course,
-    ...getCourseProgressStats(user?.id, course),
+    ...getCourseProgressStats(user?.id, course, progressByCourseId.get(course.id)),
   }));
 
   const totalLessons = courseStats.reduce((s, c) => s + c.total, 0);
@@ -93,7 +122,7 @@ export function MyCoursesSection() {
               href={planittCheckoutUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black hover:brightness-110"
+              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
             >
               Browse courses on Planitt →
             </a>
@@ -104,25 +133,15 @@ export function MyCoursesSection() {
       {(isAuthenticated || devPreview) && enrolledCourses.length > 0 ? (
         <>
           {isAuthenticated ? (
-            <>
-              <WelcomeHero
-                firstName={firstName}
-                enrolledCount={enrolledCourses.length}
-                lessonsCompleted={lessonsCompleted}
-                avgProgress={avgProgress}
-                streak={gamification.streak}
-                xp={gamification.xp}
-              />
-
-              <LearningStatsGrid
-                enrolledCount={enrolledCourses.length}
-                lessonsCompleted={lessonsCompleted}
-                totalLessons={totalLessons}
-                avgProgress={avgProgress}
-                streak={gamification.streak}
-                xp={gamification.xp}
-              />
-            </>
+            <WelcomeHero
+              firstName={firstName}
+              enrolledCount={enrolledCourses.length}
+              lessonsCompleted={lessonsCompleted}
+              totalLessons={totalLessons}
+              avgProgress={avgProgress}
+              streak={gamification.streak}
+              xp={gamification.xp}
+            />
           ) : null}
 
           {isAuthenticated && continueCourse && user?.id ? (
@@ -132,23 +151,6 @@ export function MyCoursesSection() {
               progressPercent={continueCourse.percent}
               completedLessons={continueCourse.completed}
               totalLessons={continueCourse.total}
-            />
-          ) : null}
-
-          {isAuthenticated ? (
-            <div className="grid gap-5 lg:grid-cols-3">
-              <WeeklyProgressChart days={weeklyDays} className="lg:col-span-2" />
-              <LeaderboardRankCard />
-            </div>
-          ) : null}
-
-          {isAuthenticated && recent.length > 0 ? <RecentlyWatched items={recent} /> : null}
-
-          {isAuthenticated ? (
-            <RecentAchievements
-              recentUnlocks={achievements.recentUnlocks}
-              unlockedCount={achievements.unlockedCount}
-              totalCount={achievements.totalCount}
             />
           ) : null}
 
@@ -162,9 +164,9 @@ export function MyCoursesSection() {
               </h2>
               <Link
                 href={ROUTES.STUDENT.ANALYTICS}
-                className="text-sm text-textSecondary hover:text-brand"
+                className="text-sm font-medium text-textSecondary hover:text-brand"
               >
-                View analytics →
+                View progress →
               </Link>
             </div>
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -182,12 +184,29 @@ export function MyCoursesSection() {
             </div>
           </section>
 
+          {isAuthenticated ? (
+            <div className="grid gap-5 lg:grid-cols-3">
+              <WeeklyProgressChart days={weeklyDays} className="lg:col-span-2" />
+              <div className="space-y-5">
+                <LeaderboardRankCard />
+                <RecentAchievements
+                  recentUnlocks={achievements.recentUnlocks}
+                  unlockedCount={achievements.unlockedCount}
+                  totalCount={achievements.totalCount}
+                  compact
+                />
+              </div>
+            </div>
+          ) : null}
+
+          {isAuthenticated && recent.length > 0 ? <RecentlyWatched items={recent} /> : null}
+
           {lockedCourses.length > 0 ? (
             <section>
               <div className="mb-4 flex items-center gap-2">
                 <Lock className="h-4 w-4 text-textMuted" />
                 <h2 className="text-lg font-semibold text-textPrimary">Explore more courses</h2>
-                <span className="text-sm text-textMuted">({lockedCourses.length} locked)</span>
+                <span className="text-sm text-textMuted">({lockedCourses.length})</span>
               </div>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {lockedCourses.map((course) => (

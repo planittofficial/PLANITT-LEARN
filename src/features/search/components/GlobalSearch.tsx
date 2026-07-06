@@ -4,8 +4,13 @@ import { SearchCommandPalette } from "@/features/search/components/SearchCommand
 import { SearchTrigger } from "@/features/search/components/SearchTrigger";
 import { SearchProvider, useSearchPalette } from "@/features/search/search-context";
 
-export function GlobalSearch({ className }: { className?: string }) {
-  return <SearchTrigger className={className} />;
+type GlobalSearchProps = {
+  className?: string;
+  compact?: boolean;
+};
+
+export function GlobalSearch({ className, compact }: GlobalSearchProps) {
+  return <SearchTrigger className={className} compact={compact} />;
 }
 
 function SearchPaletteHost() {

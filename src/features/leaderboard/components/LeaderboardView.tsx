@@ -8,10 +8,11 @@ import { LeaderboardEmpty } from "@/components/shared/EmptyState";
 import { useLeaderboard, type LeaderboardEntry } from "@/hooks/leaderboard/use-leaderboard";
 import { cn } from "@/lib/utils";
 
+const PODIUM_LABELS = ["1st place", "2nd place", "3rd place"];
 const PODIUM_STYLES = [
-  "from-amber-400/20 to-amber-600/5 border-amber-500/30",
-  "from-slate-300/15 to-slate-500/5 border-slate-400/30",
-  "from-orange-600/20 to-orange-800/5 border-orange-600/30",
+  "from-amber-400/20 via-surface to-amber-600/5 border-amber-500/30",
+  "from-slate-300/15 via-surface to-slate-500/5 border-slate-400/25",
+  "from-orange-600/15 via-surface to-orange-800/5 border-orange-600/25",
 ];
 
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -20,16 +21,21 @@ function PodiumCard({ entry, place }: { entry: LeaderboardEntry; place: number }
   return (
     <div
       className={cn(
-        "flex flex-col items-center rounded-2xl border bg-gradient-to-b p-5 text-center",
+        "flex flex-col items-center rounded-2xl border bg-gradient-to-b p-5 text-center transition card-interactive",
         PODIUM_STYLES[place],
-        entry.isCurrentUser && "ring-2 ring-brand/50",
+        entry.isCurrentUser && "ring-2 ring-brand/40",
       )}
     >
-      <span className="text-3xl">{MEDALS[place]}</span>
-      <p className="mt-2 font-semibold text-textPrimary">{entry.name}</p>
-      <p className="mt-1 text-2xl font-bold text-brand">{entry.totalScore.toLocaleString()}</p>
-      <p className="text-xs text-textMuted">points</p>
-      <Badge variant="brand" className="mt-3">
+      <span className="text-4xl">{MEDALS[place]}</span>
+      <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-textMuted">
+        {PODIUM_LABELS[place]}
+      </p>
+      <p className="mt-1 text-base font-bold text-textPrimary">{entry.name}</p>
+      <p className="mt-2 text-3xl font-black tracking-tight text-brand">
+        {entry.totalScore.toLocaleString()}
+      </p>
+      <p className="text-[10px] font-medium uppercase tracking-wider text-textMuted">points</p>
+      <Badge variant="success" className="mt-3 text-[10px]">
         {entry.completionPercent}% complete
       </Badge>
     </div>
@@ -40,23 +46,25 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-xl border border-borderSubtle bg-surface px-4 py-3 transition",
-        entry.isCurrentUser && "border-brand/40 bg-brand/5",
+        "flex items-center gap-4 rounded-xl border border-borderSubtle bg-surface px-4 py-3 transition hover:border-brand/20",
+        entry.isCurrentUser && "border-brand/30 bg-brand/5",
       )}
     >
       <span
         className={cn(
           "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold",
-          entry.rank <= 3 ? "bg-brand/15 text-brand" : "bg-white/5 text-textMuted",
+          entry.rank <= 3 ? "bg-brand/15 text-brand" : "bg-overlay-hover text-textMuted",
         )}
       >
         {entry.rank}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="font-medium text-textPrimary">
+        <p className="flex items-center gap-2 font-medium text-textPrimary">
           {entry.name}
           {entry.isCurrentUser ? (
-            <span className="ml-2 text-xs text-brand">(You)</span>
+            <span className="rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">
+              You
+            </span>
           ) : null}
         </p>
         <p className="text-xs text-textMuted">
@@ -72,7 +80,7 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
 }
 
 export function LeaderboardView() {
-  const { entries, isLoading, isMock } = useLeaderboard();
+  const { entries, isLoading } = useLeaderboard();
 
   if (isLoading) {
     return (
@@ -94,14 +102,6 @@ export function LeaderboardView() {
 
   return (
     <div className="space-y-8">
-      {isMock ? (
-        <p className="rounded-lg border border-brand/20 bg-brand/5 px-4 py-2 text-xs text-textSecondary">
-          <Trophy className="mr-1 inline h-3.5 w-3.5 text-brand" />
-          Showing sample rankings — live data appears when the leaderboard API is connected.
-        </p>
-      ) : null}
-
-      {/* Top 3 podium */}
       <div className="grid gap-4 sm:grid-cols-3">
         {top3[1] ? <PodiumCard entry={top3[1]} place={1} /> : null}
         {top3[0] ? (
@@ -112,18 +112,19 @@ export function LeaderboardView() {
         {top3[2] ? <PodiumCard entry={top3[2]} place={2} /> : null}
       </div>
 
-      {/* Full rankings */}
-      <section>
-        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-          <Medal className="h-5 w-5 text-brand" />
-          All rankings
-        </h2>
-        <div className="space-y-2">
-          {rest.map((entry) => (
-            <RankingRow key={entry.userId} entry={entry} />
-          ))}
-        </div>
-      </section>
+      {rest.length > 0 ? (
+        <section>
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+            <Medal className="h-5 w-5 text-brand" />
+            All rankings
+          </h2>
+          <div className="space-y-2">
+            {rest.map((entry) => (
+              <RankingRow key={entry.userId} entry={entry} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

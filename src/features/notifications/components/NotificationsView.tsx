@@ -35,9 +35,9 @@ export function NotificationsView() {
   if (isLoading) {
     return (
       <div className="space-y-4 animate-pulse">
-        <div className="h-32 rounded-2xl bg-white/5" />
+        <div className="h-32 rounded-2xl bg-overlay-hover" />
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-20 rounded-2xl bg-white/5" />
+          <div key={i} className="h-20 rounded-2xl bg-overlay-hover" />
         ))}
       </div>
     );
@@ -57,11 +57,11 @@ export function NotificationsView() {
         </p>
 
         <div className="mt-5 flex flex-wrap items-center gap-3">
-          <div className="rounded-xl border border-borderSubtle bg-black/20 px-4 py-2">
+          <div className="rounded-xl border border-borderSubtle bg-overlay-subtle px-4 py-2">
             <p className="text-xs text-textMuted">Unread</p>
             <p className="text-xl font-bold">{unreadCount}</p>
           </div>
-          <div className="rounded-xl border border-borderSubtle bg-black/20 px-4 py-2">
+          <div className="rounded-xl border border-borderSubtle bg-overlay-subtle px-4 py-2">
             <p className="text-xs text-textMuted">Total</p>
             <p className="text-xl font-bold">{notifications.length}</p>
           </div>
@@ -116,7 +116,7 @@ export function NotificationsView() {
                 "rounded-full px-3 py-1.5 text-xs font-medium transition",
                 filter === f
                   ? "bg-brand/15 text-brand"
-                  : "bg-white/5 text-textMuted hover:text-textSecondary",
+                  : "bg-overlay-hover text-textMuted hover:text-textSecondary",
               )}
             >
               {label} ({count})

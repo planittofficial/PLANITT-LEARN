@@ -1,5 +1,6 @@
 import { requireAppBackendUrl } from "@/lib/env";
 import type { AuthUser } from "@/lib/security/require-user";
+import type { CredentialsLoginInput } from "@/validations/auth.schema";
 
 export async function postGoogleAuth(body: unknown): Promise<Response> {
   return fetch(`${requireAppBackendUrl()}/api/v1/auth/google`, {
@@ -7,6 +8,15 @@ export async function postGoogleAuth(body: unknown): Promise<Response> {
     headers: { "Content-Type": "application/json" },
     cache: "no-store",
     body: JSON.stringify(body ?? {}),
+  });
+}
+
+export async function postCredentialsAuth(body: CredentialsLoginInput): Promise<Response> {
+  return fetch(`${requireAppBackendUrl()}/api/v1/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store",
+    body: JSON.stringify({ email: body.email, password: body.password }),
   });
 }
 

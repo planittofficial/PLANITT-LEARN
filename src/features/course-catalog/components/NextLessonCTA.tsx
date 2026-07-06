@@ -23,7 +23,7 @@ export function NextLessonCTA({
   progress,
   stats,
 }: NextLessonCTAProps) {
-  const continueUrl = userId ? getContinueLessonUrl(userId, course) : null;
+  const continueUrl = userId ? getContinueLessonUrl(userId, course, progress) : null;
 
   // Find first incomplete lesson for label
   let nextTitle = "Start your first lesson";
@@ -68,7 +68,7 @@ export function NextLessonCTA({
       className="group flex items-center justify-between gap-4 rounded-2xl border border-brand/30 bg-gradient-to-r from-brand/15 to-brand/5 p-5 transition hover:border-brand/50 hover:shadow-lg hover:shadow-brand/10"
     >
       <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand text-black shadow-lg shadow-brand/20 transition group-hover:scale-105">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand text-brandForeground shadow-lg shadow-brand/20 transition group-hover:scale-105 dark:text-black">
           {isNew ? <Sparkles className="h-6 w-6" /> : <Play className="h-6 w-6 fill-current" />}
         </div>
         <div>
@@ -83,7 +83,7 @@ export function NextLessonCTA({
           </p>
         </div>
       </div>
-      <span className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-black transition group-hover:brightness-110">
+      <span className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-brandForeground transition group-hover:bg-brandHover dark:text-black dark:group-hover:brightness-110">
         {isNew ? "Start" : "Resume"}
         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
       </span>

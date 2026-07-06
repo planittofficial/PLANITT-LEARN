@@ -12,6 +12,7 @@ type RecentAchievementsProps = {
   recentUnlocks: AchievementProgress[];
   unlockedCount: number;
   totalCount: number;
+  compact?: boolean;
   className?: string;
 };
 
@@ -19,6 +20,7 @@ export function RecentAchievements({
   recentUnlocks,
   unlockedCount,
   totalCount,
+  compact = false,
   className,
 }: RecentAchievementsProps) {
   const hasUnlocks = recentUnlocks.length > 0;
@@ -50,8 +52,8 @@ export function RecentAchievements({
       </div>
 
       {hasUnlocks ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {recentUnlocks.slice(0, 3).map((item) => (
+        <div className={cn("grid gap-2", compact ? "grid-cols-1" : "sm:grid-cols-2 lg:grid-cols-3")}>
+          {recentUnlocks.slice(0, compact ? 2 : 3).map((item) => (
             <AchievementBadge
               key={item.def.id}
               def={item.def}
@@ -61,7 +63,7 @@ export function RecentAchievements({
           ))}
         </div>
       ) : (
-        <p className="rounded-xl border border-dashed border-borderSubtle bg-black/20 px-4 py-6 text-center text-sm text-textMuted">
+        <p className="rounded-xl border border-dashed border-borderSubtle bg-overlay-subtle px-4 py-6 text-center text-sm text-textMuted">
           Complete lessons and build streaks to earn your first badge.
         </p>
       )}

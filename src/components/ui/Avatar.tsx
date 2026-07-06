@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
 
 const COLORS = [
-  "bg-brand/20 text-brand",
-  "bg-sky-500/20 text-sky-400",
-  "bg-violet-500/20 text-violet-400",
-  "bg-amber-500/20 text-amber-400",
-  "bg-rose-500/20 text-rose-400",
+  "bg-brand/10 text-brand dark:bg-brand/20 dark:text-brand",
+  "bg-sky-500/10 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400",
+  "bg-violet-500/10 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400",
+  "bg-amber-500/10 text-amber-800 dark:bg-amber-500/20 dark:text-amber-400",
+  "bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400",
 ];
 
 function colorForName(name: string) {

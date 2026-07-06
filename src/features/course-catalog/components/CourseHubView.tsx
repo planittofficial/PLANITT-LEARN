@@ -20,16 +20,13 @@ import { LockedCourseEmpty, NoLessonsEmpty } from "@/components/shared/EmptyStat
 import { NextLessonCTA } from "@/features/course-catalog/components/NextLessonCTA";
 import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
+import { useCourseProgress } from "@/hooks/progress/use-course-progress";
 import {
   courseIcon,
   courseThumbnailClass,
 } from "@/lib/catalog/course-visuals";
 import type { CourseDefinition } from "@/lib/catalog/courses";
 import { getModuleProgressStats, getCourseProgressStats } from "@/lib/learning/course-progress";
-import {
-  loadCourseProgress,
-  type CourseProgress,
-} from "@/lib/learning/progress";
 import { cn } from "@/lib/utils";
 
 const LESSON_ICONS = {
@@ -43,7 +40,6 @@ type CourseHubViewProps = {
   courseId: string;
   userId?: string;
   enrolled: boolean;
-  loading?: boolean;
 };
 
 export function CourseHubView({
@@ -51,15 +47,9 @@ export function CourseHubView({
   courseId,
   userId,
   enrolled,
-  loading,
 }: CourseHubViewProps) {
-  const [progress, setProgress] = useState<CourseProgress>({});
+  const { progress, isLoading: progressLoading } = useCourseProgress(courseId);
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!userId) return;
-    setProgress(loadCourseProgress(userId, courseId));
-  }, [courseId, userId]);
 
   useEffect(() => {
     if (course.modules.length) {
@@ -67,7 +57,10 @@ export function CourseHubView({
     }
   }, [course.modules]);
 
-  const stats = useMemo(() => getCourseProgressStats(userId, course), [userId, course]);
+  const stats = useMemo(
+    () => getCourseProgressStats(userId, course, progress),
+    [userId, course, progress],
+  );
 
   const toggleModule = (moduleId: string) => {
     setExpandedModules((prev) =>
@@ -75,7 +68,7 @@ export function CourseHubView({
     );
   };
 
-  if (loading) {
+  if (progressLoading && enrolled) {
     return <CoursePageSkeleton />;
   }
 
@@ -87,7 +80,7 @@ export function CourseHubView({
             href={planittCheckoutUrl(courseId)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black"
+            className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
           >
             Get this course on Planitt →
           </a>
@@ -107,7 +100,7 @@ export function CourseHubView({
           )}
         />
         <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:p-8">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-black/30 text-4xl backdrop-blur-sm">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-overlay-medium text-4xl backdrop-blur-sm">
             {courseIcon(course.category)}
           </div>
           <div className="flex-1">
@@ -188,7 +181,7 @@ export function CourseHubView({
                 <button
                   type="button"
                   onClick={() => toggleModule(module.id)}
-                  className="flex w-full items-start gap-4 p-5 text-left transition hover:bg-white/[0.02]"
+                  className="flex w-full items-start gap-4 p-5 text-left transition hover:bg-overlay-faint"
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-sm font-bold text-brand">
                     {moduleIndex + 1}
@@ -222,7 +215,7 @@ export function CourseHubView({
                         <li key={lesson.id}>
                           <Link
                             href={ROUTES.STUDENT.lesson(courseId, module.id, lesson.id)}
-                            className="group flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-white/5"
+                            className="group flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-overlay-hover"
                           >
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center text-xs text-textMuted">
                               {lessonIndex + 1}
@@ -247,6 +240,16 @@ export function CourseHubView({
                         </li>
                       );
                     })}
+                    {moduleStats.total > 0 && moduleStats.completed === moduleStats.total ? (
+                      <li className="px-3 pb-3 pt-2">
+                        <Link
+                          href={ROUTES.STUDENT.moduleTest(courseId, module.id)}
+                          className="inline-flex w-full items-center justify-center rounded-xl border border-brand/30 bg-brand/10 px-4 py-2.5 text-sm font-semibold text-brand transition hover:border-brand/40 hover:bg-brand/15"
+                        >
+                          Take module test →
+                        </Link>
+                      </li>
+                    ) : null}
                   </ul>
                 ) : null}
               </section>

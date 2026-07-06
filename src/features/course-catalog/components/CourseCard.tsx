@@ -24,9 +24,9 @@ import { countCourseLessons } from "@/lib/catalog/courses";
 import { cn } from "@/lib/utils";
 
 const LEVEL_STYLES: Record<string, string> = {
-  Beginner: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-  Intermediate: "bg-amber-500/15 text-amber-400 border-amber-500/20",
-  Advanced: "bg-rose-500/15 text-rose-400 border-rose-500/20",
+  Beginner: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-400",
+  Intermediate: "bg-amber-500/10 text-amber-800 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-400",
+  Advanced: "bg-rose-500/10 text-rose-700 border-rose-500/20 dark:bg-rose-500/15 dark:text-rose-400",
 };
 
 function estimateLearners(courseId: string): string {
@@ -85,9 +85,9 @@ export function CourseCard({
   const inner = (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface transition-all duration-300",
+        "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface card-interactive",
         enrolled
-          ? "card-interactive border-borderSubtle hover:border-brand/40 hover:shadow-xl hover:shadow-brand/10"
+          ? "border-borderSubtle hover:border-brand/30"
           : "border-borderSubtle/60 opacity-95 hover:opacity-100",
         variant === "compact" && "flex-row",
       )}
@@ -103,7 +103,7 @@ export function CourseCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
           <span className="text-3xl drop-shadow-lg">{courseIcon(course.category)}</span>
-          <span className="rounded-md bg-black/40 px-2 py-0.5 text-xs font-bold text-white/95 backdrop-blur-sm">
+          <span className="rounded-md bg-black/60 px-2 py-0.5 text-xs font-bold text-white/95 backdrop-blur-sm">
             {courseInitials(course.title)}
           </span>
         </div>
@@ -115,7 +115,7 @@ export function CourseCard({
         ) : null}
         {enrolled && notStarted ? (
           <div className="absolute right-3 top-3">
-            <span className="animate-pulse-glow rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase text-black">
+            <span className="animate-pulse-glow rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold uppercase text-brandForeground dark:text-black">
               New
             </span>
           </div>
@@ -178,8 +178,8 @@ export function CourseCard({
               className={cn(
                 "inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition",
                 isComplete
-                  ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : "bg-gradient-to-r from-brand to-emerald-400 text-black shadow-lg shadow-brand/20 group-hover:brightness-110",
+                  ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                  : "bg-brand text-brandForeground group-hover:bg-brandHover dark:text-black dark:group-hover:brightness-110",
               )}
             >
               {notStarted ? <Sparkles className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}

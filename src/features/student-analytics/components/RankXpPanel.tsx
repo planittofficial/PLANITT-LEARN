@@ -62,14 +62,14 @@ export function RankXpPanel({
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-borderSubtle/80 bg-black/20 px-3 py-2.5">
+        <div className="rounded-xl border border-borderSubtle/80 bg-overlay-subtle px-3 py-2.5">
           <p className="flex items-center gap-1 text-xs text-textMuted">
             <Flame className="h-3.5 w-3.5 text-orange-400" />
             Current streak
           </p>
           <p className="mt-1 text-lg font-bold">{streak} day{streak !== 1 ? "s" : ""}</p>
         </div>
-        <div className="rounded-xl border border-borderSubtle/80 bg-black/20 px-3 py-2.5">
+        <div className="rounded-xl border border-borderSubtle/80 bg-overlay-subtle px-3 py-2.5">
           <p className="flex items-center gap-1 text-xs text-textMuted">
             <Zap className="h-3.5 w-3.5 text-amber-400" />
             Best streak

@@ -15,7 +15,7 @@ type LeaderboardRankCardProps = {
 
 export function LeaderboardRankCard({ className }: LeaderboardRankCardProps) {
   const { user } = useAuth();
-  const { entries, isLoading } = useLeaderboard("learn-forex-master-track");
+  const { entries, isLoading } = useLeaderboard();
 
   const me = entries.find((e) => e.userId === user?.id) ?? entries.find((e) => e.isCurrentUser);
   const rank = me?.rank ?? null;
@@ -24,11 +24,11 @@ export function LeaderboardRankCard({ className }: LeaderboardRankCardProps) {
     <Link
       href={ROUTES.STUDENT.LEADERBOARD}
       className={cn(
-        "group block rounded-2xl border border-borderSubtle bg-gradient-to-br from-violet-500/10 via-surface to-base p-5 transition hover:border-brand/30",
+        "group block rounded-2xl border border-borderSubtle bg-gradient-to-br from-violet-500/10 via-surface to-appBase p-5 transition hover:border-brand/30",
         className,
       )}
     >
-      <div className="flex items-center gap-2 text-violet-400">
+      <div className="flex items-center gap-2 text-violet-600 dark:text-violet-400">
         <Trophy className="h-4 w-4" />
         <span className="text-xs font-semibold uppercase tracking-wider">Leaderboard</span>
       </div>
