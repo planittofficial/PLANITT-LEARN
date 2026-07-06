@@ -1,14 +1,16 @@
 "use client";
 
-import { Sparkles, TrendingUp } from "lucide-react";
+import { BookOpen, Flame, Target, Zap } from "lucide-react";
 
 import { XpBar, StreakBadge } from "@/features/gamification";
+import { getLevelInfo } from "@/lib/learning/gamification";
 import { cn } from "@/lib/utils";
 
 type WelcomeHeroProps = {
   firstName: string;
   enrolledCount: number;
   lessonsCompleted: number;
+  totalLessons: number;
   avgProgress: number;
   streak: number;
   xp: number;
@@ -32,67 +34,87 @@ export function WelcomeHero({
   firstName,
   enrolledCount,
   lessonsCompleted,
+  totalLessons,
   avgProgress,
   streak,
   xp,
   className,
 }: WelcomeHeroProps) {
+  const level = getLevelInfo(xp);
+
+  const stats = [
+    {
+      label: "Courses",
+      value: String(enrolledCount),
+      icon: BookOpen,
+    },
+    {
+      label: "Lessons",
+      value: `${lessonsCompleted}/${totalLessons}`,
+      icon: Target,
+    },
+    {
+      label: "Progress",
+      value: `${avgProgress}%`,
+      icon: Flame,
+    },
+    {
+      label: "XP",
+      value: xp.toLocaleString(),
+      icon: Zap,
+    },
+  ];
+
   return (
-    <div
+    <section
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/10 via-surface to-emerald-500/5 p-6 sm:p-8 glow-brand card-trading",
+        "rounded-2xl border border-borderSubtle bg-surface p-6 shadow-sm sm:p-8",
         className,
       )}
     >
-      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-8 left-1/3 h-32 w-32 rounded-full bg-emerald-500/5 blur-2xl" />
-
-      <div className="relative grid gap-6 lg:grid-cols-2 lg:items-center">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <TrendingUp className="h-4.5 w-4.5 text-emerald-600 dark:text-brand animate-pulse" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700 dark:text-brand">
-              {getGreeting()}
-            </span>
-            <StreakBadge streak={streak} size="sm" />
-          </div>
-
-          <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            Hey {firstName},{" "}
-            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 dark:from-brand dark:via-emerald-300 dark:to-sky-400 bg-clip-text text-transparent">
-              let&apos;s trade knowledge!
-            </span>
-          </h1>
-
-          <p className="mt-2 max-w-lg text-sm leading-relaxed text-textSecondary">
-            {lessonsCompleted > 0
-              ? `You've completed ${lessonsCompleted} lessons across ${enrolledCount} course${enrolledCount !== 1 ? "s" : ""}. Average progress ${avgProgress}%.`
-              : "Choose a course below to place your first learning order — let's build your portfolio!"}
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-brand">
+            {getGreeting()}, {firstName}
           </p>
-
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs text-emerald-700 dark:text-brand">
-            <Sparkles className="h-3.5 w-3.5" />
-            Daily goal: complete 1 lesson
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-textPrimary sm:text-3xl">
+            Continue your learning journey
+          </h1>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-textSecondary">
+            {lessonsCompleted > 0
+              ? `You have completed ${lessonsCompleted} lesson${lessonsCompleted !== 1 ? "s" : ""} across ${enrolledCount} course${enrolledCount !== 1 ? "s" : ""}.`
+              : "Choose a course below and complete your first lesson today."}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <StreakBadge streak={streak} size="sm" />
+            <span className="rounded-full bg-overlay-medium px-3 py-1 text-xs font-medium text-textSecondary">
+              Level {level.level} · {level.title}
+            </span>
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-borderSubtle/80 bg-overlay-subtle p-4 backdrop-blur-sm">
-            <XpBar xp={xp} />
-          </div>
-          <div className="rounded-xl border border-borderSubtle/80 bg-overlay-subtle p-4 backdrop-blur-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[10px] font-bold tracking-wider text-textMuted">
-              <span>MARKET TRENDS</span>
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-xl font-extrabold text-emerald-700 dark:text-brand">BULLISH</span>
-              <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">▲ +15.4%</span>
-            </div>
-            <p className="text-[9px] text-textMuted mt-1">Your learning yield is outperforming the index today!</p>
-          </div>
+        <div className="w-full max-w-sm rounded-xl border border-borderSubtle bg-overlay-faint p-4">
+          <XpBar xp={xp} />
+          <p className="mt-2 text-xs text-textMuted">
+            {level.progressToNext}% to level {level.level + 1}
+          </p>
         </div>
       </div>
-    </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-xl border border-borderSubtle bg-overlay-faint px-4 py-3"
+          >
+            <div className="flex items-center gap-2 text-textMuted">
+              <stat.icon className="h-4 w-4 shrink-0 text-brand" />
+              <span className="text-xs font-medium">{stat.label}</span>
+            </div>
+            <p className="mt-1 text-xl font-bold text-textPrimary">{stat.value}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

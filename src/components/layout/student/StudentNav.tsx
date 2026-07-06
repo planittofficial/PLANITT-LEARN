@@ -7,7 +7,6 @@ import {
   BarChart3,
   GraduationCap,
   Home,
-  TrendingUp,
   Trophy,
   User,
 } from "lucide-react";
@@ -17,22 +16,20 @@ import { cn } from "@/lib/utils";
 
 export const STUDENT_NAV_ITEMS = [
   { href: ROUTES.STUDENT.HOME, label: "My Learning", shortLabel: "Learn", icon: Home },
-  { href: ROUTES.STUDENT.ANALYTICS, label: "Analytics", shortLabel: "Stats", icon: BarChart3 },
+  { href: ROUTES.STUDENT.ANALYTICS, label: "Progress", shortLabel: "Progress", icon: BarChart3 },
   { href: ROUTES.STUDENT.ACHIEVEMENTS, label: "Achievements", shortLabel: "Badges", icon: Award },
-  { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", shortLabel: "Rank", icon: Trophy },
   { href: ROUTES.STUDENT.PROFILE, label: "Profile", shortLabel: "Profile", icon: User },
 ] as const;
 
-/** Header tabs — Profile lives in the avatar menu to avoid crowding search. */
-export const STUDENT_HEADER_NAV_ITEMS = STUDENT_NAV_ITEMS.filter(
-  (item) => item.href !== ROUTES.STUDENT.PROFILE,
-);
+export const STUDENT_HEADER_NAV_ITEMS = [
+  ...STUDENT_NAV_ITEMS.filter((item) => item.href !== ROUTES.STUDENT.PROFILE),
+  { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", shortLabel: "Rank", icon: Trophy },
+] as const;
 
 type StudentHeaderNavProps = {
   className?: string;
 };
 
-/** Desktop inline tab navigation */
 export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
   const pathname = usePathname();
 
@@ -66,13 +63,12 @@ export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
   );
 }
 
-/** Mobile bottom navigation */
 export function StudentNav() {
   const pathname = usePathname();
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/95 backdrop-blur-md md:hidden"
       aria-label="Main"
     >
       <div className="mx-auto flex h-[3.25rem] max-w-lg items-stretch">
@@ -108,16 +104,11 @@ export function StudentLogo({ className }: StudentLogoProps) {
       className={cn("inline-flex shrink-0 items-center gap-2", className)}
     >
       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-black shadow-sm ring-1 ring-black/5 transition hover:scale-105">
-        <TrendingUp className="h-4.5 w-4.5" />
+        <GraduationCap className="h-4.5 w-4.5" />
       </div>
       <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary md:inline">
         Planitt<span className="text-brand"> Learn</span>
       </span>
     </Link>
   );
-}
-
-/** @deprecated Use StudentHeaderNav */
-export function StudentNavBar() {
-  return <StudentHeaderNav className="flex" />;
 }

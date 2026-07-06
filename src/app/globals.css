@@ -239,65 +239,8 @@ body {
   transform: scale(0.97);
 }
 
-.card-trading {
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.card-trading:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 208, 156, 0.08);
-  border-color: rgba(0, 208, 156, 0.35);
-}
-
-.dark .card-trading:hover {
-  box-shadow: 0 12px 30px rgba(0, 208, 156, 0.15);
-}
-
-/* Ticker styles */
-.ticker-wrap {
-  width: 100%;
-  overflow: hidden;
-  height: 32px;
-  background-color: var(--bg-surface);
-  border-bottom: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-}
-
-.dark .ticker-wrap {
-  background-color: #070708;
-  border-bottom-color: rgba(255, 255, 255, 0.05);
-}
-
-.ticker {
-  display: flex;
-  white-space: nowrap;
-  padding-left: 100%;
-  animation: scroll-ticker 35s linear infinite;
-}
-
-.ticker:hover {
-  animation-play-state: paused;
-}
-
-.ticker-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 24px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  color: var(--text-secondary);
-}
-
-@keyframes scroll-ticker {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-100%, 0, 0);
-  }
+.card-interactive:hover {
+  transform: translateY(-3px);
 }
 
 /* Premium Trading Indicators & Glows */

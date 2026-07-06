@@ -15,7 +15,7 @@ type LeaderboardRankCardProps = {
 
 export function LeaderboardRankCard({ className }: LeaderboardRankCardProps) {
   const { user } = useAuth();
-  const { entries, isLoading } = useLeaderboard("learn-forex-master-track");
+  const { entries, isLoading } = useLeaderboard();
 
   const me = entries.find((e) => e.userId === user?.id) ?? entries.find((e) => e.isCurrentUser);
   const rank = me?.rank ?? null;

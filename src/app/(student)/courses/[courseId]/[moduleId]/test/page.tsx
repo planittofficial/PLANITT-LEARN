@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { GraduationCap, Loader2 } from "lucide-react";
 
-import { LearnShell } from "@/components/layout/student";
 import { LockedCourseEmpty, EmptyState } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
@@ -34,19 +33,16 @@ export default function ModuleTestPage() {
 
   if (loading || courseQuery.isLoading) {
     return (
-      <LearnShell>
         <div className="flex items-center justify-center py-16 text-textSecondary">
           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           Loading…
         </div>
-      </LearnShell>
     );
   }
 
   const enrolled = isEnrolledInCourse(enrolledIds, courseId);
   if (!enrolled) {
     return (
-      <LearnShell>
         <LockedCourseEmpty
           action={
             <a
@@ -57,12 +53,11 @@ export default function ModuleTestPage() {
             </a>
           }
         />
-      </LearnShell>
     );
   }
 
   return (
-    <LearnShell>
+    <>
       <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-textMuted">
         <Link href={ROUTES.STUDENT.HOME} className="hover:text-brand">
           Dashboard
@@ -105,7 +100,7 @@ export default function ModuleTestPage() {
           Loading test…
         </div>
       )}
-    </LearnShell>
+    </>
   );
 }
 

@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Mail, TrendingUp, User } from "lucide-react";
+import { BookOpen, Mail, Target, User } from "lucide-react";
 
-import { LearnShell } from "@/components/layout/student";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -17,22 +16,19 @@ export default function ProfilePage() {
 
   if (!authReady) {
     return (
-      <LearnShell>
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-48" />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Skeleton className="h-32 rounded-xl" />
-            <Skeleton className="h-32 rounded-xl" />
-          </div>
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
         </div>
-      </LearnShell>
+      </div>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <LearnShell>
-        <EmptyState
+      <EmptyState
           title="Sign in to view profile"
           description="Your learning stats and enrolled courses appear here after you sign in."
           icon={User}
@@ -43,9 +39,8 @@ export default function ProfilePage() {
             >
               Sign in →
             </Link>
-          }
-        />
-      </LearnShell>
+        }
+      />
     );
   }
 
@@ -56,7 +51,7 @@ export default function ProfilePage() {
       : 0;
 
   return (
-    <LearnShell>
+    <>
       <header className="mb-8">
         <div className="flex items-center gap-2 text-brand">
           <User className="h-5 w-5" />
@@ -100,7 +95,7 @@ export default function ProfilePage() {
 
           <div className="rounded-xl border border-borderSubtle bg-surface p-5">
             <div className="flex items-center gap-3">
-              <TrendingUp className="h-5 w-5 text-emerald-400" />
+              <Target className="h-5 w-5 text-brand" />
               <div>
                 <p className="text-xs text-textMuted">Lessons completed</p>
                 <p className="text-2xl font-bold">
@@ -125,6 +120,6 @@ export default function ProfilePage() {
           <EmptyState title="Could not load profile" description="Try refreshing the page." />
         </div>
       ) : null}
-    </LearnShell>
+    </>
   );
 }

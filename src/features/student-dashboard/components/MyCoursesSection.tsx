@@ -12,11 +12,9 @@ import { planittCheckoutUrl } from "@/constants/urls";
 import { CourseCard } from "@/features/course-catalog/components/CourseCard";
 import { ContinueLearningCard } from "@/features/student-dashboard/components/DashboardHero";
 import { LeaderboardRankCard } from "@/features/student-dashboard/components/LeaderboardRankCard";
-import { LearningStatsGrid } from "@/features/student-dashboard/components/LearningStatsGrid";
 import { RecentlyWatched } from "@/features/student-dashboard/components/RecentlyWatched";
 import { WeeklyProgressChart } from "@/features/student-dashboard/components/WeeklyProgressChart";
 import { WelcomeHero } from "@/features/student-dashboard/components/WelcomeHero";
-import { TradingTerminalWidget } from "@/features/student-dashboard/components/TradingTerminalWidget";
 import { RecentAchievements } from "@/features/achievements";
 import { useGamification } from "@/features/gamification";
 import { useAchievements } from "@/hooks/achievements/use-achievements";
@@ -135,31 +133,15 @@ export function MyCoursesSection() {
       {(isAuthenticated || devPreview) && enrolledCourses.length > 0 ? (
         <>
           {isAuthenticated ? (
-            <>
-              <WelcomeHero
-                firstName={firstName}
-                enrolledCount={enrolledCourses.length}
-                lessonsCompleted={lessonsCompleted}
-                avgProgress={avgProgress}
-                streak={gamification.streak}
-                xp={gamification.xp}
-              />
-
-              <LearningStatsGrid
-                enrolledCount={enrolledCourses.length}
-                lessonsCompleted={lessonsCompleted}
-                totalLessons={totalLessons}
-                avgProgress={avgProgress}
-                streak={gamification.streak}
-                xp={gamification.xp}
-              />
-
-              <TradingTerminalWidget
-                courseStats={courseStats}
-                totalXp={gamification.xp}
-                streak={gamification.streak}
-              />
-            </>
+            <WelcomeHero
+              firstName={firstName}
+              enrolledCount={enrolledCourses.length}
+              lessonsCompleted={lessonsCompleted}
+              totalLessons={totalLessons}
+              avgProgress={avgProgress}
+              streak={gamification.streak}
+              xp={gamification.xp}
+            />
           ) : null}
 
           {isAuthenticated && continueCourse && user?.id ? (
@@ -169,23 +151,6 @@ export function MyCoursesSection() {
               progressPercent={continueCourse.percent}
               completedLessons={continueCourse.completed}
               totalLessons={continueCourse.total}
-            />
-          ) : null}
-
-          {isAuthenticated ? (
-            <div className="grid gap-5 lg:grid-cols-3">
-              <WeeklyProgressChart days={weeklyDays} className="lg:col-span-2" />
-              <LeaderboardRankCard />
-            </div>
-          ) : null}
-
-          {isAuthenticated && recent.length > 0 ? <RecentlyWatched items={recent} /> : null}
-
-          {isAuthenticated ? (
-            <RecentAchievements
-              recentUnlocks={achievements.recentUnlocks}
-              unlockedCount={achievements.unlockedCount}
-              totalCount={achievements.totalCount}
             />
           ) : null}
 
@@ -199,9 +164,9 @@ export function MyCoursesSection() {
               </h2>
               <Link
                 href={ROUTES.STUDENT.ANALYTICS}
-                className="text-sm text-textSecondary hover:text-brand"
+                className="text-sm font-medium text-textSecondary hover:text-brand"
               >
-                View analytics →
+                View progress →
               </Link>
             </div>
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -219,12 +184,29 @@ export function MyCoursesSection() {
             </div>
           </section>
 
+          {isAuthenticated ? (
+            <div className="grid gap-5 lg:grid-cols-3">
+              <WeeklyProgressChart days={weeklyDays} className="lg:col-span-2" />
+              <div className="space-y-5">
+                <LeaderboardRankCard />
+                <RecentAchievements
+                  recentUnlocks={achievements.recentUnlocks}
+                  unlockedCount={achievements.unlockedCount}
+                  totalCount={achievements.totalCount}
+                  compact
+                />
+              </div>
+            </div>
+          ) : null}
+
+          {isAuthenticated && recent.length > 0 ? <RecentlyWatched items={recent} /> : null}
+
           {lockedCourses.length > 0 ? (
             <section>
               <div className="mb-4 flex items-center gap-2">
                 <Lock className="h-4 w-4 text-textMuted" />
                 <h2 className="text-lg font-semibold text-textPrimary">Explore more courses</h2>
-                <span className="text-sm text-textMuted">({lockedCourses.length} locked)</span>
+                <span className="text-sm text-textMuted">({lockedCourses.length})</span>
               </div>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {lockedCourses.map((course) => (

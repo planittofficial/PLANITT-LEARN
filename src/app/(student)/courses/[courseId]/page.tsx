@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 
-import { LearnShell } from "@/components/layout/student";
 import { CoursePageSkeleton } from "@/components/ui/skeletons";
 import { CourseHubView } from "@/features/course-catalog/components/CourseHubView";
 import { ROUTES } from "@/constants/routes";
@@ -32,7 +31,7 @@ export default function CourseHubPage() {
   const enrolled = isEnrolledInCourse(enrolledIds, courseId);
 
   return (
-    <LearnShell>
+    <>
       <Link
         href={ROUTES.STUDENT.HOME}
         className="mb-6 inline-flex text-sm text-textMuted transition hover:text-brand"
@@ -49,6 +48,6 @@ export default function CourseHubPage() {
           enrolled={enrolled}
         />
       )}
-    </LearnShell>
+    </>
   );
 }

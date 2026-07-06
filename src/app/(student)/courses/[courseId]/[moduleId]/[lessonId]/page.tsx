@@ -5,7 +5,6 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 
-import { LearnShell } from "@/components/layout/student";
 import { LessonPageSkeleton } from "@/components/ui/skeletons";
 import { LockedCourseEmpty } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
@@ -93,24 +92,24 @@ export default function LessonPage() {
 
   if (!courseId || !moduleId || !lessonId) {
     return (
-      <LearnShell>
+      <>
         <LessonPageSkeleton />
-      </LearnShell>
+      </>
     );
   }
 
   if (loading || courseQuery.isLoading || progressLoading) {
     return (
-      <LearnShell>
+      <>
         <LessonPageSkeleton />
-      </LearnShell>
+      </>
     );
   }
 
   // Enrollment gate (fast client-side check) — API also enforces enrollment.
   if (!isEnrolledInCourse(enrolledIds, courseId)) {
     return (
-      <LearnShell>
+      <>
         <LockedCourseEmpty
           action={
             <a
@@ -121,7 +120,7 @@ export default function LessonPage() {
             </a>
           }
         />
-      </LearnShell>
+      </>
     );
   }
 
@@ -187,7 +186,7 @@ export default function LessonPage() {
   };
 
   return (
-    <LearnShell>
+    <>
       <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-textMuted">
         <Link href={ROUTES.STUDENT.HOME} className="hover:text-brand">
           Dashboard
@@ -289,6 +288,6 @@ export default function LessonPage() {
       <p className="mt-8 text-center text-xs text-textMuted">
         Educational content only — not investment advice.
       </p>
-    </LearnShell>
+    </>
   );
 }

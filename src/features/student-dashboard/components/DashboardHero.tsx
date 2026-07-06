@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, Play, TrendingUp } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 
 import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -63,62 +63,6 @@ export function ContinueLearningCard({
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
-    </div>
-  );
-}
-
-type DashboardStatsProps = {
-  enrolledCount: number;
-  lessonsCompleted: number;
-  totalLessons: number;
-  avgProgress: number;
-};
-
-export function DashboardStats({
-  enrolledCount,
-  lessonsCompleted,
-  totalLessons,
-  avgProgress,
-}: DashboardStatsProps) {
-  const stats = [
-    {
-      label: "Enrolled",
-      value: enrolledCount,
-      icon: BookOpen,
-      color: "text-brand",
-    },
-    {
-      label: "Lessons done",
-      value: `${lessonsCompleted}/${totalLessons}`,
-      icon: TrendingUp,
-      color: "text-emerald-400",
-    },
-    {
-      label: "Avg. progress",
-      value: `${avgProgress}%`,
-      icon: Play,
-      color: "text-sky-400",
-    },
-  ];
-
-  return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      {stats.map((stat) => (
-        <div
-          key={stat.label}
-          className="rounded-xl border border-borderSubtle bg-surface/80 p-4 backdrop-blur-sm"
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-overlay-hover">
-              <stat.icon className={cn("h-5 w-5", stat.color)} />
-            </div>
-            <div>
-              <p className="text-xs text-textMuted">{stat.label}</p>
-              <p className="text-xl font-bold text-textPrimary">{stat.value}</p>
-            </div>
-          </div>
-        </div>
-      ))}
     </div>
   );
 }

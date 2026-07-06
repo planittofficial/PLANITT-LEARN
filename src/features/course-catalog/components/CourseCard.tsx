@@ -82,24 +82,12 @@ export function CourseCard({
         ? "Continue Learning"
         : "Start Learning";
 
-  const getTradingTag = (category: string) => {
-    switch (category) {
-      case "Indian Stocks": return { label: "Liquidity: High 💸", color: "text-emerald-700 border-emerald-500/20 bg-emerald-500/5 dark:text-emerald-400" };
-      case "Forex": return { label: "Spread: Tight 💱", color: "text-sky-700 border-sky-500/20 bg-sky-500/5 dark:text-sky-400" };
-      case "F&O": return { label: "Leverage: Active 📊", color: "text-violet-700 border-violet-500/20 bg-violet-500/5 dark:text-violet-400" };
-      case "Crypto": return { label: "Volatility: High ⚡", color: "text-amber-800 border-amber-500/20 bg-amber-500/5 dark:text-amber-400" };
-      case "Psychology": return { label: "Risk Management 🧠", color: "text-rose-700 border-rose-500/20 bg-rose-500/5 dark:text-rose-400" };
-      default: return { label: "Execution: Live ⚡", color: "text-emerald-700 border-brand/20 bg-brand/5 dark:text-brand" };
-    }
-  };
-  const tradingTag = getTradingTag(course.category);
-
   const inner = (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface transition-all duration-300 card-trading",
+        "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-surface card-interactive",
         enrolled
-          ? "border-borderSubtle hover:border-brand/40 hover:shadow-xl hover:shadow-brand/10"
+          ? "border-borderSubtle hover:border-brand/30"
           : "border-borderSubtle/60 opacity-95 hover:opacity-100",
         variant === "compact" && "flex-row",
       )}
@@ -147,9 +135,6 @@ export function CourseCard({
           <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase", levelStyle)}>
             {course.level}
           </span>
-          <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase", tradingTag.color)}>
-            {tradingTag.label}
-          </span>
           <div className="ml-auto">{statusBadge}</div>
         </div>
 
@@ -194,7 +179,7 @@ export function CourseCard({
                 "inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition",
                 isComplete
                   ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                  : "bg-gradient-to-r from-brand to-emerald-400 text-black shadow-lg shadow-brand/20 group-hover:brightness-110",
+                  : "bg-brand text-black group-hover:brightness-110",
               )}
             >
               {notStarted ? <Sparkles className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
