@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { GraduationCap, Loader2 } from "lucide-react";
 
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { LockedCourseEmpty, EmptyState } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
@@ -58,17 +59,13 @@ export default function ModuleTestPage() {
 
   return (
     <>
-      <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-textMuted">
-        <Link href={ROUTES.STUDENT.HOME} className="hover:text-brand">
-          Dashboard
-        </Link>
-        <span>/</span>
-        <Link href={ROUTES.STUDENT.course(courseId)} className="hover:text-brand">
-          {course?.title ?? courseId}
-        </Link>
-        <span>/</span>
-        <span className="text-textSecondary">Module test</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: "Dashboard", href: ROUTES.STUDENT.HOME },
+          { label: course?.title ?? courseId, href: ROUTES.STUDENT.course(courseId) },
+          { label: "Module test" },
+        ]}
+      />
 
       {!moduleTest.isLoading && !moduleTest.test ? (
         <EmptyState

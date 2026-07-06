@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { CoursePageSkeleton } from "@/components/ui/skeletons";
 import { CourseHubView } from "@/features/course-catalog/components/CourseHubView";
 import { ROUTES } from "@/constants/routes";
@@ -32,12 +32,12 @@ export default function CourseHubPage() {
 
   return (
     <>
-      <Link
-        href={ROUTES.STUDENT.HOME}
-        className="mb-6 inline-flex text-sm text-textMuted transition hover:text-brand"
-      >
-        ← Back to dashboard
-      </Link>
+      <Breadcrumb
+        items={[
+          { label: "Dashboard", href: ROUTES.STUDENT.HOME },
+          { label: course?.title ?? courseId },
+        ]}
+      />
       {!course || loading || courseQuery.isLoading ? (
         <CoursePageSkeleton />
       ) : (

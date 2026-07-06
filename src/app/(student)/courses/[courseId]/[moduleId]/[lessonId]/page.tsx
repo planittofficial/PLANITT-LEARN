@@ -5,6 +5,7 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { LessonPageSkeleton } from "@/components/ui/skeletons";
 import { LockedCourseEmpty } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
@@ -187,17 +188,13 @@ export default function LessonPage() {
 
   return (
     <>
-      <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-textMuted">
-        <Link href={ROUTES.STUDENT.HOME} className="hover:text-brand">
-          Dashboard
-        </Link>
-        <span>/</span>
-        <Link href={ROUTES.STUDENT.course(courseId)} className="hover:text-brand">
-          {course.title}
-        </Link>
-        <span>/</span>
-        <span className="text-textSecondary">{lesson.title}</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: "Dashboard", href: ROUTES.STUDENT.HOME },
+          { label: course.title, href: ROUTES.STUDENT.course(courseId) },
+          { label: lesson.title },
+        ]}
+      />
 
       <p className="text-xs font-medium uppercase tracking-wider text-brand">{module.title}</p>
       <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{lesson.title}</h1>
