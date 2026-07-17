@@ -1,6 +1,13 @@
-import { MyCoursesSection } from "@/features/student-dashboard";
+"use client";
 
-export default function HomePage() {
+import { Suspense } from "react";
+
+import { MyCoursesSection } from "@/features/student-dashboard";
+import { usePurchasedEnrollmentRefresh } from "@/hooks/enrollment/use-purchased-enrollment-refresh";
+
+function HomeContent() {
+  usePurchasedEnrollmentRefresh();
+
   return (
     <>
       <MyCoursesSection />
@@ -8,5 +15,13 @@ export default function HomePage() {
         Educational content only — not investment advice. Always perform your own due diligence.
       </p>
     </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<MyCoursesSection />}>
+      <HomeContent />
+    </Suspense>
   );
 }

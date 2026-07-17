@@ -3,14 +3,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ROUTES } from "@/constants/routes";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 import type { LessonProgressState, WatchHeartbeatResult } from "@/types/progress.types";
 
 type ProgressGetResponse = { ok: true; progress: LessonProgressState | null };
 type ProgressPostResponse = WatchHeartbeatResult & { ok: true };
 
 async function fetchLessonProgress(lessonId: string): Promise<LessonProgressState | null> {
-  const res = await fetch(ROUTES.API.LESSONS.progress(lessonId), withApiCredentials());
+  const res = await authedFetch(ROUTES.API.LESSONS.progress(lessonId));
   if (!res.ok) return null;
   const data = (await res.json()) as ProgressGetResponse;
   return data.progress ?? null;
@@ -20,14 +20,11 @@ async function postHeartbeat(
   lessonId: string,
   payload: { watchedSeconds: number; durationSeconds: number },
 ): Promise<ProgressPostResponse | null> {
-  const res = await fetch(
-    ROUTES.API.LESSONS.progress(lessonId),
-    withApiCredentials({
+  const res = await authedFetch(ROUTES.API.LESSONS.progress(lessonId), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }),
-  );
+    });
   if (!res.ok) return null;
   return (await res.json()) as ProgressPostResponse;
 }

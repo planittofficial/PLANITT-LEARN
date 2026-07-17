@@ -88,11 +88,60 @@ NEXT_PUBLIC_MAIN_WEBSITE_URL=http://localhost:3000
 DATABASE_URL=postgresql://...
 APPBACKEND_URL=https://appbackend.planitt.in
 NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID=...
-LEARN_ENROLLMENT_WEBHOOK_SECRET=...
+NEXT_PUBLIC_MAIN_WEBSITE_URL=https://planitt.in
+NEXT_PUBLIC_LEARN_PORTAL_URL=https://learn.planitt.in
+LEARN_ENROLLMENT_WEBHOOK_SECRET=<long-random-secret-shared-with-appbackend>
 LEARN_ADMIN_EMAILS=admin@planitt.in
-R2_ACCOUNT_ID=...
 # LEARN_DEV_STANDALONE must be false or unset
+# NEXT_PUBLIC_LEARN_DEV_STANDALONE must be false or unset
+# LEARN_DEV_MOCK_* must be unset
 ```
+
+### Production preflight
+
+1. Set the secrets above (never commit them).
+2. `npm run db:deploy` then `npm run db:seed` (courses must exist for webhook enrollments).
+3. Share `LEARN_ENROLLMENT_WEBHOOK_SECRET` with the appbackend team; rotate if ever leaked.
+4. Confirm Google OAuth origins include both main site and Learn portal URLs.
+5. `npm run typecheck && npm run build`
+
+### Main site / appbackend contract
+
+**Payment history (Learn pulls this on each enrollment check):**
+
+```
+GET {APPBACKEND_URL}/api/v1/payments/me/history
+Authorization: Bearer <access_token>
+→ { "items": [{ "plan_id": "learn-forex-master-track", "status": "paid" }] }
+```
+
+Only `status: "paid"` and `plan_id` starting with `learn-` unlock content. `learn-all-courses-combo` unlocks all courses.
+
+**Enrollment webhook (appbackend pushes after successful payment):**
+
+```
+POST {LEARN_PORTAL_URL}/api/v1/webhooks/enrollment
+Header: x-learn-webhook-secret: <LEARN_ENROLLMENT_WEBHOOK_SECRET>
+Body: {
+  "user_id": "<same id as /auth/me>",
+  "plan_id": "learn-forex-master-track",
+  "email": "buyer@example.com",
+  "name": "Buyer Name",
+  "status": "paid"
+}
+```
+
+`email` is required. Upserts are idempotent.
+
+**Post-checkout redirect (main site):**
+
+```
+{LEARN_PORTAL_URL}/courses/{planId}?purchased=1
+```
+
+Or if logged out: `{LEARN_PORTAL_URL}/login?next=/courses/{planId}?purchased=1`
+
+Checkout from Learn: `{MAIN_WEBSITE_URL}/learn?plan={planId}`
 
 ---
 

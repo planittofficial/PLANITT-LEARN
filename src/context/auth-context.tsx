@@ -10,7 +10,11 @@ import {
 } from "react";
 
 import { ROUTES } from "@/constants/routes";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import {
+  authedFetch,
+  isClientDevStandalone,
+  withApiCredentials,
+} from "@/lib/security/client-auth";
 
 type AuthUser = {
   id: string;
@@ -39,8 +43,7 @@ const emptyState: AuthState = {
   user: null,
 };
 
-const DEV_STANDALONE =
-  process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE?.trim().toLowerCase() === "true";
+const DEV_STANDALONE = isClientDevStandalone();
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(emptyState);
@@ -49,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const bootstrap = useCallback(async () => {
     try {
       const loadSession = async () => {
-        const res = await fetch(ROUTES.API.AUTH.ME, withApiCredentials());
+        const res = await authedFetch(ROUTES.API.AUTH.ME);
         if (!res.ok) return null;
         const data = (await res.json()) as { user?: AuthUser };
         return data.user?.id ? data.user : null;

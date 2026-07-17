@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/context/auth-context";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 
 type ProfileResponse = {
   ok: true;
@@ -18,7 +18,7 @@ type ProfileResponse = {
 };
 
 async function fetchProfile(): Promise<ProfileResponse | null> {
-  const res = await fetch(ROUTES.API.PROFILE.ME, withApiCredentials());
+  const res = await authedFetch(ROUTES.API.PROFILE.ME);
   if (!res.ok) return null;
   return (await res.json()) as ProfileResponse;
 }

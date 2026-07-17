@@ -6,21 +6,17 @@ This document explains **what infrastructure Planitt Learn needs** to become a f
 
 ## Current state vs target
 
-| Capability | Today (v0) | Target (NPTEL / Udemy-lite) |
-|------------|------------|------------------------------|
-| Course content | Hardcoded `src/lib/catalog/courses.ts` | **PostgreSQL** + admin CMS |
-| Video lectures | Placeholder URLs / markdown | **Object storage** (R2/S3) + signed URLs |
-| Progress | Browser `localStorage` | **PostgreSQL** (`lesson_progress`) |
-| 75% watch rule | Not implemented | Server-tracked watch time |
-| Lesson quiz | Not implemented | **PostgreSQL** (`lesson_quizzes`, `quiz_attempts`) |
-| Module final test | Not implemented | **PostgreSQL** (`module_tests`) |
-| User dashboard | Basic course list | Full progress + scores from DB |
-| Leaderboard | Not implemented | Computed from DB scores |
-| Admin panel | Not implemented | `/admin` — CRUD + video upload |
-| Enrollment | Planitt payment history (appbackend) | Webhook → **Learn DB** `enrollments` |
-| Auth | Google via appbackend (or dev standalone) | Same — appbackend stays auth-only |
-
-**There is no `DATABASE_URL` in the repo yet** — the app runs without a database. Phase 1 adds PostgreSQL + Prisma/Drizzle.
+| Capability | Today | Target |
+|------------|-------|--------|
+| Course content | PostgreSQL + admin CMS (+ static seed catalog) | Same |
+| Video lectures | YouTube / manual URL (+ R2 stub) | R2/S3 signed uploads |
+| Progress | PostgreSQL `lesson_progress` (+ localStorage fallback) | Server-only |
+| 75% watch rule | HTML5 video heartbeat | Same + YouTube tracking |
+| Lesson quiz / module test | DB-backed + admin builders | Same |
+| Enrollment | Payment history + webhook + lock UI | Same |
+| Leaderboard | DB-backed | Same |
+| Admin panel | `/admin` CRUD | Same |
+| Auth | Google via appbackend (or local standalone) | Same |
 
 ---
 

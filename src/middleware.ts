@@ -10,7 +10,9 @@ const PUBLIC_PATHS = new Set([
   "/api/v1/enrollment/preview",
 ]);
 
+/** Same rules as lib/env isDevStandalone — inlined for Edge middleware safety. */
 function isDevStandalone(): boolean {
+  if (process.env.NODE_ENV === "production") return false;
   const flag = process.env.LEARN_DEV_STANDALONE?.trim().toLowerCase();
   return flag === "true" || flag === "1" || flag === "yes";
 }

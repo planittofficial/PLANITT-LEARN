@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Loader2, ShieldAlert } from "lucide-react";
 
 import { ROUTES } from "@/constants/routes";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 
 type AdminGuardProps = {
   children: React.ReactNode;
@@ -20,7 +20,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
     async function check() {
       try {
-        const res = await fetch(ROUTES.API.AUTH.ADMIN, withApiCredentials());
+        const res = await authedFetch(ROUTES.API.AUTH.ADMIN);
         if (!res.ok) {
           if (!cancelled) setStatus("denied");
           return;

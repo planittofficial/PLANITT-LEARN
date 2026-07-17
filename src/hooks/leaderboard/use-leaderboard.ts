@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { ROUTES } from "@/constants/routes";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 
 export type LeaderboardEntry = {
   rank: number;
@@ -27,7 +27,7 @@ async function fetchLeaderboard(
     ? `/api/v1/leaderboard/${courseId}`
     : "/api/v1/leaderboard/learn-forex-master-track";
 
-  const res = await fetch(url, withApiCredentials());
+  const res = await authedFetch(url);
   if (!res.ok) {
     return { entries: [], fromApi: false };
   }

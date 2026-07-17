@@ -10,28 +10,26 @@ This repo was split out of the Planitt monorepo (`Planitt-inhouse/apps/learn`) s
 
 | In scope | Out of scope |
 |----------|--------------|
-| Google sign-in (same Planitt account) | Course checkout / payments |
-| Display enrolled courses on a dashboard | Creating or editing payment plans |
-| Module list, lesson player, progress tracking | Admin CMS (content lives in code for now) |
-| Gate content by payment history | Signal entitlements or trading features |
+| Google sign-in (same Planitt account) | Course checkout / payments (main site) |
+| Enrolled courses unlocked; others locked | Creating payment plans |
+| Lessons, progress, quizzes, module tests | Trading / signal entitlements |
+| Admin CMS (`/admin`) for courses & assessments | Razorpay keys (stay on main site) |
 
-**Purchase flow:** users buy courses on the main website → payment is recorded in appbackend → this app reads payment history and unlocks matching courses.
+**Purchase flow:** buy on the main website → appbackend records payment (and optionally POSTs Learn’s enrollment webhook) → Learn reads payment history + DB enrollments → only paid courses unlock. After checkout, redirect to `{LEARN_PORTAL_URL}/courses/{planId}?purchased=1`.
 
-**Content flow:** course curriculum is defined in `src/lib/catalog/courses.ts` → interns extend modules and lessons there.
+**Content:** static catalog in `src/lib/catalog/` seeds PostgreSQL via `npm run db:seed`; admin can also CRUD in `/admin`.
 
 ### Roadmap: NPTEL-lite / Udemy-lite
 
-The full vision (videos, quizzes, module tests, 75% watch rule, leaderboard, admin panel) **requires a dedicated Learn PostgreSQL database** and video object storage — separate from Planitt's main backend DB.
-
 | Phase | Status | Key env |
 |-------|--------|---------|
-| **0 — Now** | Static catalog + localStorage | `.env.example` + optional `DATABASE_URL` |
-| **1** | PostgreSQL + admin CRUD | `DATABASE_URL` — **schema in `prisma/schema.prisma`** |
-| **2** | Video upload + watch tracking | `R2_*` / S3 |
-| **3** | Lesson quizzes + module tests | DB |
-| **4** | Dashboard + leaderboard | DB |
+| **0 — Local** | Dev standalone + mock enrollments | `.env.example` |
+| **1** | PostgreSQL + admin CRUD + enrollment webhook | `DATABASE_URL` |
+| **2** | Video upload + watch tracking | `LEARN_R2_*` / S3 |
+| **3** | Lesson quizzes + module tests | Done (DB-backed) |
+| **4** | Dashboard + leaderboard | Done (DB-backed) |
 
-See **[docs/LMS_ARCHITECTURE.md](docs/LMS_ARCHITECTURE.md)** and **[docs/ENV_REFERENCE.md](docs/ENV_REFERENCE.md)**.
+See **[docs/LMS_ARCHITECTURE.md](docs/LMS_ARCHITECTURE.md)** and **[docs/ENV_REFERENCE.md](docs/ENV_REFERENCE.md)** (includes production preflight + payment/webhook contract).
 
 ---
 
