@@ -210,14 +210,34 @@ Examples:
 
 ### Step 7 — Environment checklist
 
-#### Appbackend / main site
+#### Production dashboards (required)
+
+Configure these in **Render** (appbackend) and **Vercel** (main website) for production:
+
+| Variable | Value | Where |
+|----------|-------|--------|
+| `LEARN_PORTAL_URL` | `https://learn.planitt.in` | **Render** (appbackend) **and** **Vercel** (website) — base URL of the LMS portal |
+| `LEARN_ENROLLMENT_WEBHOOK_SECRET` | A secure shared secret key | **Render** (appbackend) — **must match** `LEARN_ENROLLMENT_WEBHOOK_SECRET` on the Learn LMS host |
+
+**How they are used:**
+
+| Variable | Used for |
+|----------|----------|
+| `LEARN_PORTAL_URL` | Post-checkout redirects (`{LEARN_PORTAL_URL}/courses/{planId}?purchased=1`) and building the webhook target (`{LEARN_PORTAL_URL}/api/v1/webhooks/enrollment`) |
+| `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Appbackend sends this as `x-learn-webhook-secret` (or `Authorization: Bearer …`) when calling Learn after payment |
+
+**Learn LMS (its own host)** must also set the **same** `LEARN_ENROLLMENT_WEBHOOK_SECRET`, plus `NEXT_PUBLIC_LEARN_PORTAL_URL=https://learn.planitt.in`.
+
+Generate the secret once (e.g. `openssl rand -hex 32`), set it on Learn, then copy the identical value into Render. Never commit it to git.
+
+#### Appbackend / main site (summary)
 
 | Variable / config | Purpose |
 |-------------------|---------|
-| Learn portal base URL | Redirects after pay |
+| `LEARN_PORTAL_URL` | `https://learn.planitt.in` — redirects + webhook base |
+| `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Same secret as Learn LMS |
 | Checkout route | `/learn?plan=` |
 | Webhook URL | `{LEARN_PORTAL_URL}/api/v1/webhooks/enrollment` |
-| Webhook secret | Same as Learn’s `LEARN_ENROLLMENT_WEBHOOK_SECRET` |
 | Payment history | Includes paid `learn-*` plans for the user |
 
 #### Learn (already documented in `docs/ENV_REFERENCE.md`)
@@ -228,7 +248,7 @@ Examples:
 | `NEXT_PUBLIC_MAIN_WEBSITE_URL` | `https://planitt.in` |
 | `NEXT_PUBLIC_LEARN_PORTAL_URL` | `https://learn.planitt.in` |
 | `NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Same as main site |
-| `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Shared secret |
+| `LEARN_ENROLLMENT_WEBHOOK_SECRET` | **Same value as Render** |
 | Dev flags | **Unset** in production (`LEARN_DEV_*`, `NEXT_PUBLIC_LEARN_DEV_*`) |
 
 ---

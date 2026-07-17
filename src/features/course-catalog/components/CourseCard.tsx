@@ -15,6 +15,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
 import {
+  courseCoverSrc,
   courseIcon,
   courseInitials,
   courseThumbnailClass,
@@ -60,6 +61,7 @@ export function CourseCard({
   const inProgress = enrolled && progressPercent > 0 && progressPercent < 100;
   const notStarted = enrolled && progressPercent === 0;
   const levelStyle = LEVEL_STYLES[course.level] ?? LEVEL_STYLES.Beginner;
+  const coverSrc = courseCoverSrc(course.category);
 
   const statusBadge = !enrolled ? (
     <Badge variant="locked">
@@ -96,13 +98,24 @@ export function CourseCard({
         className={cn(
           "relative overflow-hidden bg-gradient-to-br",
           courseThumbnailClass(course.category),
-          variant === "default" ? "h-40" : "h-auto w-28 shrink-0 sm:w-32",
+          variant === "default" ? "h-44 sm:h-48" : "h-auto w-28 shrink-0 sm:w-32",
         )}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.12),_transparent_55%)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-          <span className="text-3xl drop-shadow-lg">{courseIcon(course.category)}</span>
+        {coverSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={coverSrc}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            draggable={false}
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.1),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-black/45 text-2xl shadow-lg backdrop-blur-md ring-1 ring-white/15">
+            {courseIcon(course.category)}
+          </span>
           <span className="rounded-md bg-black/60 px-2 py-0.5 text-xs font-bold text-white/95 backdrop-blur-sm">
             {courseInitials(course.title)}
           </span>

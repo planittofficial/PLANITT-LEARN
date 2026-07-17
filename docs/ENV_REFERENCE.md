@@ -99,11 +99,15 @@ LEARN_ADMIN_EMAILS=admin@planitt.in
 
 ### Production preflight
 
-1. Set the secrets above (never commit them).
+1. Set the Learn secrets above (never commit them).
 2. `npm run db:deploy` then `npm run db:seed` (courses must exist for webhook enrollments).
-3. Share `LEARN_ENROLLMENT_WEBHOOK_SECRET` with the appbackend team; rotate if ever leaked.
+3. On **Render (appbackend)** and **Vercel (website)** set:
+   - `LEARN_PORTAL_URL` = `https://learn.planitt.in`
+   - `LEARN_ENROLLMENT_WEBHOOK_SECRET` = same secure key as Learn’s `LEARN_ENROLLMENT_WEBHOOK_SECRET`
 4. Confirm Google OAuth origins include both main site and Learn portal URLs.
 5. `npm run typecheck && npm run build`
+
+See **`docs/MAIN_SITE_LEARN_INTEGRATION.md`** → Step 7 for the full Render / Vercel dashboard checklist.
 
 ### Main site / appbackend contract
 

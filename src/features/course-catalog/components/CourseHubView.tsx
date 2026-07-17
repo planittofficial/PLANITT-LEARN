@@ -22,6 +22,7 @@ import { ROUTES } from "@/constants/routes";
 import { planittCheckoutUrl } from "@/constants/urls";
 import { useCourseProgress } from "@/hooks/progress/use-course-progress";
 import {
+  courseCoverSrc,
   courseIcon,
   courseThumbnailClass,
 } from "@/lib/catalog/course-visuals";
@@ -61,6 +62,7 @@ export function CourseHubView({
     () => getCourseProgressStats(userId, course, progress),
     [userId, course, progress],
   );
+  const coverSrc = courseCoverSrc(course.category);
 
   const toggleModule = (moduleId: string) => {
     setExpandedModules((prev) =>
@@ -93,15 +95,31 @@ export function CourseHubView({
     <div className="space-y-8">
       {/* Course hero */}
       <div className="relative overflow-hidden rounded-2xl border border-borderSubtle">
-        <div
-          className={cn(
-            "absolute inset-0 bg-gradient-to-br opacity-40",
-            courseThumbnailClass(course.category),
-          )}
-        />
+        {coverSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={coverSrc}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover opacity-50"
+            draggable={false}
+          />
+        ) : (
+          <div
+            className={cn(
+              "absolute inset-0 bg-gradient-to-br opacity-40",
+              courseThumbnailClass(course.category),
+            )}
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/85 to-surface/55" />
         <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:p-8">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-overlay-medium text-4xl backdrop-blur-sm">
-            {courseIcon(course.category)}
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-overlay-medium text-4xl shadow-lg ring-1 ring-white/10 backdrop-blur-sm">
+            {coverSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={coverSrc} alt="" className="h-full w-full object-cover" draggable={false} />
+            ) : (
+              courseIcon(course.category)
+            )}
           </div>
           <div className="flex-1">
             <div className="flex flex-wrap gap-2">
