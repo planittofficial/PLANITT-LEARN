@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/context/auth-context";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 import type { ApiCourseDetail } from "@/types/course.types";
 
 type CourseDetailResponse = { ok: true; course: ApiCourseDetail };
 
 async function fetchCourseDetail(courseId: string): Promise<ApiCourseDetail | null> {
-  const res = await fetch(ROUTES.API.COURSES.detail(courseId), withApiCredentials());
+  const res = await authedFetch(ROUTES.API.COURSES.detail(courseId));
   if (!res.ok) return null;
   const data = (await res.json()) as CourseDetailResponse;
   return data.course ?? null;

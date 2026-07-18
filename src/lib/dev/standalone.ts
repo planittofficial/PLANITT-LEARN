@@ -7,10 +7,12 @@ export const DEV_ACCESS_TOKEN = "learn-dev-standalone-access";
 export const DEV_REFRESH_TOKEN = "learn-dev-standalone-refresh";
 
 export function isDevAccessToken(token: string | undefined): boolean {
+  if (!isDevStandalone()) return false;
   return Boolean(token && token === DEV_ACCESS_TOKEN);
 }
 
 export function isDevRefreshToken(token: string | undefined): boolean {
+  if (!isDevStandalone()) return false;
   return Boolean(token && token === DEV_REFRESH_TOKEN);
 }
 

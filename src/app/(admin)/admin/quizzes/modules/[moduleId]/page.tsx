@@ -30,6 +30,7 @@ export default function Page({ params }: { params: Promise<{ moduleId: string }>
         initial={test?.questions ?? []}
         passingScore={test?.passingScore ?? 60}
         title={test?.title ?? undefined}
+        published={test?.published ?? false}
         saving={saveTest.isPending}
         onSave={(payload) => saveTest.mutate(payload)}
       />

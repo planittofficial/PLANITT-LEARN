@@ -9,7 +9,7 @@ import {
   saveLessonComplete,
   type CourseProgress,
 } from "@/lib/learning/progress";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 
 type CourseProgressResponse = {
   ok: true;
@@ -20,7 +20,7 @@ export async function fetchCourseProgress(
   courseId: string,
   userId: string,
 ): Promise<CourseProgress> {
-  const res = await fetch(ROUTES.API.COURSES.progress(courseId), withApiCredentials());
+  const res = await authedFetch(ROUTES.API.COURSES.progress(courseId));
   if (res.status === 503 || !res.ok) {
     return loadCourseProgress(userId, courseId);
   }
@@ -29,14 +29,11 @@ export async function fetchCourseProgress(
 }
 
 async function postMarkLessonComplete(lessonId: string): Promise<boolean> {
-  const res = await fetch(
-    ROUTES.API.LESSONS.progress(lessonId),
-    withApiCredentials({
+  const res = await authedFetch(ROUTES.API.LESSONS.progress(lessonId), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ markComplete: true }),
-    }),
-  );
+    });
   return res.ok;
 }
 

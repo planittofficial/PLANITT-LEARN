@@ -22,8 +22,9 @@ export function planittCheckoutUrl(coursePlanId?: string): string {
 }
 
 /** After purchase on main site, redirect user to a course on Learn. */
-export function learnCourseUrl(courseId: string): string {
-  return `${LEARN_PORTAL_URL}/courses/${encodeURIComponent(courseId)}`;
+export function learnCourseUrl(courseId: string, options?: { purchased?: boolean }): string {
+  const base = `${LEARN_PORTAL_URL}/courses/${encodeURIComponent(courseId)}`;
+  return options?.purchased ? `${base}?purchased=1` : base;
 }
 
 /** Login on Learn with return path (main site can link here). */

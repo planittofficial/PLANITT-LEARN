@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 import type { AdminStudentDetail, AdminStudentSummary } from "@/types/admin.types";
 
 type StudentsResponse = {
@@ -25,7 +25,7 @@ export function useAdminStudents(params: { page?: number; pageSize?: number; q?:
     queryFn: async () => {
       const search = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
       if (q) search.set("q", q);
-      const res = await fetch(`/api/v1/admin/students?${search}`, withApiCredentials());
+      const res = await authedFetch(`/api/v1/admin/students?${search}`);
       if (!res.ok) throw new Error("Failed to load students");
       return (await res.json()) as StudentsResponse;
     },
@@ -36,7 +36,7 @@ export function useAdminStudent(userId: string) {
   return useQuery({
     queryKey: ["admin", "students", userId],
     queryFn: async () => {
-      const res = await fetch(`/api/v1/admin/students/${userId}`, withApiCredentials());
+      const res = await authedFetch(`/api/v1/admin/students/${userId}`);
       if (!res.ok) throw new Error("Failed to load student");
       const data = (await res.json()) as StudentResponse;
       return data.student;

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#9f1239"/>
+      <stop offset="0.5" stop-color="#be123c"/>
+      <stop offset="1" stop-color="#1f0a14"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.65" cy="0.2" r="0.55">
+      <stop stop-color="#fb7185" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#fb7185" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect width="800" height="450" fill="url(#glow)"/>
+  <!-- Soft waveforms / focus rings -->
+  <g stroke="#fecdd3" stroke-opacity="0.28" fill="none" stroke-width="2">
+    <circle cx="560" cy="200" r="40"/>
+    <circle cx="560" cy="200" r="90"/>
+    <circle cx="560" cy="200" r="140"/>
+    <circle cx="560" cy="200" r="190"/>
+  </g>
+  <path d="M80 260 C160 180, 240 320, 320 220 C400 120, 480 300, 560 200 C640 100, 700 240, 760 180" stroke="#fda4af" stroke-width="4" fill="none" opacity="0.55"/>
+  <path d="M80 300 C170 240, 250 340, 340 280 C430 220, 500 340, 580 280 C660 220, 720 300, 760 260" stroke="#fecdd3" stroke-width="2.5" fill="none" opacity="0.35"/>
+  <g fill="#fff1f2" fill-opacity="0.15">
+    <ellipse cx="200" cy="140" rx="90" ry="50"/>
+    <ellipse cx="200" cy="140" rx="55" ry="30"/>
+  </g>
+  <text x="48" y="420" fill="#fff1f2" fill-opacity="0.18" font-family="Georgia, serif" font-size="52" font-weight="700">MIND</text>
+</svg>

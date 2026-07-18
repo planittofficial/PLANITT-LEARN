@@ -22,12 +22,14 @@ export function QuizBuilder({
   initial,
   passingScore: initialPassing,
   title: initialTitle,
+  published: initialPublished = false,
   onSave,
   saving,
 }: {
   initial: QuizQuestion[];
   passingScore: number;
   title?: string;
+  published?: boolean;
   onSave: (payload: {
     title?: string;
     passingScore: number;
@@ -41,7 +43,7 @@ export function QuizBuilder({
   const [questions, setQuestions] = useState<QuizQuestion[]>(
     initial.length ? initial : [newQuestion()],
   );
-  const [published, setPublished] = useState(false);
+  const [published, setPublished] = useState(initialPublished);
 
   function updateQuestion(index: number, patch: Partial<QuizQuestion>) {
     setQuestions((prev) => prev.map((q, i) => (i === index ? { ...q, ...patch } : q)));

@@ -2,21 +2,21 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 import type { ApiAdminCourse } from "@/types/course.types";
 
 type CoursesResponse = { ok: true; courses: ApiAdminCourse[] };
 type CourseResponse = { ok: true; course: ApiAdminCourse & { description?: string; thumbnailUrl?: string | null } };
 
 export async function fetchAdminCourses(): Promise<ApiAdminCourse[]> {
-  const res = await fetch("/api/v1/admin/courses", withApiCredentials());
+  const res = await authedFetch("/api/v1/admin/courses");
   if (!res.ok) throw new Error("Failed to load courses");
   const data = (await res.json()) as CoursesResponse;
   return data.courses;
 }
 
 export async function fetchAdminCourse(courseId: string) {
-  const res = await fetch(`/api/v1/admin/courses/${courseId}`, withApiCredentials());
+  const res = await authedFetch(`/api/v1/admin/courses/${courseId}`);
   if (!res.ok) throw new Error("Failed to load course");
   const data = (await res.json()) as CourseResponse;
   return data.course;
@@ -41,11 +41,11 @@ export function useCreateCourse() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (body: Record<string, unknown>) => {
-      const res = await fetch("/api/v1/admin/courses", withApiCredentials({
+      const res = await authedFetch("/api/v1/admin/courses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-      }));
+      });
       if (!res.ok) {
         const err = (await res.json()) as { detail?: string };
         throw new Error(err.detail ?? "Failed to create course");
@@ -60,11 +60,11 @@ export function useUpdateCourse(courseId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (body: Record<string, unknown>) => {
-      const res = await fetch(`/api/v1/admin/courses/${courseId}`, withApiCredentials({
+      const res = await authedFetch(`/api/v1/admin/courses/${courseId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-      }));
+      });
       if (!res.ok) {
         const err = (await res.json()) as { detail?: string };
         throw new Error(err.detail ?? "Failed to update course");
@@ -82,7 +82,7 @@ export function useDeleteCourse() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (courseId: string) => {
-      const res = await fetch(`/api/v1/admin/courses/${courseId}`, withApiCredentials({ method: "DELETE" }));
+      const res = await authedFetch(`/api/v1/admin/courses/${courseId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete course");
       return res.json();
     },

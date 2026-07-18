@@ -1,6 +1,7 @@
 "use client";
 
 import { notFound, useParams } from "next/navigation";
+import { Suspense } from "react";
 
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { CoursePageSkeleton } from "@/components/ui/skeletons";
@@ -9,17 +10,19 @@ import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/context/auth-context";
 import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
+import { usePurchasedEnrollmentRefresh } from "@/hooks/enrollment/use-purchased-enrollment-refresh";
 import { apiCourseDetailToDefinition } from "@/lib/catalog/map-api-course";
 import { getCourseById } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 
-export default function CourseHubPage() {
+function CourseHubContent() {
   const params = useParams<{ courseId: string }>();
   const courseId = params.courseId;
   const staticCourse = getCourseById(courseId);
   const courseQuery = useCourseDetail(courseId);
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
+  usePurchasedEnrollmentRefresh();
 
   const course =
     courseQuery.data && courseQuery.data.modules.length > 0
@@ -49,5 +52,13 @@ export default function CourseHubPage() {
         />
       )}
     </>
+  );
+}
+
+export default function CourseHubPage() {
+  return (
+    <Suspense fallback={<CoursePageSkeleton />}>
+      <CourseHubContent />
+    </Suspense>
   );
 }

@@ -3,14 +3,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ROUTES } from "@/constants/routes";
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 import type { QuizAnswer, QuizAttemptResult, QuizPublicView } from "@/types/quiz.types";
 
 type TestResponse = { ok: true; test: QuizPublicView };
 type AttemptResponse = { ok: true; result: QuizAttemptResult };
 
 async function fetchModuleTest(moduleId: string): Promise<QuizPublicView | null> {
-  const res = await fetch(ROUTES.API.QUIZZES.module(moduleId), withApiCredentials());
+  const res = await authedFetch(ROUTES.API.QUIZZES.module(moduleId));
   if (res.status === 404) return null;
   if (!res.ok) return null;
   const data = (await res.json()) as TestResponse;
@@ -21,14 +21,11 @@ async function submitModuleTest(
   moduleId: string,
   answers: QuizAnswer[],
 ): Promise<QuizAttemptResult | null> {
-  const res = await fetch(
-    ROUTES.API.QUIZZES.moduleAttempts(moduleId),
-    withApiCredentials({
+  const res = await authedFetch(ROUTES.API.QUIZZES.moduleAttempts(moduleId), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ answers }),
-    }),
-  );
+    });
   if (!res.ok) return null;
   const data = (await res.json()) as AttemptResponse;
   return data.result ?? null;

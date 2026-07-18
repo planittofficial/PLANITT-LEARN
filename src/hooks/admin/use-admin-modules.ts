@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { withApiCredentials } from "@/lib/security/client-auth";
+import { authedFetch } from "@/lib/security/client-auth";
 
 export type AdminModuleRow = {
   id: string;
@@ -18,7 +18,7 @@ export function useAdminModules(courseId: string) {
   return useQuery({
     queryKey: ["admin", "modules", courseId],
     queryFn: async () => {
-      const res = await fetch(`/api/v1/admin/modules?courseId=${courseId}`, withApiCredentials());
+      const res = await authedFetch(`/api/v1/admin/modules?courseId=${courseId}`);
       if (!res.ok) throw new Error("Failed to load modules");
       const data = (await res.json()) as { ok: true; modules: AdminModuleRow[] };
       return data.modules;
@@ -31,11 +31,11 @@ export function useCreateModule(courseId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (body: Record<string, unknown>) => {
-      const res = await fetch("/api/v1/admin/modules", withApiCredentials({
+      const res = await authedFetch("/api/v1/admin/modules", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...body, courseId }),
-      }));
+      });
       if (!res.ok) throw new Error("Failed to create module");
       return res.json();
     },
@@ -47,11 +47,11 @@ export function useUpdateModule(moduleId: string, courseId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (body: Record<string, unknown>) => {
-      const res = await fetch(`/api/v1/admin/modules/${moduleId}`, withApiCredentials({
+      const res = await authedFetch(`/api/v1/admin/modules/${moduleId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-      }));
+      });
       if (!res.ok) throw new Error("Failed to update module");
       return res.json();
     },
@@ -63,7 +63,7 @@ export function useDeleteModule(courseId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (moduleId: string) => {
-      const res = await fetch(`/api/v1/admin/modules/${moduleId}`, withApiCredentials({ method: "DELETE" }));
+      const res = await authedFetch(`/api/v1/admin/modules/${moduleId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete module");
       return res.json();
     },
