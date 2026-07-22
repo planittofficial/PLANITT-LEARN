@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "prisma generate && next build",
-    "start": "next start -p 3001",
+    "start": "next start",
     "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
     "db:generate": "node scripts/prisma-with-env.mjs generate",
     "db:migrate": "node scripts/prisma-with-env.mjs migrate dev",
     "db:deploy": "node scripts/prisma-with-env.mjs migrate deploy",
