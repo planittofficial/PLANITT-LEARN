@@ -82,7 +82,11 @@ export function LoginPageView() {
         setError("");
         void loginWithGoogleIdToken(token)
           .then(() => router.replace(safeNext))
-          .catch(() => setError("Google sign-in failed. Try again."))
+          .catch((err) => {
+            const message =
+              err instanceof Error ? err.message : "Google sign-in failed. Try again.";
+            setError(message);
+          })
           .finally(() => setSubmitting(false));
       },
     });
