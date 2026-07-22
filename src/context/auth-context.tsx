@@ -124,7 +124,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }),
     );
     if (!res.ok) {
-      throw new Error("Google sign-in failed.");
+      const data = (await res.json().catch(() => null)) as { detail?: string } | null;
+      throw new Error(data?.detail ?? `Google sign-in failed (${res.status}).`);
     }
     await bootstrap();
   }, [bootstrap]);
