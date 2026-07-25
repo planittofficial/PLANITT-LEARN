@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
-import { Eye, EyeOff, GraduationCap, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { GraduationCap, Loader2 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ROUTES } from "@/constants/routes";
@@ -34,12 +34,27 @@ declare global {
   }
 }
 
+function resolvePostLoginPath(searchParams: URLSearchParams): string {
+  const nextPath = searchParams.get("next");
+  if (nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")) {
+    return nextPath;
+  }
+
+  const plan = searchParams.get("plan")?.trim().toLowerCase() ?? "";
+  if (plan.startsWith("learn-")) {
+    return `${ROUTES.STUDENT.course(plan)}?purchased=1`;
+  }
+
+  return ROUTES.STUDENT.HOME;
+}
+
 export function LoginPageView() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {
-    loginWithCredentials,
+    loginWithMpin,
     loginWithGoogleIdToken,
+    exchangeHandoffCode,
     loginAsDevUser,
     authReady,
     isAuthenticated,
@@ -47,26 +62,56 @@ export function LoginPageView() {
   } = useAuth();
   const { theme, mounted } = useTheme();
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
+  const handoffStarted = useRef(false);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const emailFromQuery = searchParams.get("email")?.trim() ?? "";
+  const [email, setEmail] = useState(emailFromQuery);
+  const [mpin, setMpin] = useState("");
   const [scriptReady, setScriptReady] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [handoffPending, setHandoffPending] = useState(() => Boolean(searchParams.get("code")));
 
-  const nextPath = searchParams.get("next");
-  const safeNext =
-    nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/";
+  const safeNext = useMemo(() => resolvePostLoginPath(searchParams), [searchParams]);
 
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID;
   const showGoogle = !devStandalone && Boolean(googleClientId);
 
   useEffect(() => {
-    if (authReady && isAuthenticated) {
+    if (emailFromQuery) setEmail(emailFromQuery);
+  }, [emailFromQuery]);
+
+  useEffect(() => {
+    if (authReady && isAuthenticated && !handoffPending) {
       router.replace(safeNext);
     }
-  }, [authReady, isAuthenticated, router, safeNext]);
+  }, [authReady, handoffPending, isAuthenticated, router, safeNext]);
+
+  useEffect(() => {
+    const code = searchParams.get("code")?.trim();
+    if (!code || !authReady || handoffStarted.current) return;
+    if (isAuthenticated) {
+      setHandoffPending(false);
+      router.replace(safeNext);
+      return;
+    }
+
+    handoffStarted.current = true;
+    setHandoffPending(true);
+    setSubmitting(true);
+    setError("");
+    void exchangeHandoffCode(code)
+      .then(() => router.replace(safeNext))
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : "SSO sign-in failed.";
+        setError(message);
+        handoffStarted.current = false;
+      })
+      .finally(() => {
+        setSubmitting(false);
+        setHandoffPending(false);
+      });
+  }, [authReady, exchangeHandoffCode, isAuthenticated, router, safeNext, searchParams]);
 
   useEffect(() => {
     if (!showGoogle) return;
@@ -107,12 +152,12 @@ export function LoginPageView() {
     theme,
   ]);
 
-  const handleCredentialsSubmit = async (event: React.FormEvent) => {
+  const handleMpinSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setSubmitting(true);
     setError("");
     try {
-      await loginWithCredentials(email.trim(), password);
+      await loginWithMpin(email.trim(), mpin.trim());
       router.replace(safeNext);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Sign-in failed.";
@@ -158,12 +203,14 @@ export function LoginPageView() {
         <div className="w-full max-w-[400px] rounded-2xl border border-borderSubtle bg-surface p-6 shadow-theme sm:p-8">
           <h1 className="text-2xl font-bold text-textPrimary">Welcome back</h1>
           <p className="mt-2 text-sm text-textSecondary">
-            {devStandalone
-              ? "Local dev mode — sign in with your dev credentials or use the quick dev button."
-              : "Sign in with your Planitt account. Purchased courses sync automatically after checkout."}
+            {handoffPending
+              ? "Signing you in from Planitt…"
+              : devStandalone
+                ? "Local dev mode — sign in with email + MPIN or use the quick dev button."
+                : "Sign in with Google or your Planitt email and 6-digit MPIN."}
           </p>
 
-          <form onSubmit={handleCredentialsSubmit} className="mt-6 space-y-4">
+          <form onSubmit={handleMpinSubmit} className="mt-6 space-y-4">
             <label className="block text-sm">
               <span className="font-medium text-textSecondary">Email</span>
               <input
@@ -178,26 +225,19 @@ export function LoginPageView() {
             </label>
 
             <label className="block text-sm">
-              <span className="font-medium text-textSecondary">Password</span>
-              <div className="relative mt-1.5">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full rounded-xl border border-borderSubtle bg-background px-3.5 py-2.5 pr-10 text-sm text-textPrimary outline-none transition placeholder:text-textMuted focus:border-brand/50 focus:ring-2 focus:ring-brand/20"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-textMuted hover:text-textSecondary"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
+              <span className="font-medium text-textSecondary">MPIN</span>
+              <input
+                type="password"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                required
+                maxLength={6}
+                pattern="\d{6}"
+                value={mpin}
+                onChange={(e) => setMpin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                placeholder="6-digit MPIN"
+                className="mt-1.5 w-full rounded-xl border border-borderSubtle bg-background px-3.5 py-2.5 text-sm tracking-[0.35em] text-textPrimary outline-none transition placeholder:tracking-normal placeholder:text-textMuted focus:border-brand/50 focus:ring-2 focus:ring-brand/20"
+              />
             </label>
 
             {!devStandalone ? (
@@ -206,7 +246,7 @@ export function LoginPageView() {
                   href={`${MAIN_WEBSITE_URL}/login`}
                   className="text-xs font-medium text-brand hover:underline"
                 >
-                  Forgot password?
+                  Forgot MPIN?
                 </a>
               </div>
             ) : null}
@@ -219,7 +259,7 @@ export function LoginPageView() {
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || mpin.length !== 6}
               className={cn(
                 "flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-60 dark:text-black dark:hover:brightness-110",
               )}
@@ -258,8 +298,8 @@ export function LoginPageView() {
           {devStandalone ? (
             <div className="mt-6 border-t border-borderSubtle pt-5">
               <p className="text-center text-xs text-textMuted">
-                Dev shortcut — default password is <code className="text-brand">learn123</code>{" "}
-                unless <code className="text-brand">LEARN_DEV_MOCK_PASSWORD</code> is set.
+                Dev shortcut — default MPIN is <code className="text-brand">123456</code> unless{" "}
+                <code className="text-brand">LEARN_DEV_MOCK_MPIN</code> is set.
               </p>
               <button
                 type="button"
@@ -267,7 +307,7 @@ export function LoginPageView() {
                 disabled={submitting}
                 className="mt-3 w-full rounded-xl border border-borderSubtle px-4 py-2.5 text-sm font-medium text-textSecondary transition hover:border-brand/30 hover:text-brand disabled:opacity-50"
               >
-                Continue as dev user (no password)
+                Continue as dev user (no MPIN)
               </button>
             </div>
           ) : null}
