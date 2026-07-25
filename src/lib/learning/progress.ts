@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = "planitt_learn_progress";
+const STORAGE_PREFIX = "alvest_learn_progress";
 
 export type LessonProgress = {
   completed: boolean;

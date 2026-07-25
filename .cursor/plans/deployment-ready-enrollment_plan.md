@@ -18,7 +18,7 @@ Ship Planitt Learn so that:
 | Webhook receiver `POST /api/v1/webhooks/enrollment` | Done — needs appbackend to call it |
 | UI lock on cards / hub / lessons | Done — `CourseCard`, `CourseHubView`, locked empty states |
 | API gate `assertEnrolled` on content routes | Done for courses, lessons, progress, quizzes, leaderboard |
-| Checkout link to main site | Done — `planittCheckoutUrl` → `/learn?plan={id}` |
+| Checkout link to main site | Done — `alvestCheckoutUrl` → `/learn?plan={id}` |
 | Seed of all catalog courses into DB | Done — `prisma/seed.ts` |
 
 **What is missing is mostly Learn-side auth/refresh + post-pay refetch + prod guards, plus an out-of-repo contract for appbackend/main site.**
@@ -171,7 +171,7 @@ Confirm every content API still calls `assertEnrolled` (already present on cours
 
 ### 3.3 Locked UX consistency
 
-Ensure hub / lesson / test all use the same checkout CTA (`planittCheckoutUrl`). No dark-theme restyle.
+Ensure hub / lesson / test all use the same checkout CTA (`alvestCheckoutUrl`). No dark-theme restyle.
 
 ---
 
@@ -187,7 +187,7 @@ Update `.env.example` + `docs/ENV_REFERENCE.md`:
 | `APPBACKEND_URL` | Real appbackend |
 | `NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Same as main site |
 | `NEXT_PUBLIC_MAIN_WEBSITE_URL` | e.g. `https://planitt.in` |
-| `NEXT_PUBLIC_LEARN_PORTAL_URL` | e.g. `https://learn.planitt.in` |
+| `NEXT_PUBLIC_LEARN_PORTAL_URL` | e.g. `https://alvest.planitt.in` |
 | `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Shared with appbackend; rotate if ever leaked |
 | `LEARN_ADMIN_EMAILS` | Admin allowlist |
 | **Unset** `LEARN_DEV_STANDALONE`, `NEXT_PUBLIC_LEARN_DEV_STANDALONE`, `LEARN_DEV_MOCK_*` | |

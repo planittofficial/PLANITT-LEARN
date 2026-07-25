@@ -196,7 +196,7 @@ export function LoginPageView() {
             <GraduationCap className="h-5 w-5" />
           </div>
           <span className="text-xl font-semibold tracking-tight text-textPrimary">
-            Planitt<span className="text-brand"> Learn</span>
+            Alvest<span className="text-brand"> Learn</span>
           </span>
         </div>
 
@@ -204,10 +204,10 @@ export function LoginPageView() {
           <h1 className="text-2xl font-bold text-textPrimary">Welcome back</h1>
           <p className="mt-2 text-sm text-textSecondary">
             {handoffPending
-              ? "Signing you in from Planitt…"
+              ? "Signing you in from Alvest…"
               : devStandalone
                 ? "Local dev mode — sign in with email + MPIN or use the quick dev button."
-                : "Sign in with Google or your Planitt email and 6-digit MPIN."}
+                : "Sign in with Google or your Alvest email and 6-digit MPIN."}
           </p>
 
           <form onSubmit={handleMpinSubmit} className="mt-6 space-y-4">

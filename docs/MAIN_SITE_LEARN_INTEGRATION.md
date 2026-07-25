@@ -1,7 +1,7 @@
-# Main Site / Appbackend ↔ Planitt Learn Integration
+# Main Site / Appbackend ↔ Alvest Learn Integration
 
 **Audience:** Main website + appbackend development team  
-**Purpose:** Contract and build steps so paid Learn courses unlock in the LMS after checkout on the main Planitt site.
+**Purpose:** Contract and build steps so paid Learn courses unlock in the LMS after checkout on the main Alvest site.
 
 Learn (this repo) already handles course locks, checkout links, payment-history merge, and the enrollment webhook receiver. **Checkout and payment stay on the main site.** This document covers what the main site / appbackend must provide.
 
@@ -27,7 +27,7 @@ Learn unlocks the course if EITHER:
 |--------|------|
 | **Main website** | Checkout UI (`/learn?plan=`), success redirect |
 | **Appbackend** | Auth, payment records, payment history API, webhook caller |
-| **Planitt Learn** | Course content, locks, progress, quizzes, webhook receiver |
+| **Alvest Learn** | Course content, locks, progress, quizzes, webhook receiver |
 
 ---
 
@@ -35,7 +35,7 @@ Learn unlocks the course if EITHER:
 
 - Learn shares **Google Sign-In** with the main site (same web client ID).
 - Learn talks to appbackend as a **BFF** (browser never calls appbackend directly).
-- Learn stores its own HTTP-only cookies (`planitt_learn_*`) — separate from main-site session cookies.
+- Learn stores its own HTTP-only cookies (`alvest_learn_*`) — separate from main-site session cookies.
 - `user.id` from appbackend `GET /auth/me` **must** match `user_id` in the enrollment webhook.
 
 ---
@@ -180,7 +180,7 @@ Content-Type: application/json
 
 **URLs:**
 - Local Learn: `http://localhost:3001/api/v1/webhooks/enrollment`
-- Prod Learn: `https://learn.planitt.in/api/v1/webhooks/enrollment` (confirm with Learn deploy)
+- Prod Learn: `https://alvest.planitt.in/api/v1/webhooks/enrollment` (confirm with Learn deploy)
 
 ---
 
@@ -201,8 +201,8 @@ After successful checkout, redirect the browser to Learn so the UI refetches enr
 ```
 
 Examples:
-- `https://learn.planitt.in/courses/learn-forex-master-track?purchased=1`
-- `https://learn.planitt.in/login?next=%2Fcourses%2Flearn-forex-master-track%3Fpurchased%3D1`
+- `https://alvest.planitt.in/courses/learn-forex-master-track?purchased=1`
+- `https://alvest.planitt.in/login?next=%2Fcourses%2Flearn-forex-master-track%3Fpurchased%3D1`
 
 `?purchased=1` tells Learn to invalidate enrollment and strip the query param. Learn also refetches on window focus as a backup.
 
@@ -216,7 +216,7 @@ Configure these in **Render** (appbackend) and **Vercel** (main website) for pro
 
 | Variable | Value | Where |
 |----------|-------|--------|
-| `LEARN_PORTAL_URL` | `https://learn.planitt.in` | **Render** (appbackend) **and** **Vercel** (website) — base URL of the LMS portal |
+| `LEARN_PORTAL_URL` | `https://alvest.planitt.in` | **Render** (appbackend) **and** **Vercel** (website) — base URL of the LMS portal |
 | `LEARN_ENROLLMENT_WEBHOOK_SECRET` | A secure shared secret key | **Render** (appbackend) — **must match** `LEARN_ENROLLMENT_WEBHOOK_SECRET` on the Learn LMS host |
 
 **How they are used:**
@@ -226,7 +226,7 @@ Configure these in **Render** (appbackend) and **Vercel** (main website) for pro
 | `LEARN_PORTAL_URL` | Post-checkout redirects (`{LEARN_PORTAL_URL}/courses/{planId}?purchased=1`) and building the webhook target (`{LEARN_PORTAL_URL}/api/v1/webhooks/enrollment`) |
 | `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Appbackend sends this as `x-learn-webhook-secret` (or `Authorization: Bearer …`) when calling Learn after payment |
 
-**Learn LMS (its own host)** must also set the **same** `LEARN_ENROLLMENT_WEBHOOK_SECRET`, plus `NEXT_PUBLIC_LEARN_PORTAL_URL=https://learn.planitt.in`.
+**Learn LMS (its own host)** must also set the **same** `LEARN_ENROLLMENT_WEBHOOK_SECRET`, plus `NEXT_PUBLIC_LEARN_PORTAL_URL=https://alvest.planitt.in`.
 
 Generate the secret once (e.g. `openssl rand -hex 32`), set it on Learn, then copy the identical value into Render. Never commit it to git.
 
@@ -234,7 +234,7 @@ Generate the secret once (e.g. `openssl rand -hex 32`), set it on Learn, then co
 
 | Variable / config | Purpose |
 |-------------------|---------|
-| `LEARN_PORTAL_URL` | `https://learn.planitt.in` — redirects + webhook base |
+| `LEARN_PORTAL_URL` | `https://alvest.planitt.in` — redirects + webhook base |
 | `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Same secret as Learn LMS |
 | Checkout route | `/learn?plan=` |
 | Webhook URL | `{LEARN_PORTAL_URL}/api/v1/webhooks/enrollment` |
@@ -246,7 +246,7 @@ Generate the secret once (e.g. `openssl rand -hex 32`), set it on Learn, then co
 |----------|---------|
 | `APPBACKEND_URL` | `https://api.planitt.in` |
 | `NEXT_PUBLIC_MAIN_WEBSITE_URL` | `https://planitt.in` |
-| `NEXT_PUBLIC_LEARN_PORTAL_URL` | `https://learn.planitt.in` |
+| `NEXT_PUBLIC_LEARN_PORTAL_URL` | `https://alvest.planitt.in` |
 | `NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Same as main site |
 | `LEARN_ENROLLMENT_WEBHOOK_SECRET` | **Same value as Render** |
 | Dev flags | **Unset** in production (`LEARN_DEV_*`, `NEXT_PUBLIC_LEARN_DEV_*`) |
@@ -326,7 +326,7 @@ Ship history first if needed; add webhook as soon as possible for durability.
 |------|------|
 | Auth, payments API, webhook caller | Appbackend |
 | `/learn` checkout UI + redirect | Main website |
-| LMS locks, webhook receiver, catalog IDs | Planitt Learn |
+| LMS locks, webhook receiver, catalog IDs | Alvest Learn |
 
 For Learn env details see `docs/ENV_REFERENCE.md`.  
 For Learn internal architecture see `docs/LMS_ARCHITECTURE.md`.

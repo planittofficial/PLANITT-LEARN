@@ -8,14 +8,14 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" });
 
 export const metadata: Metadata = {
-  title: "Planitt Learn",
-  description: "Planitt course portal — educational content only.",
+  title: "Alvest Learn",
+  description: "Alvest course portal — educational content only.",
 };
 
 const themeInitScript = `
 (function() {
   try {
-    var t = localStorage.getItem('planitt_learn_theme');
+    var t = localStorage.getItem('alvest_learn_theme');
     if (t === 'light') document.documentElement.classList.remove('dark');
     else document.documentElement.classList.add('dark');
   } catch (e) {

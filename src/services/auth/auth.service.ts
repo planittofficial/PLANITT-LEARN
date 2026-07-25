@@ -29,7 +29,7 @@ export async function postMpinAuth(body: MpinLoginInput): Promise<Response> {
   });
 }
 
-/** Optional SSO: exchange one-time handoff code from the main Planitt app. */
+/** Optional SSO: exchange one-time handoff code from the main Alvest app. */
 export async function postHandoffExchange(code: string): Promise<Response> {
   const serviceKey = learnServiceKey();
   if (!serviceKey) {

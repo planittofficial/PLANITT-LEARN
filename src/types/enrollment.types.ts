@@ -1,7 +1,7 @@
 import type { PaymentTransaction } from "@/lib/learning/enrollment";
 
 /** Where enrollment data was resolved (for debugging / UI badges in dev). */
-export type EnrollmentSource = "dev_mock" | "planitt" | "mixed";
+export type EnrollmentSource = "dev_mock" | "alvest" | "mixed";
 
 /**
  * GET /api/v1/enrollment/me — canonical enrollment response.

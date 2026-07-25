@@ -107,7 +107,7 @@ export function StudentLogo({ className }: StudentLogoProps) {
         <GraduationCap className="h-4.5 w-4.5" />
       </div>
       <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary md:inline">
-        Planitt<span className="text-brand"> Learn</span>
+        Alvest<span className="text-brand"> Learn</span>
       </span>
     </Link>
   );

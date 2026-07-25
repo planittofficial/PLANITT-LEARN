@@ -1,4 +1,4 @@
-const NOTES_KEY = "planitt_learn_notes";
+const NOTES_KEY = "alvest_learn_notes";
 
 export function getLessonNote(userId: string, lessonId: string): string {
   if (typeof window === "undefined") return "";

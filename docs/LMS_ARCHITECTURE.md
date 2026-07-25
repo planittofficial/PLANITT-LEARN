@@ -1,6 +1,6 @@
 # LMS architecture — NPTEL-lite / Udemy-lite roadmap
 
-This document explains **what infrastructure Planitt Learn needs** to become a full learning portal, what exists **today**, and which **environment variables** each role uses.
+This document explains **what infrastructure Alvest Learn needs** to become a full learning portal, what exists **today**, and which **environment variables** each role uses.
 
 ---
 
@@ -37,13 +37,13 @@ flowchart TB
     QB[Quiz builder]
   end
 
-  subgraph learn [Planitt Learn backend]
+  subgraph learn [Alvest Learn backend]
     API[Next.js API routes]
     DB[(PostgreSQL — Learn DB)]
     R2[Cloudflare R2 / S3]
   end
 
-  subgraph planitt [Planitt existing — keep separate]
+  subgraph planitt [Alvest existing — keep separate]
     Web[Main website :3000]
     AB[appbackend — auth + payments only]
   end
@@ -57,7 +57,7 @@ flowchart TB
   student -->|Google login| AB
 ```
 
-**Important:** Learn gets its **own PostgreSQL database**. It does **not** connect to Planitt's main trading database.
+**Important:** Learn gets its **own PostgreSQL database**. It does **not** connect to Alvest's main trading database.
 
 ---
 
@@ -81,7 +81,7 @@ DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/planitt_learn
 Example local:
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/planitt_learn_dev
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/alvest_learn_dev
 ```
 
 ### 2. Video object storage (required from Phase 2)
@@ -98,11 +98,11 @@ Videos are too large for Postgres. Store files in object storage; DB stores meta
 R2_ACCOUNT_ID=your-account-id
 R2_ACCESS_KEY_ID=your-access-key
 R2_SECRET_ACCESS_KEY=your-secret-key
-R2_BUCKET_NAME=planitt-learn-videos
-R2_PUBLIC_URL=https://videos.learn.planitt.in
+R2_BUCKET_NAME=alvest-learn-videos
+R2_PUBLIC_URL=https://videos.alvest.planitt.in
 ```
 
-### 3. Planitt appbackend (auth + enrollment only)
+### 3. Alvest appbackend (auth + enrollment only)
 
 Still needed in production/staging — **not** for intern standalone mode.
 
@@ -206,7 +206,7 @@ See [ENV_REFERENCE.md](./ENV_REFERENCE.md).
 
 **Private (production / staging only — never in repo):**
 - Production `APPBACKEND_URL`
-- Planitt main backend database
+- Alvest main backend database
 - Production `DATABASE_URL`
 - Production R2/S3 keys
 - Razorpay / payment keys
@@ -225,7 +225,7 @@ NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID=<staging>
 ```env
 LEARN_DEV_STANDALONE=true
 NEXT_PUBLIC_LEARN_DEV_STANDALONE=true
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/planitt_learn_dev
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/alvest_learn_dev
 LEARN_DEV_MOCK_ENROLLMENTS=learn-all-courses-combo
 ```
 
@@ -239,7 +239,7 @@ A: Not in the repo yet — the app doesn't use a database. It will be `DATABASE_
 **Q: Do we need a database for NPTEL/Udemy-lite?**  
 A: **Yes.** Videos, progress, quizzes, leaderboard, and admin all require PostgreSQL + object storage.
 
-**Q: Is it the same DB as Planitt trading backend?**  
+**Q: Is it the same DB as Alvest trading backend?**  
 A: **No.** Learn has its own isolated PostgreSQL instance.
 
 **Q: Can the team run without DB for now?**  

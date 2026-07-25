@@ -1,6 +1,6 @@
-# Planitt Learn — Developer guide
+# Alvest Learn — Developer guide
 
-Same setup for everyone. Local dev runs **without Planitt appbackend** — you still build all portal features (courses, videos, quizzes, admin, leaderboard).
+Same setup for everyone. Local dev runs **without Alvest appbackend** — you still build all portal features (courses, videos, quizzes, admin, leaderboard).
 
 ---
 
@@ -8,7 +8,7 @@ Same setup for everyone. Local dev runs **without Planitt appbackend** — you s
 
 ```bash
 git clone <repo-url>
-cd Planitt-Learn
+cd Alvest-Learn
 cp .env.example .env.local
 npm install
 npm run dev
@@ -40,7 +40,7 @@ NEXT_PUBLIC_MAIN_WEBSITE_URL=http://localhost:3000
 
 | Variable | Purpose |
 |----------|---------|
-| `LEARN_DEV_STANDALONE` | Local auth — no Planitt backend |
+| `LEARN_DEV_STANDALONE` | Local auth — no Alvest backend |
 | `LEARN_DEV_MOCK_ENROLLMENTS` | Which courses are unlocked locally |
 | `DATABASE_URL` | Add when Phase 1 DB lands (same for whole team) |
 
@@ -120,7 +120,7 @@ Do **not** edit each other's owned folders without coordinating. See [`ARCHITECT
 
 ## FAQ
 
-**Need Planitt backend?** No — local dev uses `LEARN_DEV_STANDALONE`.
+**Need Alvest backend?** No — local dev uses `LEARN_DEV_STANDALONE`.
 
 **Need Google login?** No — use **Continue as dev user**.
 

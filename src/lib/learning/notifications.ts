@@ -7,7 +7,7 @@ import {
 } from "./achievements";
 import { loadGamification, getLevelInfo } from "./gamification";
 
-const STORAGE_KEY = "planitt_learn_notifications";
+const STORAGE_KEY = "alvest_learn_notifications";
 const MAX_NOTIFICATIONS = 60;
 
 export type NotificationType =
@@ -187,7 +187,7 @@ export function notifyStreakReminder(userId: string, streak: number) {
 export function notifyWelcome(userId: string) {
   pushNotification(userId, {
     type: "system",
-    title: "Welcome to Planitt Learn",
+    title: "Welcome to Alvest Learn",
     body: "Complete lessons, build streaks, and earn achievements as you learn.",
     href: ROUTES.STUDENT.HOME,
     dedupeKey: "welcome",

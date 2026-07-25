@@ -36,7 +36,7 @@ function envFlag(value: string | undefined): boolean {
 }
 
 /**
- * Local dev without Planitt appbackend.
+ * Local dev without Alvest appbackend.
  * Enable with LEARN_DEV_STANDALONE=true — used by the whole team locally.
  * Blocked automatically in production.
  */
@@ -80,7 +80,7 @@ export function adminEmails(): string[] {
     .filter(Boolean);
 }
 
-/** Validates enrollment webhooks from Planitt appbackend. */
+/** Validates enrollment webhooks from Alvest appbackend. */
 export function enrollmentWebhookSecret(): string | undefined {
   const secret = process.env.LEARN_ENROLLMENT_WEBHOOK_SECRET?.trim();
   return secret || undefined;
@@ -92,7 +92,7 @@ export function learnServiceKey(): string | undefined {
   return key || undefined;
 }
 
-/** Same Google OAuth web client ID as main Planitt website — required when LEARN_DEV_STANDALONE=false. */
+/** Same Google OAuth web client ID as main Alvest website — required when LEARN_DEV_STANDALONE=false. */
 export function googleWebClientId(): string | undefined {
   const id = process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim();
   return id || undefined;
@@ -106,6 +106,6 @@ export const LEARN_PORTAL_URL =
  * Production/staging: real Google auth + appbackend payment history.
  * Local: LEARN_DEV_STANDALONE=true bypasses appbackend.
  */
-export function isPlanittIntegrationMode(): boolean {
+export function isAlvestIntegrationMode(): boolean {
   return !isDevStandalone() && Boolean(APPBACKEND_URL);
 }

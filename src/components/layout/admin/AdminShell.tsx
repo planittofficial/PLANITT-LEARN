@@ -29,7 +29,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <Menu className="h-5 w-5" />
             </button>
             <p className="flex-1 text-sm font-semibold">
-              Planitt <span className="text-violet-400">Console</span>
+              Alvest <span className="text-violet-400">Console</span>
             </p>
             <ThemeToggle />
           </div>

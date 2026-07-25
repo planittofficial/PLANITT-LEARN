@@ -19,7 +19,7 @@ import { CoursePageSkeleton } from "@/components/ui/skeletons";
 import { LockedCourseEmpty, NoLessonsEmpty } from "@/components/shared/EmptyState";
 import { NextLessonCTA } from "@/features/course-catalog/components/NextLessonCTA";
 import { ROUTES } from "@/constants/routes";
-import { planittCheckoutUrl } from "@/constants/urls";
+import { alvestCheckoutUrl } from "@/constants/urls";
 import { useCourseProgress } from "@/hooks/progress/use-course-progress";
 import {
   courseCoverSrc,
@@ -79,12 +79,12 @@ export function CourseHubView({
       <LockedCourseEmpty
         action={
           <a
-            href={planittCheckoutUrl(courseId)}
+            href={alvestCheckoutUrl(courseId)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
           >
-            Get this course on Planitt →
+            Get this course on Alvest →
           </a>
         }
       />

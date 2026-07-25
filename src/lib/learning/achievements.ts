@@ -6,7 +6,7 @@ import { loadGamification, getLevelInfo } from "./gamification";
 import { getQuizHistory, getQuizStats } from "./quiz-history";
 import { loadCourseProgress, countCompletedLessons } from "./progress";
 
-const STORAGE_KEY = "planitt_learn_achievements";
+const STORAGE_KEY = "alvest_learn_achievements";
 
 export type AchievementCategory =
   | "streak"
@@ -324,7 +324,7 @@ function saveStore(userId: string, store: AchievementsStore) {
 function countNotes(userId: string): number {
   if (typeof window === "undefined") return 0;
   try {
-    const raw = window.localStorage.getItem(`planitt_learn_notes:${userId}`);
+    const raw = window.localStorage.getItem(`alvest_learn_notes:${userId}`);
     if (!raw) return 0;
     const notes = JSON.parse(raw) as Record<string, string>;
     return Object.values(notes).filter((n) => n.trim().length > 0).length;

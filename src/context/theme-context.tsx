@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 export type Theme = "light" | "dark";
 
-const STORAGE_KEY = "planitt_learn_theme";
+const STORAGE_KEY = "alvest_learn_theme";
 
 type ThemeContextValue = {
   theme: Theme;

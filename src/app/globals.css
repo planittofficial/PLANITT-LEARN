@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme — emerald green + teal accent (Planitt LMS palette) */
+/* Light theme — emerald green + teal accent (Alvest LMS palette) */
 :root {
   color-scheme: light;
   --bg-base: #f8f9fb;

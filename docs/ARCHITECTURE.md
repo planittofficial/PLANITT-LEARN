@@ -1,8 +1,8 @@
-# Planitt Learning Portal — Production Architecture
+# Alvest Learning Portal — Production Architecture
 
 Senior architecture blueprint for parallel development across three developers with minimal merge conflicts.
 
-**Product boundary:** This app does **not** process payments. Users buy on the main Planitt website → main backend records payment → this portal verifies enrollment → serves content only.
+**Product boundary:** This app does **not** process payments. Users buy on the main Alvest website → main backend records payment → this portal verifies enrollment → serves content only.
 
 ---
 
@@ -10,7 +10,7 @@ Senior architecture blueprint for parallel development across three developers w
 
 ```
 ┌─────────────────────┐     purchase      ┌──────────────────────┐
-│  Main Planitt Site  │ ───────────────►  │  Main Backend (BFF)  │
+│  Main Alvest Site  │ ───────────────►  │  Main Backend (BFF)  │
 │  (checkout)         │                   │  auth + payments     │
 └─────────────────────┘                   └──────────┬───────────┘
                                                      │
@@ -18,7 +18,7 @@ Senior architecture blueprint for parallel development across three developers w
               enrollment webhook (future)            │
                                                      ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│              Planitt Learning Portal (this repo)                  │
+│              Alvest Learning Portal (this repo)                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
 │  │ Student      │  │ Admin        │  │ PostgreSQL (Learn DB)  │ │
 │  │ Portal       │  │ Portal       │  │ Prisma                 │ │
@@ -38,7 +38,7 @@ Senior architecture blueprint for parallel development across three developers w
 ## 2. Complete folder structure
 
 ```
-Planitt-Learn/
+Alvest-Learn/
 │
 ├── prisma/
 │   ├── schema.prisma              # Single schema — Lead owns merges
@@ -564,7 +564,7 @@ components/
     ├── EmptyState.tsx
     ├── ErrorMessage.tsx
     ├── LoadingGrid.tsx
-    └── LockedOverlay.tsx       # "Purchase on Planitt" CTA
+    └── LockedOverlay.tsx       # "Purchase on Alvest" CTA
 ```
 
 **Feature components stay in `features/`:**

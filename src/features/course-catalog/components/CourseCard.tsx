@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ROUTES } from "@/constants/routes";
-import { planittCheckoutUrl } from "@/constants/urls";
+import { alvestCheckoutUrl } from "@/constants/urls";
 import {
   courseCoverSrc,
   courseIcon,
@@ -77,7 +77,7 @@ export function CourseCard({
   );
 
   const ctaLabel = !enrolled
-    ? "Unlock on Planitt"
+    ? "Unlock on Alvest"
     : isComplete
       ? "Review Course"
       : inProgress
@@ -200,7 +200,7 @@ export function CourseCard({
             </span>
           ) : (
             <a
-              href={planittCheckoutUrl(course.id)}
+              href={alvestCheckoutUrl(course.id)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}

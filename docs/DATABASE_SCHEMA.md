@@ -1,4 +1,4 @@
-# Database schema — Planitt Learn
+# Database schema — Alvest Learn
 
 PostgreSQL via **Prisma**. See `prisma/schema.prisma` for the source of truth.
 
@@ -16,7 +16,7 @@ npm run db:studio     # Open Prisma Studio
 
 | Table | Purpose |
 |-------|---------|
-| `users` | Learner profiles (id = Planitt appbackend user id) |
+| `users` | Learner profiles (id = Alvest appbackend user id) |
 | `courses` | Course catalog (`id` = plan_id e.g. `learn-forex-master-track`) |
 | `modules` | Course modules (`id` = slug e.g. `fx-m1`) |
 | `lessons` | Lessons with video/article content, `min_watch_percent` default 75 |
@@ -27,7 +27,7 @@ npm run db:studio     # Open Prisma Studio
 | `quiz_attempts` | Lesson quiz + module test scores |
 | `leaderboard_entries` | Per-course rankings |
 | `admin_users` | Admin panel access by email |
-| `enrollment_events` | Webhook audit log from Planitt checkout |
+| `enrollment_events` | Webhook audit log from Alvest checkout |
 
 ## Entity diagram
 

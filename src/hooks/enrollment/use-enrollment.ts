@@ -26,7 +26,7 @@ async function fetchDevPreview(): Promise<Set<string>> {
 /**
  * Enrollment state for the student UI.
  * Server-resolved enrolledCourseIds from /api/v1/enrollment/me
- * (payment history from Planitt appbackend + optional Learn DB webhook sync).
+ * (payment history from Alvest appbackend + optional Learn DB webhook sync).
  */
 export function useEnrollment() {
   const { isAuthenticated, authReady, devStandalone } = useAuth();
