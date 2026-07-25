@@ -27,6 +27,8 @@ export const ROUTES = {
       ADMIN: "/api/v1/auth/admin",
       GOOGLE: "/api/v1/auth/google",
       LOGIN: "/api/v1/auth/login",
+      LOGIN_MPIN: "/api/v1/auth/login/mpin",
+      HANDOFF: "/api/v1/auth/handoff",
       LOGOUT: "/api/v1/auth/logout",
       REFRESH: "/api/v1/auth/refresh",
       DEV_LOGIN: "/api/v1/auth/dev-login",

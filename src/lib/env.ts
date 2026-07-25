@@ -86,6 +86,12 @@ export function enrollmentWebhookSecret(): string | undefined {
   return secret || undefined;
 }
 
+/** Server-to-server key for Learn SSO handoff exchange with appbackend. */
+export function learnServiceKey(): string | undefined {
+  const key = process.env.LEARN_SERVICE_KEY?.trim();
+  return key || undefined;
+}
+
 /** Same Google OAuth web client ID as main Planitt website — required when LEARN_DEV_STANDALONE=false. */
 export function googleWebClientId(): string | undefined {
   const id = process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim();

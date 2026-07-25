@@ -28,7 +28,15 @@ export function learnCourseUrl(courseId: string, options?: { purchased?: boolean
 }
 
 /** Login on Learn with return path (main site can link here). */
-export function learnLoginUrl(nextPath = "/"): string {
+export function learnLoginUrl(
+  nextPath = "/",
+  options?: { email?: string; plan?: string },
+): string {
   const safe = nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/";
-  return `${LEARN_PORTAL_URL}/login?next=${encodeURIComponent(safe)}`;
+  const params = new URLSearchParams();
+  if (safe !== "/") params.set("next", safe);
+  if (options?.email?.trim()) params.set("email", options.email.trim());
+  if (options?.plan?.trim()) params.set("plan", options.plan.trim());
+  const query = params.toString();
+  return query ? `${LEARN_PORTAL_URL}/login?${query}` : `${LEARN_PORTAL_URL}/login`;
 }

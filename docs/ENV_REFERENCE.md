@@ -29,6 +29,7 @@ Planitt **appbackend is not required** for local development. Production deploy 
 | `DATABASE_URL` | Phase 1+ | PostgreSQL for **Learn DB only** (not Planitt main DB) |
 | `LEARN_ADMIN_EMAILS` | Phase 1+ | Comma-separated emails with `/admin` access |
 | `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Phase 1+ | Validates enrollment webhooks from appbackend |
+| `LEARN_SERVICE_KEY` | Staging/prod SSO | Sent as `X-Learn-Service-Key` when exchanging `?code=` handoff tokens |
 
 ```env
 DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/planitt_learn_dev
@@ -91,11 +92,21 @@ NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID=...
 NEXT_PUBLIC_MAIN_WEBSITE_URL=https://planitt.in
 NEXT_PUBLIC_LEARN_PORTAL_URL=https://learn.planitt.in
 LEARN_ENROLLMENT_WEBHOOK_SECRET=<long-random-secret-shared-with-appbackend>
+LEARN_SERVICE_KEY=<long-random-secret-shared-with-appbackend-for-sso>
 LEARN_ADMIN_EMAILS=admin@planitt.in
 # LEARN_DEV_STANDALONE must be false or unset
 # NEXT_PUBLIC_LEARN_DEV_STANDALONE must be false or unset
 # LEARN_DEV_MOCK_* must be unset
 ```
+
+### Login / SSO query params
+
+| URL | Behavior |
+|-----|----------|
+| `/login?email=` | Prefills email on the MPIN form |
+| `/login?plan=learn-…` | After login, opens that course with `?purchased=1` (enrollment refresh) |
+| `/login?code=` | Exchanges SSO handoff via appbackend (`LEARN_SERVICE_KEY`) |
+| `/login?next=` | Explicit post-login path (wins over `plan`) |
 
 ### Production preflight
 
