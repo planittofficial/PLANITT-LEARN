@@ -45,7 +45,7 @@ export function LessonSidebar({
   const moduleStats = getModuleProgressStats(progress, moduleLessonIds);
 
   return (
-    <aside className="space-y-4 lg:sticky lg:top-24">
+    <aside className="space-y-4 xl:sticky xl:top-24">
       <LessonCourseNav
         course={course}
         courseId={courseId}
@@ -53,10 +53,10 @@ export function LessonSidebar({
         progress={progress}
       />
 
-      <div className="rounded-xl border border-borderSubtle bg-surface p-5">
+      <div className="rounded-lg border border-borderSubtle bg-surface p-5 shadow-card">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-brand">This lesson</p>
-          <h3 className="mt-2 text-base font-semibold">{lesson.title}</h3>
+          <h3 className="mt-2 text-base font-semibold text-textPrimary">{lesson.title}</h3>
           <p className="mt-2 text-sm leading-relaxed text-textSecondary">{lesson.summary}</p>
         </div>
 
@@ -132,7 +132,7 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       {previous ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, previous.moduleId, previous.lessonId)}
-          className="group flex items-center gap-3 rounded-xl border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:bg-brand/5"
+          className="group flex items-center gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:bg-brand/5"
         >
           <ArrowLeft className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
           <div className="min-w-0 text-left">
@@ -147,7 +147,7 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       {next ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, next.moduleId, next.lessonId)}
-          className="group flex items-center justify-end gap-3 rounded-xl border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:bg-brand/5 sm:col-start-2"
+          className="group flex items-center justify-end gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:bg-brand/5 sm:col-start-2"
         >
           <div className="min-w-0 text-right">
             <p className="text-xs text-textMuted">Next</p>
@@ -158,10 +158,10 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       ) : (
         <div
           className={cn(
-            "flex items-center justify-center rounded-xl border border-dashed border-borderSubtle p-4 text-sm text-textMuted sm:col-start-2",
+            "flex items-center justify-center rounded-lg border border-dashed border-borderSubtle p-4 text-sm text-textMuted sm:col-start-2",
           )}
         >
-          🎉 Last lesson — great work!
+          Last lesson - great work!
         </div>
       )}
     </nav>
@@ -178,9 +178,10 @@ type LessonContentProps = {
 export function LessonContent({ lesson, courseId, userId, onComplete }: LessonContentProps) {
   if (lesson.kind === "video") {
     return (
-      <div className="overflow-hidden rounded-2xl border border-borderSubtle bg-gradient-to-b from-white/5 to-black/40 shadow-2xl shadow-black/40">
-        <div className="border-b border-borderSubtle/50 px-4 py-2 text-xs text-textMuted">
-          Video lesson · watch {lesson.durationMinutes} min to complete
+      <div className="overflow-hidden rounded-lg border border-[#111] bg-[#070707] shadow-card">
+        <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-[#111] px-4 py-2.5 text-xs text-zinc-300">
+          <span>Video lesson</span>
+          <span className="text-zinc-400">{lesson.durationMinutes} min</span>
         </div>
         {lesson.content.videoUrl && userId ? (
           <VideoPlayer
@@ -199,7 +200,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
             title={lesson.title}
           />
         ) : (
-          <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black/60 text-sm text-textMuted">
+          <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black text-sm text-zinc-400">
             <Video className="h-10 w-10 opacity-30" />
             Video will be added by the instructor
           </div>
@@ -214,7 +215,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
         href={lesson.content.externalUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-brandForeground hover:bg-brandHover dark:text-black"
+        className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brandForeground hover:bg-brandHover"
       >
         Open external resource →
       </a>
@@ -222,7 +223,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
   }
 
   return (
-    <div id="lesson-content" className="rounded-2xl border border-borderSubtle bg-surface p-6 sm:p-8">
+    <div id="lesson-content" className="rounded-lg border border-borderSubtle bg-surface p-6 shadow-card sm:p-8">
       {lesson.content.markdown ? (
         <MarkdownLesson markdown={lesson.content.markdown} />
       ) : (

@@ -2,64 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme — emerald green + teal accent (Alvest LMS palette) */
+/* Light theme — calm education surface with restrained Alvest gold accents */
 :root {
   color-scheme: light;
-  --bg-base: #f8f9fb;
+  --bg-base: #f6f7f4;
   --bg-surface: #ffffff;
-  --bg-elevated: #f0fdf9;
-  --border-subtle: #d9dfeb;
-  --text-primary: #101828;
-  --text-secondary: #334155;
-  --text-muted: #667085;
-  --brand: #059669;
-  --brand-hover: #047857;
-  --brand-bright: #10b981;
-  --brand-foreground: #ffffff;
-  --brand-subtle: rgba(5, 150, 105, 0.1);
-  --accent: #0d9488;
-  --accent-bright: #2dd4bf;
-  --accent-subtle: rgba(13, 148, 136, 0.12);
-  --overlay-subtle: rgba(15, 23, 42, 0.035);
-  --overlay-medium: rgba(15, 23, 42, 0.055);
-  --overlay-strong: rgba(15, 23, 42, 0.08);
-  --overlay-hover: rgba(15, 23, 42, 0.045);
-  --overlay-faint: rgba(15, 23, 42, 0.02);
-  --shadow-soft: 0 8px 28px rgba(15, 23, 42, 0.08);
-  --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.06);
-  --scrollbar-thumb-hover: #94a3b8;
-  --page-gradient: radial-gradient(80% 50% at 0 0, rgba(5, 150, 105, 0.09), transparent 55%),
-    radial-gradient(60% 45% at 100% 0, rgba(13, 148, 136, 0.07), transparent 50%),
-    linear-gradient(165deg, #f8f9fb 0%, #f3f8f7 50%, #eef3fa 100%);
+  --bg-elevated: #eef2ed;
+  --border-subtle: #d9ded6;
+  --text-primary: #17201d;
+  --text-secondary: #46524d;
+  --text-muted: #707a75;
+  --brand: #b8892f;
+  --brand-hover: #9f7425;
+  --brand-bright: #d9b45f;
+  --brand-foreground: #17120b;
+  --brand-subtle: rgba(184, 137, 47, 0.12);
+  --accent: #4f6f64;
+  --accent-bright: #7c948b;
+  --accent-subtle: rgba(79, 111, 100, 0.1);
+  --overlay-subtle: rgba(23, 32, 29, 0.04);
+  --overlay-medium: rgba(23, 32, 29, 0.07);
+  --overlay-strong: rgba(23, 32, 29, 0.1);
+  --overlay-hover: rgba(23, 32, 29, 0.055);
+  --overlay-faint: rgba(23, 32, 29, 0.025);
+  --shadow-soft: 0 14px 36px rgba(23, 32, 29, 0.1);
+  --shadow-card: 0 8px 24px rgba(23, 32, 29, 0.07);
+  --scrollbar-thumb-hover: #a5ada8;
+  --page-gradient: linear-gradient(180deg, #fbfcfa 0%, #f6f7f4 48%, #eef2ed 100%);
 }
 
-/* Dark theme — unchanged */
+/* Dark theme — optional low-glare study mode */
 .dark {
   color-scheme: dark;
-  --bg-base: #0a0a0b;
-  --bg-surface: #141416;
-  --border-subtle: #27272a;
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --brand: #00d09c;
-  --brand-hover: #00b88a;
-  --brand-bright: #00d09c;
-  --brand-foreground: #000000;
-  --brand-subtle: rgba(0, 208, 156, 0.15);
-  --accent: #00b88a;
-  --accent-bright: #34d399;
-  --accent-subtle: rgba(0, 208, 156, 0.12);
-  --bg-elevated: #141416;
-  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
-  --page-gradient: var(--bg-base);
-  --overlay-subtle: rgba(0, 0, 0, 0.3);
-  --overlay-medium: rgba(0, 0, 0, 0.4);
-  --overlay-strong: rgba(255, 255, 255, 0.1);
-  --overlay-hover: rgba(255, 255, 255, 0.05);
-  --overlay-faint: rgba(255, 255, 255, 0.02);
-  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.45);
-  --scrollbar-thumb-hover: #3f3f46;
+  --bg-base: #111513;
+  --bg-surface: #191f1c;
+  --border-subtle: #2f3934;
+  --text-primary: #f2f5f0;
+  --text-secondary: #c5cdc7;
+  --text-muted: #8c9690;
+  --brand: #d3a94e;
+  --brand-hover: #e0bb66;
+  --brand-bright: #f0d489;
+  --brand-foreground: #18130a;
+  --brand-subtle: rgba(211, 169, 78, 0.14);
+  --accent: #95aaa1;
+  --accent-bright: #cbd6d1;
+  --accent-subtle: rgba(149, 170, 161, 0.12);
+  --bg-elevated: #202823;
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.28);
+  --page-gradient: linear-gradient(180deg, #121714 0%, #151b18 55%, #18201c 100%);
+  --overlay-subtle: rgba(242, 245, 240, 0.04);
+  --overlay-medium: rgba(242, 245, 240, 0.07);
+  --overlay-strong: rgba(242, 245, 240, 0.11);
+  --overlay-hover: rgba(242, 245, 240, 0.06);
+  --overlay-faint: rgba(242, 245, 240, 0.025);
+  --shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.32);
+  --scrollbar-thumb-hover: #68746e;
 }
 
 body {
@@ -116,10 +114,10 @@ body {
 
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(0, 208, 156, 0.4);
+    box-shadow: 0 0 0 0 rgba(214, 166, 63, 0.32);
   }
   50% {
-    box-shadow: 0 0 12px 2px rgba(0, 208, 156, 0.35);
+    box-shadow: 0 0 14px 3px rgba(214, 166, 63, 0.28);
   }
 }
 
@@ -149,7 +147,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(0, 208, 156, 0.08) 50%,
+    rgba(214, 166, 63, 0.12) 50%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -214,11 +212,11 @@ body {
 }
 
 .prose-lesson p {
-  @apply mb-3 text-sm leading-relaxed text-textSecondary;
+  @apply mb-4 text-[15px] leading-7 text-textSecondary;
 }
 
 .prose-lesson ul {
-  @apply mb-4 list-inside list-disc space-y-1 text-sm text-textSecondary;
+  @apply mb-5 list-inside list-disc space-y-1.5 text-[15px] leading-7 text-textSecondary;
 }
 
 ::-webkit-scrollbar {
@@ -256,13 +254,13 @@ body {
 
 /* Glowing Animations & Shadows */
 .glow-brand {
-  box-shadow: 0 0 15px rgba(5, 150, 105, 0.18);
-  border-color: rgba(5, 150, 105, 0.28);
+  box-shadow: 0 0 18px rgba(214, 166, 63, 0.18);
+  border-color: rgba(214, 166, 63, 0.3);
 }
 
 .dark .glow-brand {
-  box-shadow: 0 0 15px rgba(0, 208, 156, 0.15);
-  border-color: rgba(0, 208, 156, 0.25);
+  box-shadow: 0 0 18px rgba(214, 166, 63, 0.22);
+  border-color: rgba(214, 166, 63, 0.34);
 }
 
 .glow-amber {
@@ -290,13 +288,13 @@ body {
 
 /* Premium Trading Indicators & Glows */
 .trading-glow-green {
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 14px rgba(214, 166, 63, 0.14);
+  border-color: rgba(214, 166, 63, 0.26);
 }
 
 .dark .trading-glow-green {
-  box-shadow: 0 0 16px rgba(0, 208, 156, 0.2);
-  border-color: rgba(0, 208, 156, 0.3);
+  box-shadow: 0 0 18px rgba(214, 166, 63, 0.24);
+  border-color: rgba(214, 166, 63, 0.34);
 }
 
 .trading-grid-bg {

@@ -25,10 +25,10 @@ const TYPE_ICONS: Record<SearchResultType, LucideIcon> = {
 
 const TYPE_COLORS: Record<SearchResultType, string> = {
   course: "text-brand bg-brand/15",
-  lesson: "text-emerald-400 bg-emerald-500/15",
-  module: "text-sky-400 bg-sky-500/15",
+  lesson: "text-brandBright bg-brand/15",
+  module: "text-accent bg-accent/15",
   bookmark: "text-amber-400 bg-amber-500/15",
-  note: "text-violet-400 bg-violet-500/15",
+  note: "text-brand bg-brand/12",
 };
 
 type SearchResultItemProps = {

@@ -12,10 +12,10 @@ type AdminStatCardProps = {
 };
 
 const ACCENTS = {
-  violet: "text-violet-400 bg-violet-500/15",
-  indigo: "text-indigo-400 bg-indigo-500/15",
-  sky: "text-sky-400 bg-sky-500/15",
-  emerald: "text-emerald-400 bg-emerald-500/15",
+  violet: "text-brand bg-brand/15",
+  indigo: "text-accent bg-accent/15",
+  sky: "text-accentBright bg-accent/10",
+  emerald: "text-brandBright bg-brand/15",
   amber: "text-amber-400 bg-amber-500/15",
   rose: "text-rose-400 bg-rose-500/15",
 };
@@ -31,7 +31,7 @@ export function AdminStatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-borderSubtle bg-surface/80 p-5 backdrop-blur-sm transition hover:border-violet-500/20",
+        "rounded-2xl border border-borderSubtle bg-surface/80 p-5 backdrop-blur-sm transition hover:border-brand/20",
         className,
       )}
     >

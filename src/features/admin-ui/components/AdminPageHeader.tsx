@@ -22,15 +22,15 @@ export function AdminPageHeader({
   return (
     <header
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 via-surface to-indigo-500/10 p-6 sm:p-8",
+        "relative overflow-hidden rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/12 via-surface to-accent/10 p-6 sm:p-8",
         className,
       )}
     >
-      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-violet-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-brand/12 blur-3xl" />
       <div className="relative flex flex-wrap items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-violet-400">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand">
               {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
               {eyebrow}
             </p>

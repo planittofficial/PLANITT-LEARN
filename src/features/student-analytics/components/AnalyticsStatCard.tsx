@@ -15,10 +15,10 @@ type AnalyticsStatProps = {
 
 const ACCENTS = {
   brand: "from-brand/20 to-brand/5 border-brand/20 text-brand",
-  emerald: "from-emerald-500/20 to-emerald-500/5 border-emerald-500/20 text-emerald-400",
-  sky: "from-sky-500/20 to-sky-500/5 border-sky-500/20 text-sky-400",
+  emerald: "from-brand/20 to-brand/5 border-brand/20 text-brandBright",
+  sky: "from-accent/20 to-accent/5 border-accent/20 text-accent",
   amber: "from-amber-500/20 to-amber-500/5 border-amber-500/20 text-amber-400",
-  violet: "from-violet-500/20 to-violet-500/5 border-violet-500/20 text-violet-400",
+  violet: "from-brand/18 to-accent/10 border-brand/20 text-brand",
   rose: "from-rose-500/20 to-rose-500/5 border-rose-500/20 text-rose-400",
 };
 

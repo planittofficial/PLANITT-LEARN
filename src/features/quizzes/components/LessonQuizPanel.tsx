@@ -33,10 +33,10 @@ export function LessonQuizPanel({
   };
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-borderSubtle bg-surface">
+    <section className="overflow-hidden rounded-lg border border-borderSubtle bg-surface shadow-card">
       <div className="border-b border-borderSubtle px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/15 text-brand">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/15 text-brand">
             <HelpCircle className="h-5 w-5" />
           </div>
           <div>
@@ -44,7 +44,7 @@ export function LessonQuizPanel({
               {quiz.title?.trim() || "Lesson quiz"}
             </h2>
             <p className="text-xs text-textSecondary">
-              {quiz.questions.length} questions · pass score {quiz.passingScore}%
+              {quiz.questions.length} questions - pass score {quiz.passingScore}%
             </p>
           </div>
         </div>
@@ -54,20 +54,20 @@ export function LessonQuizPanel({
         {result ? (
           <div
             className={cn(
-              "flex items-start gap-3 rounded-xl border px-4 py-3",
+              "flex items-start gap-3 rounded-lg border px-4 py-3",
               result.passed
-                ? "border-emerald-500/30 bg-emerald-500/10"
+                ? "border-brand/30 bg-brand/10"
                 : "border-rose-500/30 bg-rose-500/10",
             )}
           >
             {result.passed ? (
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
             ) : (
               <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
             )}
             <div>
               <p className="font-semibold text-textPrimary">
-                {result.passed ? "Quiz passed!" : "Not quite — try again"}
+                {result.passed ? "Quiz passed!" : "Not quite - try again"}
               </p>
               <p className="mt-1 text-sm text-textSecondary">
                 Score: {result.score}/{result.maxScore} ({result.correctCount}/
@@ -89,7 +89,7 @@ export function LessonQuizPanel({
                   <label
                     key={`${question.id}-${optionIndex}`}
                     className={cn(
-                      "flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm transition",
+                      "flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-sm transition",
                       selected
                         ? "border-brand bg-brand/10 text-textPrimary"
                         : "border-borderSubtle hover:border-brand/30 hover:bg-overlay-faint",
@@ -119,12 +119,12 @@ export function LessonQuizPanel({
             type="button"
             onClick={() => void handleSubmit()}
             disabled={!allAnswered || isSubmitting}
-            className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50 dark:text-black dark:hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50"
           >
             {isSubmitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Submitting…
+                Submitting...
               </>
             ) : (
               "Submit quiz"

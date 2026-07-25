@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Script from "next/script";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GraduationCap, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
+import { AlvestLogo } from "@/components/brand";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { BRAND } from "@/constants/brand";
 import { ROUTES } from "@/constants/routes";
 import { MAIN_WEBSITE_URL } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
@@ -191,16 +193,21 @@ export function LoginPageView() {
           <ThemeToggle />
         </div>
 
-        <div className="mb-8 flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-brandForeground shadow-sm dark:text-black">
-            <GraduationCap className="h-5 w-5" />
-          </div>
-          <span className="text-xl font-semibold tracking-tight text-textPrimary">
-            Alvest<span className="text-brand"> Learn</span>
-          </span>
+        <div className="mb-8 flex flex-col items-center gap-3">
+          <AlvestLogo
+            variant="wordmark"
+            size={72}
+            priority
+            alt={BRAND.product}
+            className="drop-shadow-lg"
+          />
+          <p className="text-sm font-medium tracking-wide text-textSecondary">
+            <span className="text-textPrimary">{BRAND.name}</span>
+            <span className="text-brand"> Learn</span>
+          </p>
         </div>
 
-        <div className="w-full max-w-[400px] rounded-2xl border border-borderSubtle bg-surface p-6 shadow-theme sm:p-8">
+        <div className="w-full max-w-[400px] rounded-lg border border-borderSubtle bg-surface p-6 shadow-card sm:p-8">
           <h1 className="text-2xl font-bold text-textPrimary">Welcome back</h1>
           <p className="mt-2 text-sm text-textSecondary">
             {handoffPending
@@ -220,7 +227,7 @@ export function LoginPageView() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="mt-1.5 w-full rounded-xl border border-borderSubtle bg-background px-3.5 py-2.5 text-sm text-textPrimary outline-none transition placeholder:text-textMuted focus:border-brand/50 focus:ring-2 focus:ring-brand/20"
+                className="mt-1.5 w-full rounded-lg border border-borderSubtle bg-elevated px-3.5 py-2.5 text-sm text-textPrimary outline-none transition placeholder:text-textMuted focus:border-brand/50 focus:bg-surface focus:ring-2 focus:ring-brand/20"
               />
             </label>
 
@@ -236,7 +243,7 @@ export function LoginPageView() {
                 value={mpin}
                 onChange={(e) => setMpin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 placeholder="6-digit MPIN"
-                className="mt-1.5 w-full rounded-xl border border-borderSubtle bg-background px-3.5 py-2.5 text-sm tracking-[0.35em] text-textPrimary outline-none transition placeholder:tracking-normal placeholder:text-textMuted focus:border-brand/50 focus:ring-2 focus:ring-brand/20"
+                className="mt-1.5 w-full rounded-lg border border-borderSubtle bg-elevated px-3.5 py-2.5 text-sm tracking-[0.35em] text-textPrimary outline-none transition placeholder:tracking-normal placeholder:text-textMuted focus:border-brand/50 focus:bg-surface focus:ring-2 focus:ring-brand/20"
               />
             </label>
 
@@ -261,7 +268,7 @@ export function LoginPageView() {
               type="submit"
               disabled={submitting || mpin.length !== 6}
               className={cn(
-                "flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-60 dark:text-black dark:hover:brightness-110",
+                "flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-60",
               )}
             >
               {submitting ? (
@@ -305,7 +312,7 @@ export function LoginPageView() {
                 type="button"
                 onClick={handleDevLogin}
                 disabled={submitting}
-                className="mt-3 w-full rounded-xl border border-borderSubtle px-4 py-2.5 text-sm font-medium text-textSecondary transition hover:border-brand/30 hover:text-brand disabled:opacity-50"
+                className="mt-3 w-full rounded-lg border border-borderSubtle px-4 py-2.5 text-sm font-medium text-textSecondary transition hover:border-brand/30 hover:text-brand disabled:opacity-50"
               >
                 Continue as dev user (no MPIN)
               </button>
@@ -313,7 +320,7 @@ export function LoginPageView() {
           ) : null}
 
           {!showGoogle && !devStandalone ? (
-            <p className="mt-4 text-center text-xs text-amber-400">
+            <p className="mt-4 text-center text-xs text-brand">
               Google sign-in is not configured. Set{" "}
               <code className="text-brand">NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID</code> in{" "}
               <code className="text-brand">.env.local</code>.

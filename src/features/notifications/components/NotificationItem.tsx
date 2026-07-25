@@ -28,10 +28,10 @@ const TYPE_ICONS: Record<NotificationType, LucideIcon> = {
 
 const TYPE_COLORS: Record<NotificationType, string> = {
   achievement: "text-amber-400 bg-amber-500/15",
-  level_up: "text-violet-400 bg-violet-500/15",
+  level_up: "text-brand bg-brand/15",
   streak: "text-orange-400 bg-orange-500/15",
-  lesson_complete: "text-emerald-400 bg-emerald-500/15",
-  reminder: "text-sky-400 bg-sky-500/15",
+  lesson_complete: "text-brand bg-brand/15",
+  reminder: "text-accent bg-accent/15",
   leaderboard: "text-brand bg-brand/15",
   system: "text-textSecondary bg-overlay-strong",
 };
@@ -55,7 +55,7 @@ export function NotificationItem({
   const content = (
     <div
       className={cn(
-        "flex gap-3 rounded-xl border transition",
+        "flex gap-3 rounded-lg border transition",
         notification.read
           ? "border-transparent bg-transparent"
           : "border-brand/10 bg-brand/5",
@@ -64,7 +64,7 @@ export function NotificationItem({
     >
       <div
         className={cn(
-          "flex shrink-0 items-center justify-center rounded-xl",
+          "flex shrink-0 items-center justify-center rounded-lg",
           compact ? "h-9 w-9" : "h-10 w-10",
           color,
         )}

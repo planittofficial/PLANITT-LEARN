@@ -44,17 +44,17 @@ export function NextLessonCTA({
 
   if (isComplete) {
     return (
-      <div className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
+      <div className="flex items-center justify-between gap-4 rounded-lg border border-brand/25 bg-brand/10 p-5">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🎉</span>
+          <Sparkles className="h-6 w-6 shrink-0 text-brand" />
           <div>
-            <p className="font-semibold text-emerald-300">Course complete!</p>
+            <p className="font-semibold text-textPrimary">Course complete!</p>
             <p className="text-sm text-textSecondary">You finished all {stats.total} lessons.</p>
           </div>
         </div>
         <Link
           href={continueUrl}
-          className="shrink-0 rounded-xl border border-emerald-500/30 px-4 py-2.5 text-sm font-medium text-emerald-300 hover:bg-emerald-500/10"
+          className="shrink-0 rounded-lg border border-brand/30 px-4 py-2.5 text-sm font-medium text-brand hover:bg-brand/10"
         >
           Review
         </Link>
@@ -65,10 +65,10 @@ export function NextLessonCTA({
   return (
     <Link
       href={continueUrl}
-      className="group flex items-center justify-between gap-4 rounded-2xl border border-brand/30 bg-gradient-to-r from-brand/15 to-brand/5 p-5 transition hover:border-brand/50 hover:shadow-lg hover:shadow-brand/10"
+      className="group flex items-center justify-between gap-4 rounded-lg border border-brand/30 bg-brand/10 p-5 transition hover:border-brand/50 hover:bg-brand/15"
     >
       <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand text-brandForeground shadow-lg shadow-brand/20 transition group-hover:scale-105 dark:text-black">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-brand text-brandForeground shadow-sm transition group-hover:scale-105">
           {isNew ? <Sparkles className="h-6 w-6" /> : <Play className="h-6 w-6 fill-current" />}
         </div>
         <div>
@@ -79,11 +79,11 @@ export function NextLessonCTA({
             {nextTitle}
           </p>
           <p className="mt-1 text-xs text-textMuted">
-            {stats.completed}/{stats.total} lessons · {stats.percent}% complete
+            {stats.completed}/{stats.total} lessons - {stats.percent}% complete
           </p>
         </div>
       </div>
-      <span className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-brandForeground transition group-hover:bg-brandHover dark:text-black dark:group-hover:brightness-110">
+      <span className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-brandForeground transition group-hover:bg-brandHover">
         {isNew ? "Start" : "Resume"}
         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
       </span>

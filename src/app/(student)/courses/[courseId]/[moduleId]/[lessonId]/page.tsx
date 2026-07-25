@@ -115,7 +115,7 @@ export default function LessonPage() {
           action={
             <a
               href={alvestCheckoutUrl(courseId)}
-              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
+              className="inline-flex rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover"
             >
               Buy course on Alvest →
             </a>
@@ -196,14 +196,18 @@ export default function LessonPage() {
         ]}
       />
 
-      <p className="text-xs font-medium uppercase tracking-wider text-brand">{module.title}</p>
-      <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{lesson.title}</h1>
-      <div className="mt-3">
-        <LessonMetaBar lesson={lesson} module={module} />
-      </div>
+      <section className="border-b border-borderSubtle pb-5">
+        <p className="text-xs font-semibold uppercase tracking-wider text-brand">{module.title}</p>
+        <h1 className="mt-1 max-w-4xl text-2xl font-bold leading-tight text-textPrimary sm:text-3xl">
+          {lesson.title}
+        </h1>
+        <div className="mt-3">
+          <LessonMetaBar lesson={lesson} module={module} />
+        </div>
+      </section>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="space-y-5">
           <LessonContent
             lesson={lesson}
             courseId={courseId}
@@ -216,7 +220,7 @@ export default function LessonPage() {
               type="button"
               onClick={() => void markComplete()}
               disabled={completed || isMarking}
-              className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50 dark:text-black dark:hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50"
             >
               {completed ? (
                 <>

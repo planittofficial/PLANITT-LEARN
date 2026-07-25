@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
 
+import { AlvestLogo } from "@/components/brand";
 import { AdminSidebar } from "@/components/layout/admin/AdminSidebar";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -28,9 +29,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <p className="flex-1 text-sm font-semibold">
-              Alvest <span className="text-violet-400">Console</span>
-            </p>
+            <div className="flex flex-1 items-center gap-2">
+              <AlvestLogo variant="mark" size={28} />
+              <p className="text-sm font-semibold text-textPrimary">
+                Alvest <span className="text-brand">Console</span>
+              </p>
+            </div>
             <ThemeToggle />
           </div>
         </header>

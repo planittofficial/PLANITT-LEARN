@@ -82,7 +82,7 @@ export function CourseHubView({
             href={alvestCheckoutUrl(courseId)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
+            className="inline-flex rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover"
           >
             Get this course on Alvest →
           </a>
@@ -239,7 +239,7 @@ export function CourseHubView({
                               {lessonIndex + 1}
                             </span>
                             {done ? (
-                              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />
+                              <CheckCircle2 className="h-5 w-5 shrink-0 text-brand" />
                             ) : (
                               <Circle className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
                             )}

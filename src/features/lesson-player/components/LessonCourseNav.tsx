@@ -58,7 +58,7 @@ export function LessonCourseNav({
   const coursePercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
   return (
-    <div className="rounded-xl border border-borderSubtle bg-surface">
+    <div className="rounded-lg border border-borderSubtle bg-surface shadow-card">
       <div className="border-b border-borderSubtle p-4">
         <p className="text-xs font-medium uppercase tracking-wider text-brand">Course progress</p>
         <p className="mt-1 text-sm font-semibold text-textPrimary">{course.title}</p>
@@ -72,7 +72,7 @@ export function LessonCourseNav({
         </div>
       </div>
 
-      <div className="max-h-[420px] overflow-y-auto p-2">
+      <div className="max-h-[440px] overflow-y-auto p-2">
         {course.modules.map((mod, modIndex) => {
           const lessonIds = mod.lessons.map((l) => l.id);
           const modStats = getModuleProgressStats(progress, lessonIds);
@@ -83,9 +83,9 @@ export function LessonCourseNav({
               <button
                 type="button"
                 onClick={() => toggle(mod.id)}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-left text-sm transition hover:bg-overlay-hover"
+                className="flex w-full items-center gap-2 rounded-md px-2 py-2.5 text-left text-sm transition hover:bg-overlay-hover"
               >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand/10 text-xs font-bold text-brand">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-brand/10 text-xs font-bold text-brand">
                   {modIndex + 1}
                 </span>
                 <span className="min-w-0 flex-1 truncate font-medium text-textPrimary">{mod.title}</span>
@@ -111,14 +111,14 @@ export function LessonCourseNav({
                         <Link
                           href={ROUTES.STUDENT.lesson(courseId, mod.id, lesson.id)}
                           className={cn(
-                            "group flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition",
+                            "group flex items-center gap-2 rounded-md px-2 py-2 text-sm transition",
                             active
                               ? "bg-brand/10 text-brand"
                               : "hover:bg-overlay-hover",
                           )}
                         >
                           {done ? (
-                            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-brand" />
                           ) : (
                             <Circle
                               className={cn(

@@ -1,0 +1,1 @@
+export { AlvestLogo } from "./AlvestLogo";

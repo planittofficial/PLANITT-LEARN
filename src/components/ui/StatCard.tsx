@@ -13,10 +13,10 @@ type StatCardProps = {
 
 const ACCENTS = {
   brand: "text-brand bg-brand/10",
-  emerald: "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400",
-  sky: "text-sky-600 bg-sky-500/10 dark:text-sky-400",
+  emerald: "text-brand bg-brand/12 dark:text-brandBright",
+  sky: "text-accent bg-accent/12 dark:text-accentBright",
   amber: "text-amber-800 bg-amber-500/10 dark:text-amber-400",
-  violet: "text-violet-600 bg-violet-500/10 dark:text-violet-400",
+  violet: "text-brandBright bg-brand/12 dark:text-brandBright",
 };
 
 export function StatCard({ label, value, hint, icon: Icon, accent = "brand", className }: StatCardProps) {

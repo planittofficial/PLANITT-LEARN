@@ -34,7 +34,7 @@ export function RankXpPanel({
   return (
     <section
       className={cn(
-        "rounded-2xl border border-borderSubtle bg-gradient-to-br from-violet-500/10 via-surface to-brand/5 p-5",
+        "rounded-2xl border border-borderSubtle bg-gradient-to-br from-brand/12 via-surface to-accent/10 p-5",
         className,
       )}
     >

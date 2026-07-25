@@ -283,7 +283,7 @@ export function AchievementUnlockToast() {
             <button
               type="button"
               onClick={handleDismiss}
-              className="w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-brandForeground transition hover:bg-brandHover active:scale-[0.99] dark:text-black dark:hover:brightness-105"
+              className="w-full rounded-lg bg-brand px-4 py-3 text-sm font-bold text-brandForeground transition hover:bg-brandHover active:scale-[0.99]"
             >
               Continue learning
             </button>

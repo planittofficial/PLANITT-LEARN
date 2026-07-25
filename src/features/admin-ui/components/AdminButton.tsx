@@ -7,9 +7,9 @@ type AdminButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const VARIANTS = {
   primary:
-    "bg-gradient-to-r from-violet-500 to-indigo-500 font-semibold text-white shadow-lg shadow-violet-500/20 hover:brightness-110",
+    "bg-gradient-to-r from-brand via-brand to-brandBright font-semibold text-brandForeground shadow-lg shadow-brand/20 hover:brightness-110",
   secondary:
-    "border border-borderSubtle bg-surface text-textSecondary hover:border-violet-500/30 hover:text-textPrimary",
+    "border border-borderSubtle bg-surface text-textSecondary hover:border-brand/30 hover:text-textPrimary",
   danger: "border border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500/15",
   ghost: "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
 };

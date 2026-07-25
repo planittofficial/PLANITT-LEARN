@@ -48,7 +48,7 @@ export function AnalyticsAdminView() {
               className="flex items-center justify-between !p-4 text-sm"
             >
               <span className="font-medium">{course.title}</span>
-              <span className="text-violet-400">{course.enrollmentCount} enrollments</span>
+              <span className="text-brand">{course.enrollmentCount} enrollments</span>
             </AdminCard>
           ))}
         </div>

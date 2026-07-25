@@ -23,7 +23,7 @@ export default function AchievementsPage() {
         action={
           <Link
             href={ROUTES.STUDENT.LOGIN}
-            className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
+            className="inline-flex rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover"
           >
             Sign in →
           </Link>

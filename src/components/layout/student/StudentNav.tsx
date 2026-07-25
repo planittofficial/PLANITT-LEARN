@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import {
   Award,
   BarChart3,
-  GraduationCap,
   Home,
   Trophy,
   User,
 } from "lucide-react";
 
+import { AlvestLogo } from "@/components/brand";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
@@ -101,11 +101,12 @@ export function StudentLogo({ className }: StudentLogoProps) {
   return (
     <Link
       href={ROUTES.STUDENT.HOME}
-      className={cn("inline-flex shrink-0 items-center gap-2", className)}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-2 transition hover:opacity-90",
+        className,
+      )}
     >
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-brandForeground shadow-sm ring-1 ring-brand/20 transition hover:scale-105 dark:text-black dark:ring-black/5">
-        <GraduationCap className="h-4.5 w-4.5" />
-      </div>
+      <AlvestLogo variant="mark" size={36} className="shadow-sm ring-1 ring-black/10 dark:ring-white/10" />
       <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary md:inline">
         Alvest<span className="text-brand"> Learn</span>
       </span>

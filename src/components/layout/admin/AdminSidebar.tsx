@@ -5,15 +5,15 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   BookOpen,
-  GraduationCap,
   LayoutDashboard,
   Trophy,
   Users,
   X,
 } from "lucide-react";
 
-import { ROUTES } from "@/constants/routes";
+import { AlvestLogo } from "@/components/brand";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -41,12 +41,10 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
     <>
       <div className="flex items-center justify-between gap-3 border-b border-borderSubtle px-5 py-5">
         <Link href={ROUTES.ADMIN.HOME} className="flex items-center gap-3" onClick={onMobileClose}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20">
-            <GraduationCap className="h-5 w-5 text-violet-400" />
-          </div>
+          <AlvestLogo variant="mark" size={40} className="shadow-sm" />
           <div>
             <p className="font-semibold text-textPrimary">
-              Alvest <span className="text-violet-400">Console</span>
+              Alvest <span className="text-brand">Console</span>
             </p>
             <p className="text-[10px] uppercase tracking-widest text-textMuted">Admin panel</p>
           </div>
@@ -74,11 +72,11 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
                 active
-                  ? "bg-violet-500/15 text-violet-300 shadow-sm shadow-violet-500/10"
+                  ? "bg-brand/15 text-brand shadow-sm shadow-brand/20 ring-1 ring-brand/15"
                   : "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
               )}
             >
-              <item.icon className={cn("h-4 w-4", active ? "text-violet-400" : "")} />
+              <item.icon className={cn("h-4 w-4", active ? "text-brand" : "")} />
               {item.label}
             </Link>
           );
@@ -93,8 +91,8 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
         <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-textMuted">
           Quick tip
         </p>
-        <p className="rounded-xl border border-violet-500/15 bg-violet-500/5 px-3 py-2.5 text-xs leading-relaxed text-textMuted">
-          Upload videos from <strong className="text-violet-300">Courses → Module → Lesson</strong>{" "}
+        <p className="rounded-xl border border-brand/20 bg-brand/5 px-3 py-2.5 text-xs leading-relaxed text-textMuted">
+          Upload videos from <strong className="text-brand">Courses → Module → Lesson</strong>{" "}
           editor.
         </p>
         <Link

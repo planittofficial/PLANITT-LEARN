@@ -2,9 +2,9 @@ import { cn } from "@/lib/utils";
 
 const COLORS = [
   "bg-brand/10 text-brand dark:bg-brand/20 dark:text-brand",
-  "bg-sky-500/10 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400",
-  "bg-violet-500/10 text-violet-700 dark:bg-violet-500/20 dark:text-violet-400",
-  "bg-amber-500/10 text-amber-800 dark:bg-amber-500/20 dark:text-amber-400",
+  "bg-accent/10 text-textPrimary dark:bg-accent/15 dark:text-accentBright",
+  "bg-brand/12 text-brandForeground dark:bg-brand/20 dark:text-brandBright",
+  "bg-amber-500/10 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
   "bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400",
 ];
 
