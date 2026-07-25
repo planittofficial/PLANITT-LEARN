@@ -9,7 +9,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { LessonPageSkeleton } from "@/components/ui/skeletons";
 import { LockedCourseEmpty } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
-import { planittCheckoutUrl } from "@/constants/urls";
+import { alvestCheckoutUrl } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
 import {
   LessonContent,
@@ -114,10 +114,10 @@ export default function LessonPage() {
         <LockedCourseEmpty
           action={
             <a
-              href={planittCheckoutUrl(courseId)}
+              href={alvestCheckoutUrl(courseId)}
               className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
             >
-              Buy course on Planitt →
+              Buy course on Alvest →
             </a>
           }
         />

@@ -1,4 +1,4 @@
-# Mentor checklist — onboarding to Planitt Learn
+# Mentor checklist — onboarding to Alvest Learn
 
 Use this when **Sanvi**, **Gauri**, or another developer joins the Learn portal team.
 
@@ -8,7 +8,7 @@ Use this when **Sanvi**, **Gauri**, or another developer joins the Learn portal 
 
 | # | Item | How |
 |---|------|-----|
-| 1 | **Git repo access** | Add to `Planitt-Learn` on GitHub/GitLab |
+| 1 | **Git repo access** | Add to `Alvest-Learn` on GitHub/GitLab |
 | 2 | **Env template** | They copy `.env.example` → `.env.local` (same for everyone) |
 | 3 | **Onboarding doc** | [`docs/intern/README.md`](./intern/README.md) |
 | 4 | **Architecture** | [`docs/ARCHITECTURE.md`](./ARCHITECTURE.md) (structure + ownership) |
@@ -24,7 +24,7 @@ These stay with mentors / production deploy only:
 
 | Secret | Why |
 |--------|-----|
-| Production `APPBACKEND_URL` | Bulky Planitt backend + prod data |
+| Production `APPBACKEND_URL` | Bulky Alvest backend + prod data |
 | Production `DATABASE_URL` | Live Learn DB |
 | Production R2/S3 keys | Video storage |
 | Razorpay / payment keys | Checkout |
@@ -64,10 +64,10 @@ LEARN_DEV_MOCK_ENROLLMENTS=
 Share **Learn dev** `DATABASE_URL` with the team (same URL for everyone, or each runs Docker locally):
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/planitt_learn_dev
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/alvest_learn_dev
 ```
 
-This is the **Learn portal database** — not Planitt's main backend database.
+This is the **Learn portal database** — not Alvest's main backend database.
 
 ---
 

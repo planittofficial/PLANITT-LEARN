@@ -1,8 +1,8 @@
-# Planitt Learn 
+# Alvest Learn 
 
-**Planitt Learn** is the standalone learning portal for [Planitt](https://planitt.in) — a course consumption app where users watch lessons, track progress, and continue courses they purchased on the main website.
+**Alvest Learn** is the standalone learning portal for [Alvest](https://planitt.in) — a course consumption app where users watch lessons, track progress, and continue courses they purchased on the main website.
 
-This repo was split out of the Planitt monorepo (`Planitt-inhouse/apps/learn`) so it can be developed and deployed independently. It runs on **port 3001**, separate from the main marketing/checkout site on port 3000.
+This repo was split out of the Alvest monorepo (`Alvest-inhouse/apps/learn`) so it can be developed and deployed independently. It runs on **port 3001**, separate from the main marketing/checkout site on port 3000.
 
 ---
 
@@ -10,7 +10,7 @@ This repo was split out of the Planitt monorepo (`Planitt-inhouse/apps/learn`) s
 
 | In scope | Out of scope |
 |----------|--------------|
-| Google sign-in (same Planitt account) | Course checkout / payments (main site) |
+| Google sign-in (same Alvest account) | Course checkout / payments (main site) |
 | Enrolled courses unlocked; others locked | Creating payment plans |
 | Lessons, progress, quizzes, module tests | Trading / signal entitlements |
 | Admin CMS (`/admin`) for courses & assessments | Razorpay keys (stay on main site) |
@@ -41,7 +41,7 @@ See **[docs/LMS_ARCHITECTURE.md](docs/LMS_ARCHITECTURE.md)** and **[docs/ENV_REF
 - **TanStack React Query** (enrollment / payment history)
 - **Lucide React** (icons)
 
-Auth tokens are stored in HTTP-only cookies. The Learn app acts as a **BFF (Backend-for-Frontend)** — browser calls `/api/*` routes, which proxy to Planitt appbackend server-side.
+Auth tokens are stored in HTTP-only cookies. The Learn app acts as a **BFF (Backend-for-Frontend)** — browser calls `/api/*` routes, which proxy to Alvest appbackend server-side.
 
 ---
 
@@ -50,15 +50,15 @@ Auth tokens are stored in HTTP-only cookies. The Learn app acts as a **BFF (Back
 1. **Node.js 20+** and npm
 2. Copy **`.env.example`** → **`.env.local`** (same setup for the whole team)
 
-You do **not** need Planitt appbackend, Google OAuth, or Docker for Phase 0.
+You do **not** need Alvest appbackend, Google OAuth, or Docker for Phase 0.
 
 ---
 
 ## Quick start
 
 ```bash
-git clone <your-planitt-learn-repo-url>
-cd Planitt-Learn
+git clone <your-alvest-learn-repo-url>
+cd Alvest-Learn
 cp .env.example .env.local
 npm install
 npm run dev
@@ -112,7 +112,7 @@ Use comma-separated plan IDs. Available course IDs:
 ## Project structure
 
 ```
-Planitt-Learn/
+Alvest-Learn/
 ├── src/
 │   ├── app/                          # Next.js App Router pages & API routes
 │   │   ├── page.tsx                  # Home — "My learning" dashboard
@@ -206,7 +206,7 @@ Browser → Google Sign-In button → POST /api/auth/google
        → middleware checks session hint cookie on protected routes
 ```
 
-Users sign in with the **same Google account** as the main Planitt site. Unauthenticated visitors are redirected to `/login`.
+Users sign in with the **same Google account** as the main Alvest site. Unauthenticated visitors are redirected to `/login`.
 
 ### Enrollment (course access)
 
@@ -258,9 +258,9 @@ Copy `.env.example` to `.env.local`:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `APPBACKEND_URL` | Yes (server) | Planitt appbackend URL. Default in dev: `http://127.0.0.1:8000` |
+| `APPBACKEND_URL` | Yes (server) | Alvest appbackend URL. Default in dev: `http://127.0.0.1:8000` |
 | `NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Yes | Google OAuth web client ID. Add `http://localhost:3001` to authorized origins |
-| `NEXT_PUBLIC_MAIN_WEBSITE_URL` | No | Main Planitt site for checkout links. Default: `http://localhost:3000` |
+| `NEXT_PUBLIC_MAIN_WEBSITE_URL` | No | Main Alvest site for checkout links. Default: `http://localhost:3000` |
 | `LEARN_DEV_MOCK_ENROLLMENTS` | No (dev only) | Comma-separated plan IDs to simulate enrollment without payment |
 
 `APPBACKEND_URL` is server-only (no `NEXT_PUBLIC_` prefix) — the browser never talks to appbackend directly.

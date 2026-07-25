@@ -38,7 +38,7 @@ function moduleWithIntro(
   };
 }
 
-/** Full catalog — metadata matches Planitt Learn marketing pages. */
+/** Full catalog — metadata matches Alvest Learn marketing pages. */
 export const COURSE_CATALOG_DATA: CourseDefinition[] = [
   {
     id: "learn-indian-stocks-pro",

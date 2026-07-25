@@ -1,5 +1,5 @@
 /**
- * Client-safe URLs for linking Learn ↔ main Planitt website.
+ * Client-safe URLs for linking Learn ↔ main Alvest website.
  * Use NEXT_PUBLIC_* vars so the same build works locally and in production.
  */
 
@@ -13,10 +13,10 @@ export const LEARN_PORTAL_URL =
   (typeof window !== "undefined" ? window.location.origin : "http://localhost:3001");
 
 /** Checkout path on the main website (same plan_id as course id in Learn). */
-export const PLANITT_LEARN_CHECKOUT_PATH = "/learn";
+export const ALVEST_LEARN_CHECKOUT_PATH = "/learn";
 
-export function planittCheckoutUrl(coursePlanId?: string): string {
-  const base = `${MAIN_WEBSITE_URL}${PLANITT_LEARN_CHECKOUT_PATH}`;
+export function alvestCheckoutUrl(coursePlanId?: string): string {
+  const base = `${MAIN_WEBSITE_URL}${ALVEST_LEARN_CHECKOUT_PATH}`;
   if (!coursePlanId) return base;
   return `${base}?plan=${encodeURIComponent(coursePlanId)}`;
 }

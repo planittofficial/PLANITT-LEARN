@@ -1,4 +1,4 @@
-const QUIZ_HISTORY_KEY = "planitt_learn_quiz_history";
+const QUIZ_HISTORY_KEY = "alvest_learn_quiz_history";
 
 export type QuizHistoryEntry = {
   id: string;

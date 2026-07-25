@@ -2,7 +2,7 @@
 
 Copy **`.env.example`** → **`.env.local`**. Everyone on the team uses the same file.
 
-Planitt **appbackend is not required** for local development. Production deploy uses separate secrets.
+Alvest **appbackend is not required** for local development. Production deploy uses separate secrets.
 
 ---
 
@@ -10,7 +10,7 @@ Planitt **appbackend is not required** for local development. Production deploy 
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `LEARN_DEV_STANDALONE` | Yes | `true` — local auth without Planitt appbackend |
+| `LEARN_DEV_STANDALONE` | Yes | `true` — local auth without Alvest appbackend |
 | `NEXT_PUBLIC_LEARN_DEV_STANDALONE` | Yes | `true` — dev login button + course preview on home |
 | `LEARN_DEV_MOCK_USER_ID` | No | Mock user id (default: `dev-local-001`) |
 | `LEARN_DEV_MOCK_USER_NAME` | No | Display name in nav |
@@ -26,13 +26,13 @@ Planitt **appbackend is not required** for local development. Production deploy 
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | Phase 1+ | PostgreSQL for **Learn DB only** (not Planitt main DB) |
+| `DATABASE_URL` | Phase 1+ | PostgreSQL for **Learn DB only** (not Alvest main DB) |
 | `LEARN_ADMIN_EMAILS` | Phase 1+ | Comma-separated emails with `/admin` access |
 | `LEARN_ENROLLMENT_WEBHOOK_SECRET` | Phase 1+ | Validates enrollment webhooks from appbackend |
 | `LEARN_SERVICE_KEY` | Staging/prod SSO | Sent as `X-Learn-Service-Key` when exchanging `?code=` handoff tokens |
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/planitt_learn_dev
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/alvest_learn_dev
 ```
 
 ---
@@ -57,7 +57,7 @@ Only needed when testing **real Google login + payment history** against staging
 
 | Variable | Description |
 |----------|-------------|
-| `APPBACKEND_URL` | Planitt appbackend (staging or prod) |
+| `APPBACKEND_URL` | Alvest appbackend (staging or prod) |
 | `NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Google OAuth web client |
 
 Set `LEARN_DEV_STANDALONE=false` when using real auth.
@@ -78,7 +78,7 @@ LEARN_DEV_MOCK_ENROLLMENTS=learn-all-courses-combo
 NEXT_PUBLIC_MAIN_WEBSITE_URL=http://localhost:3000
 
 # When Phase 1 lands — same for whole team:
-# DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/planitt_learn_dev
+# DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/alvest_learn_dev
 ```
 
 ---
@@ -164,5 +164,5 @@ Checkout from Learn: `{MAIN_WEBSITE_URL}/learn?plan={planId}`
 
 1. Never commit `.env.local`
 2. Never put production `APPBACKEND_URL` or prod `DATABASE_URL` in the repo
-3. Learn DB is separate from Planitt's main trading database
+3. Learn DB is separate from Alvest's main trading database
 4. `LEARN_DEV_STANDALONE` must never be `true` in production

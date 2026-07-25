@@ -2,7 +2,7 @@ import { COURSE_CATALOG } from "@/lib/catalog/courses";
 
 import { loadCourseProgress } from "./progress";
 
-const RECENT_KEY = "planitt_learn_recent";
+const RECENT_KEY = "alvest_learn_recent";
 const MAX_RECENT = 8;
 
 export type RecentLesson = {

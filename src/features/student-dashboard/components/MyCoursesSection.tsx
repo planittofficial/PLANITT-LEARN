@@ -8,7 +8,7 @@ import { Lock } from "lucide-react";
 import { DashboardSkeleton } from "@/components/ui/skeletons";
 import { NoCoursesEmpty } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
-import { planittCheckoutUrl } from "@/constants/urls";
+import { alvestCheckoutUrl } from "@/constants/urls";
 import { CourseCard } from "@/features/course-catalog/components/CourseCard";
 import { ContinueLearningCard } from "@/features/student-dashboard/components/DashboardHero";
 import { LeaderboardRankCard } from "@/features/student-dashboard/components/LeaderboardRankCard";
@@ -110,7 +110,7 @@ export function MyCoursesSection() {
             <Link href={ROUTES.STUDENT.LOGIN} className="font-semibold text-brand hover:underline">
               Sign in
             </Link>{" "}
-            with your Planitt Google account to see your courses.
+            with your Alvest Google account to see your courses.
           </p>
         </div>
       ) : null}
@@ -119,12 +119,12 @@ export function MyCoursesSection() {
         <NoCoursesEmpty
           action={
             <a
-              href={planittCheckoutUrl()}
+              href={alvestCheckoutUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
             >
-              Browse courses on Planitt →
+              Browse courses on Alvest →
             </a>
           }
         />
@@ -216,8 +216,8 @@ export function MyCoursesSection() {
               {!devStandalone ? (
                 <p className="mt-4 text-center text-xs text-textMuted">
                   Purchase on{" "}
-                  <a href={planittCheckoutUrl()} className="text-brand hover:underline">
-                    Planitt
+                  <a href={alvestCheckoutUrl()} className="text-brand hover:underline">
+                    Alvest
                   </a>{" "}
                   to unlock — same Google account works here automatically.
                 </p>

@@ -173,7 +173,7 @@ export async function ensureUserProfile(user: {
 export type EnrollmentSnapshot = {
   enrolledCourseIds: string[];
   transactions: PaymentTransaction[];
-  source: "dev_mock" | "planitt" | "mixed";
+  source: "dev_mock" | "alvest" | "mixed";
 };
 
 /**
@@ -199,7 +199,7 @@ export async function getEnrollmentSnapshot(
   const fromPayments = enrolledCourseIdsFromTransactions(transactions);
   const fromDb = await enrolledCourseIdsFromDatabase(userId);
 
-  let source: EnrollmentSnapshot["source"] = "planitt";
+  let source: EnrollmentSnapshot["source"] = "alvest";
   if (isDevAccessToken(accessToken)) {
     source = fromDb.size > 0 ? "mixed" : "dev_mock";
   } else if (fromDb.size > 0 && fromPayments.size > 0) {

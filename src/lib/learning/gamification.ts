@@ -1,4 +1,4 @@
-const STORAGE_KEY = "planitt_learn_gamification";
+const STORAGE_KEY = "alvest_learn_gamification";
 const XP_PER_LESSON = 50;
 const XP_PER_STREAK_BONUS = 10;
 

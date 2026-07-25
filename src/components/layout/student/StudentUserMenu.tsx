@@ -7,7 +7,7 @@ import { ChevronDown, LogOut, ShoppingBag, User } from "lucide-react";
 
 import { Avatar } from "@/components/ui/Avatar";
 import { ROUTES } from "@/constants/routes";
-import { planittCheckoutUrl } from "@/constants/urls";
+import { alvestCheckoutUrl } from "@/constants/urls";
 import { cn } from "@/lib/utils";
 
 type StudentUserMenuProps = {
@@ -82,7 +82,7 @@ export function StudentUserMenu({ name, email, onLogout }: StudentUserMenuProps)
               Profile
             </Link>
             <a
-              href={planittCheckoutUrl()}
+              href={alvestCheckoutUrl()}
               target="_blank"
               rel="noopener noreferrer"
               role="menuitem"

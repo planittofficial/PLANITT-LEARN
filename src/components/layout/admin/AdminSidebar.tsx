@@ -46,7 +46,7 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
           </div>
           <div>
             <p className="font-semibold text-textPrimary">
-              Planitt <span className="text-violet-400">Console</span>
+              Alvest <span className="text-violet-400">Console</span>
             </p>
             <p className="text-[10px] uppercase tracking-widest text-textMuted">Admin panel</p>
           </div>

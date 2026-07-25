@@ -7,7 +7,7 @@ import { GraduationCap, Loader2 } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { LockedCourseEmpty, EmptyState } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
-import { planittCheckoutUrl } from "@/constants/urls";
+import { alvestCheckoutUrl } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
 import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
@@ -47,10 +47,10 @@ export default function ModuleTestPage() {
         <LockedCourseEmpty
           action={
             <a
-              href={planittCheckoutUrl(courseId)}
+              href={alvestCheckoutUrl(courseId)}
               className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
             >
-              Buy course on Planitt →
+              Buy course on Alvest →
             </a>
           }
         />

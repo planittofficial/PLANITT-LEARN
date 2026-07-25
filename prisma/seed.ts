@@ -11,7 +11,7 @@ function toLessonKind(kind: string): LessonKind {
 }
 
 async function main() {
-  console.log("Seeding Planitt Learn catalog…");
+  console.log("Seeding Alvest Learn catalog…");
 
   let courseOrder = 0;
   for (const course of COURSE_CATALOG_DATA) {

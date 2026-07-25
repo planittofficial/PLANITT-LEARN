@@ -1,8 +1,8 @@
 /** Learn-app cookie names — isolated from apps/website to avoid session collisions. */
 
-export const ACCESS_TOKEN_COOKIE = "planitt_learn_access_token";
-export const REFRESH_TOKEN_COOKIE = "planitt_learn_refresh_token";
-export const SESSION_HINT_COOKIE = "planitt_learn_session_hint";
+export const ACCESS_TOKEN_COOKIE = "alvest_learn_access_token";
+export const REFRESH_TOKEN_COOKIE = "alvest_learn_refresh_token";
+export const SESSION_HINT_COOKIE = "alvest_learn_session_hint";
 
 const ACCESS_MAX_AGE = 30 * 60;
 const REFRESH_MAX_AGE = 7 * 24 * 60 * 60;

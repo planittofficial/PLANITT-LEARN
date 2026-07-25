@@ -45,7 +45,7 @@ export const ALL_COURSE_IDS = [
   "learn-algo-trading",
 ] as const;
 
-/** All Planitt Learn courses — interns extend content in course-content.ts */
+/** All Alvest Learn courses — interns extend content in course-content.ts */
 export const COURSE_CATALOG: CourseDefinition[] = COURSE_CATALOG_DATA;
 
 export function getCourseById(courseId: string): CourseDefinition | undefined {

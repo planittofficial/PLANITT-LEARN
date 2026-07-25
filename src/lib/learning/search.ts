@@ -4,7 +4,7 @@ import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { getBookmarks } from "./bookmarks";
 import { isEnrolledInCourse } from "./enrollment";
 
-const RECENT_SEARCHES_KEY = "planitt_learn_recent_searches";
+const RECENT_SEARCHES_KEY = "alvest_learn_recent_searches";
 const MAX_RECENT = 8;
 
 export type SearchResultType =
@@ -54,7 +54,7 @@ function bestScore(fields: string[], query: string): number {
 function getAllNotes(userId: string): Array<{ lessonId: string; text: string }> {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(`planitt_learn_notes:${userId}`);
+    const raw = window.localStorage.getItem(`alvest_learn_notes:${userId}`);
     if (!raw) return [];
     const notes = JSON.parse(raw) as Record<string, string>;
     return Object.entries(notes)

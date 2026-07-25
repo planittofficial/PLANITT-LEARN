@@ -4,7 +4,7 @@
 **Your tasks:** [`TASKS.md`](./TASKS.md) — Sanvi (student UI) · Gauri (admin + APIs)
 
 ```
-Planitt-Learn/
+Alvest-Learn/
 │
 ├── .env.example             ← Copy to .env.local (everyone)
 ├── docs/

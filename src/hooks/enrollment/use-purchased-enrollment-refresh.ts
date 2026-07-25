@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 /**
- * After checkout on the main Planitt site, users return with ?purchased=1.
+ * After checkout on the main Alvest site, users return with ?purchased=1.
  * Invalidate enrollment so paid courses unlock without a hard refresh.
  */
 export function usePurchasedEnrollmentRefresh() {

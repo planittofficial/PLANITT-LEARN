@@ -42,7 +42,7 @@ export function NoCoursesEmpty({ action }: { action?: React.ReactNode }) {
     <EmptyState
       icon={BookOpen}
       title="No enrolled courses yet"
-      description="Purchase a course on Planitt to start your learning journey. Your progress will appear here automatically."
+      description="Purchase a course on Alvest to start your learning journey. Your progress will appear here automatically."
       action={action}
     />
   );
@@ -63,7 +63,7 @@ export function LockedCourseEmpty({ action }: { action?: React.ReactNode }) {
     <EmptyState
       icon={Lock}
       title="Course locked"
-      description="Enroll on Planitt to unlock this course and access all modules and lessons."
+      description="Enroll on Alvest to unlock this course and access all modules and lessons."
       action={action}
     />
   );

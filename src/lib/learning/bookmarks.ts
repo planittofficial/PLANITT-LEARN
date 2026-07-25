@@ -1,4 +1,4 @@
-const BOOKMARKS_KEY = "planitt_learn_bookmarks";
+const BOOKMARKS_KEY = "alvest_learn_bookmarks";
 
 export type Bookmark = {
   courseId: string;
