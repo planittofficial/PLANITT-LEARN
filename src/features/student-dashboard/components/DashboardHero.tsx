@@ -1,12 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Play } from "lucide-react";
+import { Zap } from "lucide-react";
 
-import { Badge } from "@/components/ui/Badge";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import type { CourseDefinition } from "@/lib/catalog/courses";
-import { courseIcon, courseThumbnailClass } from "@/lib/catalog/course-visuals";
 import { getContinueLessonUrl } from "@/lib/learning/course-progress";
 import { cn } from "@/lib/utils";
 
@@ -29,39 +26,41 @@ export function ContinueLearningCard({
   if (!continueUrl) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/10 via-surface to-appBase p-6 sm:p-8">
-      <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-brand/10 blur-3xl" />
-      <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-4">
-          <div
-            className={cn(
-              "flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-2xl",
-              courseThumbnailClass(course.category),
-            )}
-          >
-            {courseIcon(course.category)}
+    <div className="group relative overflow-hidden rounded-xl border border-borderSubtle bg-surface min-h-[320px] flex flex-col md:flex-row shadow-2xl transition-all duration-300 hover:border-brand/35">
+      <div className="relative z-10 flex-1 p-8 flex flex-col justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="w-2 h-[1px] bg-brand"></span>
+            <span className="font-mono text-[10px] text-brand font-bold uppercase tracking-widest">Active Intelligence</span>
           </div>
-          <div>
-            <Badge variant="brand" className="mb-2">
-              <Play className="mr-1 h-3 w-3" />
-              Continue learning
-            </Badge>
-            <h2 className="text-xl font-bold text-textPrimary">{course.title}</h2>
-            <p className="mt-1 text-sm text-textSecondary">
-              Pick up where you left off — {completedLessons} of {totalLessons} lessons done
-            </p>
-            <div className="mt-4 max-w-xs">
-              <ProgressBar value={progressPercent} showLabel size="md" />
-            </div>
-          </div>
+          <h3 className="font-headline text-2xl md:text-3xl font-bold text-textPrimary mb-3 leading-tight">
+            {course.title}
+          </h3>
+          <p className="font-sans text-textSecondary max-w-md text-sm leading-relaxed">
+            {course.blurb || "Systematic analysis of market imbalances and quantitative portfolios."}
+          </p>
         </div>
-        <Link
-          href={continueUrl}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-semibold text-brandForeground transition hover:bg-brandHover"
-        >
-          Resume
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+        <div className="flex items-center gap-6 mt-8">
+          <Link
+            href={continueUrl}
+            className="bg-brand text-brandForeground px-6 py-3 rounded font-mono text-xs font-bold transition-all hover:brightness-110 active:scale-95 flex items-center gap-2 tracking-tighter"
+          >
+            INITIALIZE_LESSON <Zap className="h-3 w-3 fill-current" />
+          </Link>
+          <span className="font-mono text-[11px] text-textSecondary flex items-center gap-1.5 uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
+            {progressPercent}% completed ({completedLessons}/{totalLessons} lessons)
+          </span>
+        </div>
+      </div>
+      <div className="relative w-full md:w-2/5 min-h-[200px] md:min-h-full border-l border-borderSubtle overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-85 transition-all duration-700"
+          alt="Technical Chart"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1bc_1Pc7nVTaOGr8IEvdoqAu2RxbkMyshu44eVgFNjLvZQg2bbK9KlDjaw9lpg42gDOHyKUtelzK1hnNkps0fupE-QwHf12pwvPm1Pp_4AmXTWpDdZhYBkWqvOCI-TOXkKH6ue5D2yVNnGUcDmGoxCShHT6CciSN92IrnBpLCWetM5AZrGix-SKeRtiMvOfqMswUhqg_R4NYyVHYJ0gk51chL7xPrIMZagUTtqh0xx50zFRjAePcPDvqJ0qepCf3635tvn7SpBTU"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/40 to-transparent" />
       </div>
     </div>
   );

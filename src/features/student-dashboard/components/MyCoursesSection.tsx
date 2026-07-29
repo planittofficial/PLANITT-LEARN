@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
-import { Lock } from "lucide-react";
+import { Lock, Trophy, Zap } from "lucide-react";
 
 import { DashboardSkeleton } from "@/components/ui/skeletons";
 import { NoCoursesEmpty } from "@/components/shared/EmptyState";
@@ -27,6 +27,8 @@ import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { getRecentlyWatched, getWeeklyActivity } from "@/lib/learning/activity";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { getCourseProgressStats } from "@/lib/learning/course-progress";
+import { getLevelInfo } from "@/lib/learning/gamification";
+import { cn } from "@/lib/utils";
 import type { CourseProgress } from "@/lib/learning/progress";
 
 export function MyCoursesSection() {
@@ -79,17 +81,11 @@ export function MyCoursesSection() {
     ...getCourseProgressStats(user?.id, course, progressByCourseId.get(course.id)),
   }));
 
-  const totalLessons = courseStats.reduce((s, c) => s + c.total, 0);
-  const lessonsCompleted = courseStats.reduce((s, c) => s + c.completed, 0);
-  const avgProgress =
-    courseStats.length > 0
-      ? Math.round(courseStats.reduce((s, c) => s + c.percent, 0) / courseStats.length)
-      : 0;
-
   const continueCourse =
     courseStats.find((c) => c.percent > 0 && c.percent < 100) ??
     courseStats.find((c) => c.percent === 0);
 
+  const level = getLevelInfo(gamification.xp);
   const firstName = user?.name?.split(" ")[0] ?? "Learner";
 
   return (
@@ -135,24 +131,56 @@ export function MyCoursesSection() {
           {isAuthenticated ? (
             <WelcomeHero
               firstName={firstName}
-              enrolledCount={enrolledCourses.length}
-              lessonsCompleted={lessonsCompleted}
-              totalLessons={totalLessons}
-              avgProgress={avgProgress}
               streak={gamification.streak}
-              xp={gamification.xp}
             />
           ) : null}
 
-          {isAuthenticated && continueCourse && user?.id ? (
-            <ContinueLearningCard
-              course={continueCourse.course}
-              userId={user.id}
-              progressPercent={continueCourse.percent}
-              completedLessons={continueCourse.completed}
-              totalLessons={continueCourse.total}
-            />
-          ) : null}
+          {(isAuthenticated || devPreview) && (
+            <div className="grid grid-cols-12 gap-5 mb-8">
+              <div className={cn(continueCourse ? "col-span-12 lg:col-span-8" : "col-span-12")}>
+                {continueCourse && user?.id ? (
+                  <ContinueLearningCard
+                    course={continueCourse.course}
+                    userId={user.id}
+                    progressPercent={continueCourse.percent}
+                    completedLessons={continueCourse.completed}
+                    totalLessons={continueCourse.total}
+                  />
+                ) : (
+                  <div className="p-8 rounded-xl border border-borderSubtle bg-surface flex flex-col justify-center min-h-[320px] text-center">
+                    <p className="font-headline text-2xl font-bold text-textPrimary mb-2">All tasks executed successfully</p>
+                    <p className="text-sm text-textSecondary font-sans">You have completed all enrolled courses! Select another course to initialize below.</p>
+                  </div>
+                )}
+              </div>
+
+              {isAuthenticated ? (
+                <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+                  {/* Gamification Bento Card 1: XP */}
+                  <div className="p-6 rounded-xl border border-borderSubtle bg-surface flex flex-col justify-between flex-1 min-h-[148px] justify-between terminal-glow">
+                    <p className="font-mono text-[10px] text-textSecondary uppercase tracking-widest mb-4">Cumulative_XP</p>
+                    <div className="flex items-end justify-between">
+                      <p className="font-mono text-4xl font-bold text-brand">{gamification.xp.toLocaleString()}</p>
+                      <Zap className="text-brand/35 h-8 w-8" />
+                    </div>
+                  </div>
+                  {/* Gamification Bento Card 2: Level */}
+                  <div className="p-6 rounded-xl border border-borderSubtle bg-surface flex flex-col justify-between flex-1 min-h-[148px] justify-between group hover:border-brand/30 transition-colors">
+                    <p className="font-mono text-[10px] text-textSecondary uppercase tracking-widest mb-4">Execution_Level</p>
+                    <div className="flex items-end justify-between">
+                      <p className="font-mono text-2xl font-bold text-textPrimary leading-none">
+                        LEVEL {level.level}
+                        <span className="block text-[10px] text-brand/60 font-semibold tracking-wider uppercase mt-1">
+                          {level.title}
+                        </span>
+                      </p>
+                      <Trophy className="text-textPrimary/20 h-8 w-8 group-hover:text-brand transition-colors" />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          )}
 
           <section>
             <div className="mb-4 flex items-center justify-between">

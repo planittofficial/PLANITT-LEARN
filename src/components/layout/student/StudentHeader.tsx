@@ -17,8 +17,8 @@ export function StudentHeader() {
   const { isAuthenticated, authReady, user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-borderSubtle bg-surface/95 shadow-sm backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-7xl items-stretch px-4 sm:h-16 sm:px-6 lg:px-8">
+    <header className="fixed top-0 left-0 w-full z-50 glass-effect border-b border-borderSubtle h-20">
+      <div className="mx-auto flex h-full max-w-7xl items-stretch px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 shrink-0 items-stretch gap-4 lg:gap-5">
           <div className="flex items-center">
             <StudentLogo />

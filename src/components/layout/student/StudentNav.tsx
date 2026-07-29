@@ -68,7 +68,7 @@ export function StudentNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/95 backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/80 backdrop-blur-md md:hidden"
       aria-label="Main"
     >
       <div className="mx-auto flex h-[3.25rem] max-w-lg items-stretch">
@@ -106,10 +106,57 @@ export function StudentLogo({ className }: StudentLogoProps) {
         className,
       )}
     >
-      <AlvestLogo variant="mark" size={36} className="shadow-sm ring-1 ring-black/10 dark:ring-white/10" />
-      <span className="hidden whitespace-nowrap text-[15px] font-semibold tracking-tight text-textPrimary md:inline">
-        Alvest<span className="text-brand"> Learn</span>
+      <AlvestLogo variant="mark" size={32} className="shadow-sm ring-1 ring-black/10 dark:ring-white/10" />
+      <span className="hidden whitespace-nowrap text-lg font-headline font-bold tracking-tight text-brand uppercase md:inline">
+        ALVEST<span className="text-textPrimary">_</span>LEARN
       </span>
     </Link>
+  );
+}
+
+export function StudentSidebar() {
+  const pathname = usePathname();
+
+  const sidebarItems = [
+    { href: ROUTES.STUDENT.HOME, label: "COMMAND_CENTER", icon: Home },
+    { href: "/courses", label: "CURRICULUM", icon: BarChart3, matches: (p: string) => p.startsWith("/courses") || p === ROUTES.STUDENT.HOME },
+    { href: ROUTES.STUDENT.LEADERBOARD, label: "LEADERBOARD", icon: Trophy },
+    { href: ROUTES.STUDENT.ACHIEVEMENTS, label: "ACHIEVEMENTS", icon: Award },
+    { href: ROUTES.STUDENT.PROFILE, label: "SETTINGS", icon: User },
+  ];
+
+  return (
+    <aside className="hidden md:flex flex-col p-6 pt-24 h-screen w-64 fixed left-0 top-0 z-40 bg-surface border-r border-borderSubtle">
+      <nav className="flex flex-col gap-1.5">
+        {sidebarItems.map((item) => {
+          const active = item.matches ? item.matches(pathname) : pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded font-mono text-xs tracking-tight transition-all duration-200",
+                active
+                  ? "bg-brand/10 text-brand font-bold border border-brand/20"
+                  : "text-textSecondary hover:text-textPrimary hover:bg-white/5 border border-transparent"
+              )}
+            >
+              <item.icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.25 : 2} />
+              <span className="tracking-widest uppercase">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+      <div className="mt-8 pt-6 border-t border-borderSubtle/50">
+        <div className="p-4 bg-elevated border border-borderSubtle rounded-lg terminal-glow">
+          <p className="font-mono text-[10px] text-brand mb-2 opacity-60">SYSTEM_LOG_V2.4</p>
+          <p className="font-mono text-[11px] text-textSecondary leading-relaxed">
+            &gt; Status: Active<br/>
+            &gt; Mode: Dev Standalone<br/>
+            &gt; Delta: Connected
+          </p>
+        </div>
+      </div>
+    </aside>
   );
 }

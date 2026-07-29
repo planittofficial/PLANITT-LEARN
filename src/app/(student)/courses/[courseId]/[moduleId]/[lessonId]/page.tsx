@@ -196,12 +196,17 @@ export default function LessonPage() {
         ]}
       />
 
-      <section className="border-b border-borderSubtle pb-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-brand">{module.title}</p>
-        <h1 className="mt-1 max-w-4xl text-2xl font-bold leading-tight text-textPrimary sm:text-3xl">
+      <section className="border-b border-borderSubtle pb-6 mb-8 mt-4">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="w-2 h-[1px] bg-brand"></span>
+          <span className="font-mono text-[10px] text-brand uppercase tracking-widest font-bold">
+            {module.title}
+          </span>
+        </div>
+        <h1 className="font-headline text-3xl font-bold tracking-tight text-textPrimary leading-tight">
           {lesson.title}
         </h1>
-        <div className="mt-3">
+        <div className="mt-4">
           <LessonMetaBar lesson={lesson} module={module} />
         </div>
       </section>

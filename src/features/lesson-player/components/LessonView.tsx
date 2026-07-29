@@ -132,12 +132,12 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       {previous ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, previous.moduleId, previous.lessonId)}
-          className="group flex items-center gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:bg-brand/5"
+          className="group flex items-center gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition-all duration-200 hover:border-brand/35 hover:bg-brand/5"
         >
           <ArrowLeft className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
           <div className="min-w-0 text-left">
-            <p className="text-xs text-textMuted">Previous</p>
-            <p className="truncate text-sm font-medium group-hover:text-brand">{previous.title}</p>
+            <p className="font-mono text-[9px] text-brand/60 uppercase tracking-widest">&lt; PREV_EXECUTE</p>
+            <p className="truncate text-sm font-bold text-textPrimary group-hover:text-brand mt-1">{previous.title}</p>
           </div>
         </Link>
       ) : (
@@ -147,21 +147,21 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       {next ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, next.moduleId, next.lessonId)}
-          className="group flex items-center justify-end gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:bg-brand/5 sm:col-start-2"
+          className="group flex items-center justify-end gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition-all duration-200 hover:border-brand/35 hover:bg-brand/5 sm:col-start-2"
         >
           <div className="min-w-0 text-right">
-            <p className="text-xs text-textMuted">Next</p>
-            <p className="truncate text-sm font-medium group-hover:text-brand">{next.title}</p>
+            <p className="font-mono text-[9px] text-brand/60 uppercase tracking-widest">NEXT_EXECUTE &gt;</p>
+            <p className="truncate text-sm font-bold text-textPrimary group-hover:text-brand mt-1">{next.title}</p>
           </div>
           <ArrowRight className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
         </Link>
       ) : (
         <div
           className={cn(
-            "flex items-center justify-center rounded-lg border border-dashed border-borderSubtle p-4 text-sm text-textMuted sm:col-start-2",
+            "flex items-center justify-center rounded-lg border border-dashed border-borderSubtle p-4 font-mono text-xs text-brand/60 sm:col-start-2",
           )}
         >
-          Last lesson - great work!
+          &gt; ALL_LESSONS_EXECUTED
         </div>
       )}
     </nav>
@@ -178,10 +178,10 @@ type LessonContentProps = {
 export function LessonContent({ lesson, courseId, userId, onComplete }: LessonContentProps) {
   if (lesson.kind === "video") {
     return (
-      <div className="overflow-hidden rounded-lg border border-[#111] bg-[#070707] shadow-card">
-        <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-[#111] px-4 py-2.5 text-xs text-zinc-300">
-          <span>Video lesson</span>
-          <span className="text-zinc-400">{lesson.durationMinutes} min</span>
+      <div className="overflow-hidden rounded-xl border border-borderSubtle bg-black shadow-card shadow-[0_0_15px_rgba(20,184,166,0.12)]">
+        <div className="flex items-center justify-between gap-3 border-b border-borderSubtle bg-surface px-4 py-2.5 font-mono text-[10px] text-brand font-bold uppercase tracking-wider">
+          <span>VIDEO_DECODER_CONNECTED</span>
+          <span className="text-textSecondary/60">{lesson.durationMinutes} min</span>
         </div>
         {lesson.content.videoUrl && userId ? (
           <VideoPlayer
@@ -201,7 +201,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
           />
         ) : (
           <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black text-sm text-zinc-400">
-            <Video className="h-10 w-10 opacity-30" />
+            <Video className="h-10 w-10 opacity-30 text-brand" />
             Video will be added by the instructor
           </div>
         )}
@@ -223,11 +223,15 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
   }
 
   return (
-    <div id="lesson-content" className="rounded-lg border border-borderSubtle bg-surface p-6 shadow-card sm:p-8">
+    <div id="lesson-content" className="rounded-xl border border-borderSubtle bg-surface p-6 shadow-card sm:p-8">
+      <div className="flex items-center gap-2 mb-4 border-b border-borderSubtle/50 pb-3">
+        <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
+        <span className="font-mono text-[10px] text-brand uppercase tracking-widest font-bold">LESSON_TAKEAWAYS_MD</span>
+      </div>
       {lesson.content.markdown ? (
         <MarkdownLesson markdown={lesson.content.markdown} />
       ) : (
-        <p className="text-textSecondary">Lesson content coming soon.</p>
+        <p className="text-textSecondary font-sans">Lesson content coming soon.</p>
       )}
     </div>
   );

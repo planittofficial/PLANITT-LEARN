@@ -8,6 +8,7 @@ import {
   Circle,
   Clock,
   FileText,
+  Lock,
   Play,
   Video,
 } from "lucide-react";
@@ -175,13 +176,16 @@ export function CourseHubView({
       ) : null}
 
       {/* Modules */}
-      <div className="space-y-4">
+      <div className="space-y-6 relative">
         <h2 className="text-lg font-semibold">
           Course content
           <span className="ml-2 text-sm font-normal text-textMuted">
             {course.modules.length} modules
           </span>
         </h2>
+
+        {/* Vertical Connector Line */}
+        <div className="absolute left-6 top-16 bottom-8 w-0.5 learning-path-line hidden md:block" />
 
         {course.modules.length === 0 ? (
           <NoLessonsEmpty />
@@ -191,86 +195,148 @@ export function CourseHubView({
             const moduleStats = getModuleProgressStats(progress, moduleLessonIds);
             const isExpanded = expandedModules.includes(module.id);
 
+            // Determine completed, current, and locked states
+            const isCompleted = moduleStats.total > 0 && moduleStats.completed === moduleStats.total;
+            let isCurrent = false;
+            let isLocked = false;
+
+            if (!isCompleted) {
+              if (moduleIndex === 0) {
+                isCurrent = true;
+              } else {
+                const prevModule = course.modules[moduleIndex - 1];
+                const prevModuleLessonIds = prevModule.lessons.map((l) => l.id);
+                const prevModuleStats = getModuleProgressStats(progress, prevModuleLessonIds);
+                const prevCompleted = prevModuleStats.total > 0 && prevModuleStats.completed === prevModuleStats.total;
+                if (prevCompleted) {
+                  isCurrent = true;
+                } else {
+                  isLocked = true;
+                }
+              }
+            }
+
             return (
-              <section
-                key={module.id}
-                className="overflow-hidden rounded-xl border border-borderSubtle bg-surface transition-colors hover:border-borderSubtle/80"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleModule(module.id)}
-                  className="flex w-full items-start gap-4 p-5 text-left transition hover:bg-overlay-faint"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-sm font-bold text-brand">
-                    {moduleIndex + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-semibold text-textPrimary">{module.title}</h3>
-                      <span className="text-xs text-textMuted">
-                        {moduleStats.completed}/{moduleStats.total} done
-                      </span>
-                    </div>
-                    <p className="mt-1 line-clamp-2 text-sm text-textSecondary">{module.summary}</p>
-                    <div className="mt-3 max-w-xs">
-                      <ProgressBar value={moduleStats.percent} size="sm" />
-                    </div>
-                  </div>
-                  {isExpanded ? (
-                    <ChevronDown className="mt-1 h-5 w-5 shrink-0 text-textMuted" />
-                  ) : (
-                    <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-textMuted" />
+              <div key={module.id} className="relative group">
+                {/* Connector timeline dots */}
+                {isCompleted && (
+                  <div className="hidden md:flex absolute left-6 top-[28px] -translate-x-1/2 w-4 h-4 rounded-full bg-brand z-10 border-4 border-appBase" />
+                )}
+                {isCurrent && (
+                  <div className="hidden md:flex absolute left-6 top-[24px] -translate-x-1/2 w-6 h-6 rounded-full bg-brand z-10 border-4 border-appBase animate-pulse shadow-[0_0_15px_rgba(20,184,166,0.5)]" />
+                )}
+                {isLocked && (
+                  <div className="hidden md:flex absolute left-6 top-[28px] -translate-x-1/2 w-4 h-4 rounded-full bg-borderSubtle z-10 border-4 border-appBase" />
+                )}
+
+                <section
+                  className={cn(
+                    "overflow-hidden rounded-xl border md:ml-16 transition-all duration-300",
+                    isCurrent
+                      ? "border-brand bg-elevated shadow-lg"
+                      : isLocked
+                        ? "border-borderSubtle bg-surface/40 opacity-60 grayscale-[0.3]"
+                        : "border-borderSubtle bg-surface hover:border-brand/40"
                   )}
-                </button>
+                >
+                  <button
+                    type="button"
+                    onClick={() => !isLocked && toggleModule(module.id)}
+                    className="flex w-full items-start gap-4 p-5 text-left transition hover:bg-overlay-faint"
+                    disabled={isLocked}
+                  >
+                    <span className={cn(
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold",
+                      isCompleted ? "bg-brand/10 text-brand" : isCurrent ? "bg-brand text-brandForeground" : "bg-overlay-medium text-textMuted"
+                    )}>
+                      {moduleIndex + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-semibold text-textPrimary">{module.title}</h3>
+                        {isCompleted && (
+                          <span className="flex items-center gap-1 bg-brand/10 text-brand px-2 py-0.5 rounded text-[9px] font-bold font-mono">
+                            COMPLETED
+                          </span>
+                        )}
+                        {isCurrent && (
+                          <span className="flex items-center gap-1 bg-brand text-brandForeground px-2 py-0.5 rounded text-[9px] font-bold font-mono">
+                            CURRENT
+                          </span>
+                        )}
+                        {isLocked && (
+                          <span className="flex items-center gap-1 bg-overlay-medium text-textMuted px-2 py-0.5 rounded text-[9px] font-bold font-mono">
+                            <Lock className="h-2.5 w-2.5" /> LOCKED
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 line-clamp-2 text-sm text-textSecondary">{module.summary}</p>
+                      
+                      {!isLocked && (
+                        <div className="mt-3 max-w-xs">
+                          <ProgressBar value={moduleStats.percent} size="sm" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {!isLocked && (
+                      isExpanded ? (
+                        <ChevronDown className="mt-1 h-5 w-5 shrink-0 text-textMuted" />
+                      ) : (
+                        <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-textMuted" />
+                      )
+                    )}
+                  </button>
 
-                {isExpanded ? (
-                  <ul className="border-t border-borderSubtle/50 px-3 py-2 sm:px-5">
-                    {module.lessons.map((lesson, lessonIndex) => {
-                      const done = progress[lesson.id]?.completed;
-                      const Icon = LESSON_ICONS[lesson.kind] ?? FileText;
+                  {isExpanded && !isLocked ? (
+                    <ul className="border-t border-borderSubtle/50 px-3 py-2 sm:px-5 bg-surface/50">
+                      {module.lessons.map((lesson, lessonIndex) => {
+                        const done = progress[lesson.id]?.completed;
+                        const Icon = LESSON_ICONS[lesson.kind] ?? FileText;
 
-                      return (
-                        <li key={lesson.id}>
+                        return (
+                          <li key={lesson.id}>
+                            <Link
+                              href={ROUTES.STUDENT.lesson(courseId, module.id, lesson.id)}
+                              className="group flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-overlay-hover"
+                            >
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center text-xs text-textMuted">
+                                {lessonIndex + 1}
+                              </span>
+                              {done ? (
+                                <CheckCircle2 className="h-5 w-5 shrink-0 text-brand" />
+                              ) : (
+                                <Circle className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-textPrimary group-hover:text-brand">
+                                  {lesson.title}
+                                </p>
+                                <p className="truncate text-xs text-textMuted">{lesson.summary}</p>
+                              </div>
+                              <div className="flex shrink-0 items-center gap-2 text-xs text-textMuted">
+                                <Icon className="h-3.5 w-3.5" />
+                                <Clock className="h-3.5 w-3.5" />
+                                {lesson.durationMinutes}m
+                              </div>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                      {moduleStats.total > 0 && moduleStats.completed === moduleStats.total ? (
+                        <li className="px-3 pb-3 pt-2">
                           <Link
-                            href={ROUTES.STUDENT.lesson(courseId, module.id, lesson.id)}
-                            className="group flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-overlay-hover"
+                            href={ROUTES.STUDENT.moduleTest(courseId, module.id)}
+                            className="inline-flex w-full items-center justify-center rounded bg-brand/10 border border-brand/35 px-4 py-2.5 text-sm font-semibold text-brand transition hover:bg-brand/15"
                           >
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center text-xs text-textMuted">
-                              {lessonIndex + 1}
-                            </span>
-                            {done ? (
-                              <CheckCircle2 className="h-5 w-5 shrink-0 text-brand" />
-                            ) : (
-                              <Circle className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
-                            )}
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium text-textPrimary group-hover:text-brand">
-                                {lesson.title}
-                              </p>
-                              <p className="truncate text-xs text-textMuted">{lesson.summary}</p>
-                            </div>
-                            <div className="flex shrink-0 items-center gap-2 text-xs text-textMuted">
-                              <Icon className="h-3.5 w-3.5" />
-                              <Clock className="h-3.5 w-3.5" />
-                              {lesson.durationMinutes}m
-                            </div>
+                            Take module test →
                           </Link>
                         </li>
-                      );
-                    })}
-                    {moduleStats.total > 0 && moduleStats.completed === moduleStats.total ? (
-                      <li className="px-3 pb-3 pt-2">
-                        <Link
-                          href={ROUTES.STUDENT.moduleTest(courseId, module.id)}
-                          className="inline-flex w-full items-center justify-center rounded-xl border border-brand/30 bg-brand/10 px-4 py-2.5 text-sm font-semibold text-brand transition hover:border-brand/40 hover:bg-brand/15"
-                        >
-                          Take module test →
-                        </Link>
-                      </li>
-                    ) : null}
-                  </ul>
-                ) : null}
-              </section>
+                      ) : null}
+                    </ul>
+                  ) : null}
+                </section>
+              </div>
             );
           })
         )}

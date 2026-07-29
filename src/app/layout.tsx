@@ -1,12 +1,28 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans, JetBrains_Mono } from "next/font/google";
 
 import { BRAND } from "@/constants/brand";
 import { AppProviders } from "@/context/app-providers";
 
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-body" });
+const headline = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-headline",
+  display: "swap",
+});
+
+const body = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: BRAND.product,
@@ -21,10 +37,10 @@ const themeInitScript = `
 (function() {
   try {
     var t = localStorage.getItem('alvest_learn_theme');
-    if (t === 'dark') document.documentElement.classList.add('dark');
+    if (t !== 'light') document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
   } catch (e) {
-    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('dark');
   }
 })();
 `;
@@ -35,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className={`${inter.variable} min-h-screen font-sans`}>
+      <body className={`${headline.variable} ${body.variable} ${mono.variable} min-h-screen font-sans`}>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
