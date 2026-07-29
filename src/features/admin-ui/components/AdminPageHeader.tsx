@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 type AdminPageHeaderProps = {
@@ -22,22 +21,22 @@ export function AdminPageHeader({
   return (
     <header
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/12 via-surface to-accent/10 p-6 sm:p-8",
+        "relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl",
         className,
       )}
     >
-      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-brand/12 blur-3xl" />
+      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-brand/5 blur-3xl" />
       <div className="relative flex flex-wrap items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand">
+            <p className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-brand font-bold">
               {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>
+          <h1 className="mt-2 font-headline text-2xl font-extrabold tracking-tight sm:text-3xl uppercase text-textPrimary">{title}</h1>
           {description ? (
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-textSecondary">
+            <p className="mt-2 max-w-2xl text-xs text-textSecondary leading-relaxed">
               {description}
             </p>
           ) : null}

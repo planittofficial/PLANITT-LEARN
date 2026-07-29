@@ -8,11 +8,16 @@ import {
   Home,
   Trophy,
   User,
+  TrendingUp,
+  LogOut,
+  LineChart,
+  BookOpen
 } from "lucide-react";
 
-import { AlvestLogo } from "@/components/brand";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/auth-context";
+import { Avatar } from "@/components/ui/Avatar";
 
 export const STUDENT_NAV_ITEMS = [
   { href: ROUTES.STUDENT.HOME, label: "My Learning", shortLabel: "Learn", icon: Home },
@@ -44,9 +49,9 @@ export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
               href={item.href}
               title={item.label}
               className={cn(
-                "relative inline-flex h-full shrink-0 items-center gap-2 border-b-2 px-2.5 text-sm font-medium transition-colors sm:px-3",
+                "relative inline-flex h-full shrink-0 items-center gap-2 border-b-2 px-2.5 text-xs font-mono tracking-widest uppercase transition-colors sm:px-3",
                 active
-                  ? "border-brand text-brand"
+                  ? "border-brand text-brand font-bold"
                   : "border-transparent text-textSecondary hover:border-borderSubtle hover:text-textPrimary",
               )}
             >
@@ -68,10 +73,10 @@ export function StudentNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/80 backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/5 bg-surface/80 backdrop-blur-md md:hidden"
       aria-label="Main"
     >
-      <div className="mx-auto flex h-[3.25rem] max-w-lg items-stretch">
+      <div className="mx-auto flex h-16 items-stretch px-4">
         {STUDENT_NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
           return (
@@ -79,12 +84,12 @@ export function StudentNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] transition",
+                "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[10px] font-mono tracking-wider transition",
                 active ? "text-brand" : "text-textMuted",
               )}
             >
-              <item.icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.25 : 2} />
-              <span className="truncate font-medium leading-none">{item.shortLabel}</span>
+              <item.icon className="h-5 w-5" strokeWidth={active ? 2.25 : 2} />
+              <span className="truncate leading-none uppercase">{item.shortLabel}</span>
             </Link>
           );
         })}
@@ -102,13 +107,15 @@ export function StudentLogo({ className }: StudentLogoProps) {
     <Link
       href={ROUTES.STUDENT.HOME}
       className={cn(
-        "inline-flex shrink-0 items-center gap-2 transition hover:opacity-90",
+        "inline-flex shrink-0 items-center gap-3 transition hover:opacity-90",
         className,
       )}
     >
-      <AlvestLogo variant="mark" size={32} className="shadow-sm ring-1 ring-black/10 dark:ring-white/10" />
-      <span className="hidden whitespace-nowrap text-lg font-headline font-bold tracking-tight text-brand uppercase md:inline">
-        ALVEST<span className="text-textPrimary">_</span>LEARN
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 border border-brand/20">
+        <TrendingUp className="h-5 w-5 text-brand" />
+      </div>
+      <span className="hidden whitespace-nowrap text-lg font-headline font-extrabold tracking-tighter text-brand uppercase md:inline">
+        TRDR<span className="text-textPrimary">_PRO</span>
       </span>
     </Link>
   );
@@ -116,43 +123,81 @@ export function StudentLogo({ className }: StudentLogoProps) {
 
 export function StudentSidebar() {
   const pathname = usePathname();
+  const { user, logout, isAuthenticated } = useAuth();
 
   const sidebarItems = [
     { href: ROUTES.STUDENT.HOME, label: "COMMAND_CENTER", icon: Home },
-    { href: "/courses", label: "CURRICULUM", icon: BarChart3, matches: (p: string) => p.startsWith("/courses") || p === ROUTES.STUDENT.HOME },
+    { 
+      href: ROUTES.STUDENT.HOME, 
+      label: "CURRICULUM", 
+      icon: BookOpen, 
+      matches: (p: string) => p.startsWith("/courses") || p === ROUTES.STUDENT.HOME 
+    },
     { href: ROUTES.STUDENT.LEADERBOARD, label: "LEADERBOARD", icon: Trophy },
     { href: ROUTES.STUDENT.ACHIEVEMENTS, label: "ACHIEVEMENTS", icon: Award },
+    { href: ROUTES.STUDENT.ANALYTICS, label: "ANALYTICS", icon: BarChart3 },
     { href: ROUTES.STUDENT.PROFILE, label: "SETTINGS", icon: User },
   ];
 
   return (
-    <aside className="hidden md:flex flex-col p-6 pt-24 h-screen w-64 fixed left-0 top-0 z-40 bg-surface border-r border-borderSubtle">
-      <nav className="flex flex-col gap-1.5">
+    <aside className="hidden md:flex flex-col p-6 h-screen w-64 fixed left-0 top-0 z-40 bg-surface border-r border-white/5">
+      {/* Sidebar Header Logo */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 border border-brand/20">
+          <TrendingUp className="h-5 w-5 text-brand" />
+        </div>
+        <span className="font-headline text-[20px] font-black text-brand tracking-tighter uppercase">
+          TRDR_PRO
+        </span>
+      </div>
+
+      {/* Navigation menu */}
+      <nav className="flex-grow flex flex-col gap-1.5">
         {sidebarItems.map((item) => {
           const active = item.matches ? item.matches(pathname) : pathname === item.href;
           return (
             <Link
-              key={item.href}
+              key={item.label}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded font-mono text-xs tracking-tight transition-all duration-200",
+                "flex items-center gap-3 px-4 py-3 rounded font-mono text-xs tracking-wider transition-all duration-200 border border-transparent",
                 active
-                  ? "bg-brand/10 text-brand font-bold border border-brand/20"
-                  : "text-textSecondary hover:text-textPrimary hover:bg-white/5 border border-transparent"
+                  ? "bg-brand/5 text-brand font-bold border-l-2 border-l-brand"
+                  : "text-textSecondary hover:text-textPrimary hover:bg-white/5"
               )}
             >
               <item.icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.25 : 2} />
-              <span className="tracking-widest uppercase">{item.label}</span>
+              <span className="uppercase">{item.label}</span>
             </Link>
           );
         })}
       </nav>
-      <div className="mt-8 pt-6 border-t border-borderSubtle/50">
-        <div className="p-4 bg-elevated border border-borderSubtle rounded-lg terminal-glow">
-          <p className="font-mono text-[10px] text-brand mb-2 opacity-60">SYSTEM_LOG_V2.4</p>
-          <p className="font-mono text-[11px] text-textSecondary leading-relaxed">
+
+      {/* Sidebar Footer User Info */}
+      <div className="mt-auto border-t border-white/5 pt-6 space-y-4">
+        {isAuthenticated && user && (
+          <div className="flex items-center gap-3">
+            <Avatar name={user.name ?? "Learner"} className="h-10 w-10 ring-1 ring-white/10" />
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-sm text-textPrimary truncate">{user.name}</p>
+              <p className="text-[10px] text-brand/60 font-mono uppercase tracking-wider">
+                TERMINAL v2.4
+              </p>
+            </div>
+            <button
+              onClick={() => logout()}
+              title="Sign Out"
+              className="text-textMuted hover:text-red-400 p-1.5 rounded hover:bg-white/5 transition"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
+        <div className="p-4 bg-elevated border border-white/5 rounded-lg terminal-glow">
+          <p className="font-mono text-[9px] text-brand mb-1 opacity-60 uppercase tracking-widest">SYSTEM_LOG</p>
+          <p className="font-mono text-[10px] text-textSecondary leading-relaxed">
             &gt; Status: Active<br/>
-            &gt; Mode: Dev Standalone<br/>
             &gt; Delta: Connected
           </p>
         </div>

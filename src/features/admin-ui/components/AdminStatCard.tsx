@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 type AdminStatCardProps = {
@@ -12,12 +11,12 @@ type AdminStatCardProps = {
 };
 
 const ACCENTS = {
-  violet: "text-brand bg-brand/15",
-  indigo: "text-accent bg-accent/15",
-  sky: "text-accentBright bg-accent/10",
-  emerald: "text-brandBright bg-brand/15",
-  amber: "text-amber-400 bg-amber-500/15",
-  rose: "text-rose-400 bg-rose-500/15",
+  violet: "text-brand border-brand/20 bg-brand/5",
+  indigo: "text-accent border-accent/20 bg-accent/5",
+  sky: "text-accent border-accent/20 bg-accent/5",
+  emerald: "text-brand border-brand/20 bg-brand/5",
+  amber: "text-amber-400 border-amber-500/20 bg-amber-500/5",
+  rose: "text-red-400 border-red-500/20 bg-red-500/5",
 };
 
 export function AdminStatCard({
@@ -31,23 +30,24 @@ export function AdminStatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-borderSubtle bg-surface/80 p-5 backdrop-blur-sm transition hover:border-brand/20",
+        "rounded-lg border border-white/5 bg-[#131313]/60 p-5 backdrop-blur-md transition hover:border-brand/40 shadow-2xl relative overflow-hidden group",
         className,
       )}
     >
-      <div className="flex items-start gap-4">
+      <div className="glow-border" />
+      <div className="flex items-start gap-4 relative z-10">
         <div
           className={cn(
-            "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded border",
             ACCENTS[accent],
           )}
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wide text-textMuted">{label}</p>
-          <p className="mt-1 text-3xl font-bold tracking-tight text-textPrimary">{value}</p>
-          {hint ? <p className="mt-1 text-xs text-textMuted">{hint}</p> : null}
+          <p className="font-mono text-[9px] uppercase tracking-widest text-textMuted">{label}</p>
+          <p className="mt-1 font-mono text-2xl font-extrabold tracking-tight text-textPrimary leading-none">{value}</p>
+          {hint ? <p className="mt-1.5 font-mono text-[9px] text-textSecondary uppercase tracking-wider">{hint}</p> : null}
         </div>
       </div>
     </div>

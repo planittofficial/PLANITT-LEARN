@@ -8,11 +8,10 @@ import {
   Clock,
   FileText,
   Layers,
-  Video,
+  Video
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/Badge";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ROUTES } from "@/constants/routes";
 import { MarkdownLesson } from "@/features/lesson-player/components/MarkdownLesson";
 import { LessonCourseNav } from "@/features/lesson-player/components/LessonCourseNav";
@@ -45,7 +44,7 @@ export function LessonSidebar({
   const moduleStats = getModuleProgressStats(progress, moduleLessonIds);
 
   return (
-    <aside className="space-y-4 xl:sticky xl:top-24">
+    <aside className="space-y-4 xl:sticky xl:top-20">
       <LessonCourseNav
         course={course}
         courseId={courseId}
@@ -53,28 +52,28 @@ export function LessonSidebar({
         progress={progress}
       />
 
-      <div className="rounded-lg border border-borderSubtle bg-surface p-5 shadow-card">
+      <div className="rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-5 shadow-2xl">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-brand">This lesson</p>
-          <h3 className="mt-2 text-base font-semibold text-textPrimary">{lesson.title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-textSecondary">{lesson.summary}</p>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-brand">THIS_NODE</p>
+          <h3 className="mt-2 font-headline text-base font-extrabold text-textPrimary leading-snug tracking-tight">{lesson.title}</h3>
+          <p className="mt-2 text-xs leading-relaxed text-textSecondary">{lesson.summary}</p>
         </div>
 
-        <dl className="mt-4 space-y-2 text-sm">
+        <dl className="mt-4 space-y-2 font-mono text-[11px] border-t border-white/5 pt-4">
           <div className="flex justify-between">
             <dt className="text-textMuted">Duration</dt>
-            <dd className="font-medium">{lesson.durationMinutes} min</dd>
+            <dd className="font-bold text-textPrimary">{lesson.durationMinutes} min</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-textMuted">Type</dt>
+            <dt className="text-textMuted">Decoder Type</dt>
             <dd>
-              <Badge variant={lesson.kind === "video" ? "brand" : "default"}>
+              <Badge className="font-mono text-[9px] tracking-wider py-0.5">
                 {lesson.kind === "video" ? (
                   <Video className="mr-1 h-3 w-3" />
                 ) : (
                   <FileText className="mr-1 h-3 w-3" />
                 )}
-                {lesson.kind}
+                {lesson.kind.toUpperCase()}
               </Badge>
             </dd>
           </div>
@@ -82,35 +81,33 @@ export function LessonSidebar({
             <dt className="text-textMuted">Status</dt>
             <dd>
               {completed ? (
-                <Badge variant="success">
-                  <CheckCircle2 className="mr-1 h-3 w-3" />
-                  Completed
-                </Badge>
+                <span className="text-brand font-bold uppercase tracking-wider">COMPLETED</span>
               ) : (
-                <Badge variant="warning">In progress</Badge>
+                <span className="text-amber-400 font-bold uppercase tracking-wider">IN_PROGRESS</span>
               )}
             </dd>
           </div>
         </dl>
 
-        <div className="mt-4 border-t border-borderSubtle pt-4">
-          <div className="mb-2 flex items-center gap-2 text-xs text-textMuted">
+        <div className="mt-4 border-t border-white/5 pt-4">
+          <div className="mb-2 flex items-center gap-2 font-mono text-[10px] text-textMuted uppercase tracking-wider">
             <Layers className="h-3.5 w-3.5" />
             Module progress
           </div>
-          <ProgressBar
-            value={moduleStats.percent}
-            showLabel
-            label={`${moduleStats.completed}/${moduleStats.total} lessons`}
-            size="sm"
-          />
+          <div className="w-full h-1 bg-white/5 rounded overflow-hidden mb-1">
+            <div className="h-full bg-brand" style={{ width: `${moduleStats.percent}%` }} />
+          </div>
+          <div className="flex justify-between font-mono text-[9px] text-textMuted mt-1">
+            <span>{moduleStats.percent}% Complete</span>
+            <span>{moduleStats.completed}/{moduleStats.total} Nodes</span>
+          </div>
         </div>
 
         <Link
           href={ROUTES.STUDENT.course(course.id)}
-          className="mt-4 block text-center text-xs text-brand hover:underline"
+          className="mt-4 block text-center font-mono text-[10px] text-brand hover:underline uppercase tracking-wider"
         >
-          View course overview →
+          [View Course Overview]
         </Link>
       </div>
 
@@ -128,16 +125,17 @@ type LessonNavProps = {
 
 export function LessonNav({ courseId, previous, next }: LessonNavProps) {
   return (
-    <nav className="mt-10 grid gap-3 border-t border-borderSubtle pt-8 sm:grid-cols-2">
+    <nav className="mt-10 grid gap-4 border-t border-white/5 pt-8 sm:grid-cols-2">
       {previous ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, previous.moduleId, previous.lessonId)}
-          className="group flex items-center gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition-all duration-200 hover:border-brand/35 hover:bg-brand/5"
+          className="group relative flex items-center gap-3 rounded-lg border border-white/5 bg-[#131313]/60 p-4 transition-all duration-200 hover:border-brand/40"
         >
-          <ArrowLeft className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
-          <div className="min-w-0 text-left">
+          <div className="glow-border" />
+          <ArrowLeft className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand transition-colors" />
+          <div className="min-w-0 text-left relative z-10">
             <p className="font-mono text-[9px] text-brand/60 uppercase tracking-widest">&lt; PREV_EXECUTE</p>
-            <p className="truncate text-sm font-bold text-textPrimary group-hover:text-brand mt-1">{previous.title}</p>
+            <p className="truncate text-xs font-bold text-textPrimary group-hover:text-brand mt-1">{previous.title}</p>
           </div>
         </Link>
       ) : (
@@ -147,21 +145,22 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       {next ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, next.moduleId, next.lessonId)}
-          className="group flex items-center justify-end gap-3 rounded-lg border border-borderSubtle bg-surface p-4 transition-all duration-200 hover:border-brand/35 hover:bg-brand/5 sm:col-start-2"
+          className="group relative flex items-center justify-end gap-3 rounded-lg border border-white/5 bg-[#131313]/60 p-4 transition-all duration-200 hover:border-brand/40 sm:col-start-2"
         >
-          <div className="min-w-0 text-right">
+          <div className="glow-border" />
+          <div className="min-w-0 text-right relative z-10">
             <p className="font-mono text-[9px] text-brand/60 uppercase tracking-widest">NEXT_EXECUTE &gt;</p>
-            <p className="truncate text-sm font-bold text-textPrimary group-hover:text-brand mt-1">{next.title}</p>
+            <p className="truncate text-xs font-bold text-textPrimary group-hover:text-brand mt-1">{next.title}</p>
           </div>
-          <ArrowRight className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand" />
+          <ArrowRight className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand transition-colors" />
         </Link>
       ) : (
         <div
           className={cn(
-            "flex items-center justify-center rounded-lg border border-dashed border-borderSubtle p-4 font-mono text-xs text-brand/60 sm:col-start-2",
+            "flex items-center justify-center rounded-lg border border-dashed border-white/5 p-4 font-mono text-[10px] text-brand/60 sm:col-start-2",
           )}
         >
-          &gt; ALL_LESSONS_EXECUTED
+          &gt; ALL_NODES_EXECUTED
         </div>
       )}
     </nav>
@@ -178,9 +177,9 @@ type LessonContentProps = {
 export function LessonContent({ lesson, courseId, userId, onComplete }: LessonContentProps) {
   if (lesson.kind === "video") {
     return (
-      <div className="overflow-hidden rounded-xl border border-borderSubtle bg-black shadow-card shadow-[0_0_15px_rgba(20,184,166,0.12)]">
-        <div className="flex items-center justify-between gap-3 border-b border-borderSubtle bg-surface px-4 py-2.5 font-mono text-[10px] text-brand font-bold uppercase tracking-wider">
-          <span>VIDEO_DECODER_CONNECTED</span>
+      <div className="overflow-hidden rounded-lg border border-white/5 bg-black shadow-2xl">
+        <div className="flex items-center justify-between gap-3 border-b border-white/5 bg-[#131313]/60 px-4 py-2.5 font-mono text-[9px] text-brand font-bold uppercase tracking-wider">
+          <span>VIDEO_DECODER_NODE</span>
           <span className="text-textSecondary/60">{lesson.durationMinutes} min</span>
         </div>
         {lesson.content.videoUrl && userId ? (
@@ -200,9 +199,9 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
             title={lesson.title}
           />
         ) : (
-          <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black text-sm text-zinc-400">
-            <Video className="h-10 w-10 opacity-30 text-brand" />
-            Video will be added by the instructor
+          <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black text-xs text-textMuted font-mono uppercase tracking-wider">
+            <Video className="h-8 w-8 opacity-30 text-brand" />
+            Video stream is processing...
           </div>
         )}
       </div>
@@ -215,23 +214,23 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
         href={lesson.content.externalUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brandForeground hover:bg-brandHover"
+        className="inline-flex items-center gap-2 rounded bg-brand px-5 py-3 font-mono text-xs font-bold text-black uppercase tracking-wider hover:brightness-110 shadow-[0_0_12px_rgba(20,184,166,0.15)]"
       >
-        Open external resource →
+        Open External Resource →
       </a>
     );
   }
 
   return (
-    <div id="lesson-content" className="rounded-xl border border-borderSubtle bg-surface p-6 shadow-card sm:p-8">
-      <div className="flex items-center gap-2 mb-4 border-b border-borderSubtle/50 pb-3">
+    <div id="lesson-content" className="rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 shadow-2xl">
+      <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-3">
         <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
-        <span className="font-mono text-[10px] text-brand uppercase tracking-widest font-bold">LESSON_TAKEAWAYS_MD</span>
+        <span className="font-mono text-[9px] text-brand uppercase tracking-widest font-bold">LESSON_CORE_LOG_MD</span>
       </div>
       {lesson.content.markdown ? (
         <MarkdownLesson markdown={lesson.content.markdown} />
       ) : (
-        <p className="text-textSecondary font-sans">Lesson content coming soon.</p>
+        <p className="text-textSecondary font-mono text-xs uppercase tracking-wider">Lesson content not yet initialized.</p>
       )}
     </div>
   );
@@ -239,14 +238,14 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
 
 export function LessonMetaBar({ lesson, module }: { lesson: Lesson; module: CourseModule }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 text-xs text-textMuted">
+    <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] text-textMuted uppercase tracking-wider">
       <span className="inline-flex items-center gap-1">
         <Clock className="h-3.5 w-3.5" />
         {lesson.durationMinutes} min
       </span>
-      <span>•</span>
-      <Badge variant={lesson.kind === "video" ? "brand" : "default"}>{lesson.kind}</Badge>
-      <span>•</span>
+      <span>//</span>
+      <Badge className="font-mono text-[9px] py-0.5 tracking-wider">{lesson.kind.toUpperCase()}</Badge>
+      <span>//</span>
       <span>{module.title}</span>
     </div>
   );

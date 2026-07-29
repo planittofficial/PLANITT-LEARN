@@ -1,7 +1,6 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 type AnalyticsStatProps = {
@@ -13,13 +12,13 @@ type AnalyticsStatProps = {
   large?: boolean;
 };
 
-const ACCENTS = {
-  brand: "from-brand/20 to-brand/5 border-brand/20 text-brand",
-  emerald: "from-brand/20 to-brand/5 border-brand/20 text-brandBright",
-  sky: "from-accent/20 to-accent/5 border-accent/20 text-accent",
-  amber: "from-amber-500/20 to-amber-500/5 border-amber-500/20 text-amber-400",
-  violet: "from-brand/18 to-accent/10 border-brand/20 text-brand",
-  rose: "from-rose-500/20 to-rose-500/5 border-rose-500/20 text-rose-400",
+const ACCENT_COLORS = {
+  brand: "text-brand border-brand/20 bg-brand/5",
+  emerald: "text-[#10b981] border-[#10b981]/20 bg-[#10b981]/5",
+  sky: "text-accent border-accent/20 bg-accent/5",
+  amber: "text-amber-400 border-amber-500/20 bg-amber-500/5",
+  violet: "text-brand border-brand/20 bg-brand/5",
+  rose: "text-red-400 border-red-500/20 bg-red-500/5",
 };
 
 export function AnalyticsStatCard({
@@ -30,24 +29,20 @@ export function AnalyticsStatCard({
   accent = "brand",
   large,
 }: AnalyticsStatProps) {
+  const accentStyle = ACCENT_COLORS[accent] || ACCENT_COLORS.brand;
+
   return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-2xl border bg-gradient-to-br p-5",
-        ACCENTS[accent],
-        large && "sm:p-6",
-      )}
-    >
+    <div className="relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-5 shadow-2xl group hover:border-brand/40 transition">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-textMuted">{label}</p>
-          <p className={cn("mt-2 font-bold text-textPrimary", large ? "text-3xl" : "text-2xl")}>
+        <div className="space-y-1">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-textMuted">{label}</p>
+          <p className={cn("font-mono font-extrabold text-textPrimary leading-none", large ? "text-3xl" : "text-2xl")}>
             {value}
           </p>
-          {hint ? <p className="mt-1 text-xs text-textSecondary">{hint}</p> : null}
+          {hint ? <p className="font-mono text-[10px] text-textSecondary uppercase tracking-wider">{hint}</p> : null}
         </div>
-        <div className={cn("rounded-xl bg-overlay-subtle p-2.5", ACCENTS[accent].split(" ")[2])}>
-          <Icon className="h-5 w-5" />
+        <div className={cn("rounded p-2 border", accentStyle)}>
+          <Icon className="h-4 w-4" />
         </div>
       </div>
     </div>

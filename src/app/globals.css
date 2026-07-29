@@ -352,3 +352,69 @@ body {
 .learning-path-line {
   background: linear-gradient(180deg, rgba(20, 184, 166, 0.5) 0%, rgba(20, 184, 166, 0.1) 100%);
 }
+
+/* Additional Stitch MCP Premium Utilities */
+:root {
+  --glass-blur: blur(16px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+  --glass-glow: inset 0px 1px 0px rgba(255, 255, 255, 0.1);
+}
+
+.dark {
+  --bg-base: #0a0a0a;
+  --bg-surface: #131313;
+  --bg-elevated: #1a1a1a;
+}
+
+.glass-panel-stitch {
+  background: rgba(23, 23, 23, 0.6);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-glow);
+}
+
+.radar-grid {
+  background-image: radial-gradient(circle, rgba(20, 184, 166, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.glow-border {
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--brand), transparent) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.course-card-stitch:hover .glow-border {
+  opacity: 1;
+}
+
+@keyframes pulse-live {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-pulse-live {
+  animation: pulse-live 2s infinite ease-in-out;
+}
+
+.terminal-scroll::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.terminal-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+.terminal-scroll::-webkit-scrollbar-thumb {
+  background: var(--brand);
+  border-radius: 2px;
+}
+
