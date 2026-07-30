@@ -16,13 +16,16 @@ export default function Page({ params }: { params: Promise<{ lessonId: string }>
   if (isLoading) return <AdminPageSkeleton />;
 
   return (
-    <div className="space-y-8">
-      <Link href={`/admin/lessons/${lessonId}`} className="text-sm text-violet-400 hover:underline">
-        ← Lesson
+    <div className="space-y-8 animate-in fade-in">
+      <Link
+        href={`/admin/lessons/${lessonId}`}
+        className="inline-flex items-center gap-1.5 font-mono text-[10px] text-brand hover:underline uppercase tracking-widest"
+      >
+        ← Back to Lesson Node
       </Link>
       <AdminPageHeader
-        eyebrow="Assessment"
-        title="Lesson quiz builder"
+        eyebrow="Assessment Setup"
+        title="Lesson Quiz Builder"
         description="Create multiple-choice questions and set a passing score for this lesson."
         icon={Target}
       />

@@ -60,15 +60,15 @@ export function VideoUploadPanel({
   );
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/5 via-surface to-appBase">
-      <div className="border-b border-borderSubtle/60 px-5 py-4">
+    <section className="overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md">
+      <div className="border-b border-white/5 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded border border-brand/20 bg-brand/10 text-brand">
             <Video className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-semibold text-textPrimary">Video content</h2>
-            <p className="text-xs text-textSecondary">
+            <h2 className="font-mono text-sm font-bold text-textPrimary uppercase tracking-wider">Video Asset Stream</h2>
+            <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest mt-0.5">
               Upload MP4/WebM, or paste a YouTube or hosted video link.
             </p>
           </div>
@@ -94,10 +94,10 @@ export function VideoUploadPanel({
           }}
           onClick={() => inputRef.current?.click()}
           className={cn(
-            "flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-all",
+            "flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded border border-dashed p-8 text-center transition-all",
             dragOver
-              ? "border-violet-500 bg-violet-500/10 scale-[1.01]"
-              : "border-borderSubtle hover:border-violet-500/40 hover:bg-overlay-faint",
+              ? "border-brand bg-brand/10 scale-[1.01]"
+              : "border-white/10 hover:border-brand/40 hover:bg-[#1C1B1B]",
             uploading && "pointer-events-none opacity-60",
           )}
         >
@@ -113,25 +113,25 @@ export function VideoUploadPanel({
           />
           {uploading ? (
             <>
-              <Loader2 className="h-10 w-10 animate-spin text-violet-400" />
-              <p className="mt-3 text-sm font-medium">Uploading video…</p>
+              <Loader2 className="h-10 w-10 animate-spin text-brand" />
+              <p className="mt-3 font-mono text-xs text-brand uppercase tracking-widest">UPLOADING_VIDEO_STREAM…</p>
             </>
           ) : (
             <>
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500/10">
-                <Upload className="h-7 w-7 text-violet-400" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand/10 border border-brand/20">
+                <Upload className="h-7 w-7 text-brand" />
               </div>
-              <p className="mt-4 text-sm font-medium text-textPrimary">
-                Drag & drop your video here
+              <p className="mt-4 font-mono text-xs font-bold text-textPrimary uppercase tracking-wider">
+                Drag & drop video binary
               </p>
-              <p className="mt-1 text-xs text-textMuted">or click to browse · MP4, WebM, MOV</p>
+              <p className="mt-1 font-mono text-[9px] text-textMuted uppercase tracking-widest">or click to browse · MP4, WebM, MOV</p>
             </>
           )}
         </div>
 
         {/* Preview + metadata */}
         <div className="space-y-4">
-          <div className="overflow-hidden rounded-xl border border-borderSubtle bg-black/60">
+          <div className="overflow-hidden rounded border border-white/5 bg-black/60">
             {youtubeEmbedUrl ? (
               <iframe
                 key={youtubeEmbedUrl}
@@ -155,66 +155,63 @@ export function VideoUploadPanel({
                 }}
               />
             ) : (
-              <div className="flex aspect-video flex-col items-center justify-center gap-2 text-textMuted">
-                <Film className="h-10 w-10 opacity-40" />
-                <p className="text-xs">No video yet — upload or paste a link to preview</p>
+              <div className="flex aspect-video flex-col items-center justify-center gap-2 text-textMuted font-mono">
+                <Film className="h-8 w-8 opacity-45 text-textMuted" />
+                <p className="text-[10px] uppercase tracking-wider text-textMuted">No video loaded — paste link or upload file</p>
               </div>
             )}
           </div>
 
-          <label className="block text-sm">
-            <span className="flex items-center gap-2 text-textSecondary">
-              <Link2 className="h-4 w-4 shrink-0 text-violet-400" />
-              YouTube or hosted video URL
+          <label className="block">
+            <span className="flex items-center gap-2 font-mono text-[9px] text-textMuted uppercase tracking-widest">
+              <Link2 className="h-3.5 w-3.5 shrink-0 text-brand" />
+              YouTube or Hosted Video Stream URL
             </span>
             <input
-              className="mt-1 w-full rounded-lg border border-borderSubtle bg-background px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 uppercase tracking-wide"
               value={videoUrl}
               onChange={(e) => onVideoUrlChange(e.target.value)}
-              placeholder="https://www.youtube.com/watch?v=… or https://youtu.be/…"
+              placeholder="HTTPS://WWW.YOUTUBE.COM/WATCH?V=…"
             />
-            <p className="mt-1.5 text-xs text-textMuted">
-              Supports YouTube watch, share, and Shorts links, or any direct MP4/WebM URL.
-            </p>
           </label>
 
           {isYoutube && videoUrl.trim() ? (
-            <div className="flex items-center justify-between gap-3 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2.5">
+            <div className="flex items-center justify-between gap-3 rounded border border-red-500/20 bg-red-500/5 px-3 py-2.5 font-mono text-xs">
               <div className="min-w-0">
-                <p className="text-xs font-medium text-textPrimary">YouTube link attached</p>
-                <p className="truncate text-xs text-textMuted">{videoUrl.trim()}</p>
+                <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider">YouTube Link Mapped</p>
+                <p className="truncate text-[9px] text-textMuted lowercase">{videoUrl.trim()}</p>
               </div>
               <a
                 href={videoUrl.trim()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-red-500 hover:underline"
+                className="inline-flex shrink-0 items-center gap-1 text-[10px] font-bold text-red-500 hover:underline uppercase tracking-wider"
               >
-                Open
+                Launch
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
           ) : null}
 
           <div className="grid grid-cols-2 gap-3">
-            <label className="block text-sm">
-              <span className="text-textSecondary">Duration (seconds)</span>
+            <label className="block">
+              <span className="font-mono text-[9px] text-textMuted uppercase tracking-widest">Duration (Seconds)</span>
               <input
                 type="number"
                 min={0}
-                className="mt-1 w-full rounded-lg border border-borderSubtle bg-background px-3 py-2 text-sm"
+                className="mt-1.5 w-full rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 tracking-wide"
                 value={durationSeconds}
                 onChange={(e) =>
                   onDurationChange(e.target.value === "" ? "" : Number(e.target.value))
                 }
               />
             </label>
-            <div className="flex flex-col justify-end">
-              <p className="text-xs text-textMuted">Display duration</p>
-              <p className="text-lg font-semibold text-violet-400">
+            <div className="flex flex-col justify-end font-mono">
+              <p className="text-[9px] text-textMuted uppercase tracking-widest">Calculated Time</p>
+              <p className="text-base font-extrabold text-brand tracking-widest mt-1">
                 {typeof durationSeconds === "number" && durationSeconds > 0
                   ? formatDuration(durationSeconds)
-                  : "—"}
+                  : "--:--"}
               </p>
             </div>
           </div>

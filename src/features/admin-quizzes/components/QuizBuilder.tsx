@@ -75,14 +75,15 @@ export function QuizBuilder({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in">
       <QuizSmartPaste onImport={handleSmartPaste} />
 
       <AdminCard>
+        <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest mb-3">Quiz_Assessment_Properties</p>
         <div className="grid gap-4 sm:grid-cols-2">
-          <AdminInput label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <AdminInput label="Quiz Title" value={title} onChange={(e) => setTitle(e.target.value)} />
           <AdminInput
-            label="Passing score (%)"
+            label="Passing Score (%)"
             type="number"
             min={0}
             max={100}
@@ -94,73 +95,74 @@ export function QuizBuilder({
 
       {questions.map((question, qIndex) => (
         <AdminCard key={question.id}>
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <p className="font-semibold text-violet-300">Question {qIndex + 1}</p>
+          <div className="mb-3 flex items-center justify-between gap-2 border-b border-white/5 pb-2">
+            <p className="font-mono text-xs font-bold text-brand uppercase tracking-wider">Question #{qIndex + 1}</p>
             <AdminButton
               variant="danger"
               size="sm"
               onClick={() => setQuestions((prev) => prev.filter((_, i) => i !== qIndex))}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-3 w-3" />
               Remove
             </AdminButton>
           </div>
           <AdminTextarea
             rows={2}
-            placeholder="Question prompt"
+            placeholder="ENTER QUESTION PROMPT / STEM..."
             value={question.prompt}
             onChange={(e) => updateQuestion(qIndex, { prompt: e.target.value })}
           />
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 space-y-2.5">
+            <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest">Options / Distractors (Select correct answer)</p>
             {question.options.map((option, oIndex) => (
-              <label key={oIndex} className="flex items-center gap-2 text-sm">
+              <label key={oIndex} className="flex items-center gap-3 font-mono text-xs text-textPrimary">
                 <input
                   type="radio"
                   name={`correct-${question.id}`}
                   checked={question.correctIndex === oIndex}
                   onChange={() => updateQuestion(qIndex, { correctIndex: oIndex })}
-                  className="accent-violet-500"
+                  className="accent-brand h-4 w-4 border-white/10 bg-[#1C1B1B]"
                 />
                 <input
-                  className="flex-1 rounded-xl border border-borderSubtle bg-overlay-subtle px-3 py-2 outline-none focus:border-violet-500/40"
+                  className="flex-1 rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 tracking-wide uppercase"
                   value={option}
                   onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
-                  placeholder={`Option ${oIndex + 1}`}
+                  placeholder={`Option ${String.fromCharCode(65 + oIndex)}`}
                 />
               </label>
             ))}
             <button
               type="button"
-              className="text-sm text-violet-400 hover:underline"
+              className="font-mono text-[10px] text-brand hover:underline uppercase tracking-wider font-bold"
               onClick={() =>
                 updateQuestion(qIndex, { options: [...question.options, ""] })
               }
             >
-              + Add option
+              + Add Option Row
             </button>
           </div>
         </AdminCard>
       ))}
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-4 font-mono text-xs">
         <AdminButton variant="secondary" onClick={() => setQuestions((prev) => [...prev, newQuestion()])}>
-          <Plus className="h-4 w-4" />
-          Add question
+          <Plus className="h-3.5 w-3.5" />
+          Add Question Node
         </AdminButton>
-        <label className="flex items-center gap-2 text-sm text-textSecondary">
+        <label className="flex items-center gap-2 text-textSecondary cursor-pointer uppercase tracking-widest text-[10px]">
           <input
             type="checkbox"
-            className="rounded border-borderSubtle accent-violet-500"
+            className="rounded border-white/10 accent-brand h-4 w-4 bg-[#1C1B1B]"
             checked={published}
             onChange={(e) => setPublished(e.target.checked)}
           />
-          Published
+          Publish to Students
         </label>
         <AdminButton
           disabled={saving}
           onClick={() => onSave({ title, passingScore, questions, published })}
         >
-          {saving ? "Saving…" : "Save assessment"}
+          {saving ? "Commiting..." : "Commit Assessment Setup"}
         </AdminButton>
       </div>
     </div>

@@ -121,10 +121,10 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
   }
 
   if (isLoading) return <AdminPageSkeleton />;
-  if (!lesson) return <p>Lesson not found.</p>;
+  if (!lesson) return <p className="font-mono text-xs text-textMuted uppercase tracking-wider">LESSON_NOT_FOUND</p>;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in">
       <AdminBreadcrumb
         items={[
           { label: "Courses", href: "/admin/courses" },
@@ -135,14 +135,14 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
       />
 
       <AdminPageHeader
-        eyebrow="Lesson editor"
-        title="Edit lesson"
-        description='Choose Video below to open the upload screen and attach lecture content.'
+        eyebrow="Lesson Settings"
+        title="Lesson Editor"
+        description="Choose Video below to open the upload screen and attach lecture content or update article contents."
         icon={Video}
       />
 
       <AdminCard>
-        <p className="mb-3 text-sm font-medium text-textPrimary">Lesson type</p>
+        <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest mb-3">Lesson_Type_Selector</p>
         <div className="grid gap-3 sm:grid-cols-3">
           {LESSON_TYPES.map((type) => {
             const Icon = type.icon;
@@ -153,15 +153,15 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
                 type="button"
                 onClick={() => setKind(type.kind)}
                 className={cn(
-                  "flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition",
+                  "flex flex-col items-start gap-2 rounded border p-4 text-left transition font-mono",
                   selected
-                    ? "border-violet-500 bg-violet-500/10 ring-1 ring-violet-500/30"
-                    : "border-borderSubtle hover:border-violet-500/30 hover:bg-overlay-faint",
+                    ? "border-brand bg-brand/10 ring-1 ring-brand/30"
+                    : "border-white/5 bg-[#131313]/60 hover:border-brand/40 hover:bg-[#1C1B1B]",
                 )}
               >
-                <Icon className={cn("h-5 w-5", selected ? "text-violet-400" : "text-textMuted")} />
-                <span className="font-medium text-textPrimary">{type.label}</span>
-                <span className="text-xs text-textMuted">{type.description}</span>
+                <Icon className={cn("h-4 w-4", selected ? "text-brand animate-pulse" : "text-textMuted")} />
+                <span className="font-bold text-textPrimary text-xs uppercase tracking-wide">{type.label}</span>
+                <span className="text-[9px] text-textMuted uppercase tracking-widest">{type.description}</span>
               </button>
             );
           })}
@@ -180,10 +180,11 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
       ) : null}
 
       <AdminCard>
+        <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest mb-3">Lesson_Metadata_Properties</p>
         <form onSubmit={handleSave} className="space-y-4">
-          <AdminInput label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <AdminInput label="Lesson Title" value={title} onChange={(e) => setTitle(e.target.value)} />
           <AdminTextarea
-            label="Summary"
+            label="Lesson Summary"
             rows={2}
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
@@ -191,7 +192,7 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
 
           {kind === "article" ? (
             <AdminTextarea
-              label="Markdown content"
+              label="Markdown Content Stream"
               rows={12}
               className="font-mono text-xs"
               value={markdown}
@@ -201,7 +202,7 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
 
           {kind === "external" ? (
             <AdminInput
-              label="External URL"
+              label="External Asset URL"
               placeholder="https://…"
               value={externalUrl}
               onChange={(e) => setExternalUrl(e.target.value)}
@@ -211,13 +212,13 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
           <AdminButton type="submit" disabled={updateLesson.isPending}>
             {saved ? (
               <>
-                <CheckCircle2 className="h-4 w-4" />
-                Saved!
+                <CheckCircle2 className="h-4 w-4 text-black" />
+                Lesson_Saved!
               </>
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                {updateLesson.isPending ? "Saving…" : "Save lesson"}
+                {updateLesson.isPending ? "Commiting_Changes…" : "Commit Lesson Metadata"}
               </>
             )}
           </AdminButton>

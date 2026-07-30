@@ -7,12 +7,16 @@ type AdminTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
 export function AdminTextarea({ label, className, id, ...props }: AdminTextareaProps) {
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
   return (
-    <label className="block text-sm" htmlFor={inputId}>
-      {label ? <span className="text-textSecondary">{label}</span> : null}
+    <label className="block" htmlFor={inputId}>
+      {label ? (
+        <span className="font-mono text-[9px] text-textMuted uppercase tracking-widest block mb-1.5">
+          {label}
+        </span>
+      ) : null}
       <textarea
         id={inputId}
         className={cn(
-          "mt-1.5 w-full rounded-xl border border-borderSubtle bg-overlay-subtle px-3 py-2.5 text-sm text-textPrimary outline-none transition placeholder:text-textMuted focus:border-brand/40 focus:ring-2 focus:ring-brand/20",
+          "w-full rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 tracking-wide",
           className,
         )}
         {...props}

@@ -56,37 +56,37 @@ export function QuizSmartPaste({
     <AdminCard highlight>
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-3 text-left"
+        className="flex w-full items-center justify-between gap-3 text-left font-mono"
         onClick={() => setOpen((v) => !v)}
       >
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/15 text-violet-400">
+          <span className="flex h-9 w-9 items-center justify-center rounded border border-brand/20 bg-brand/10 text-brand">
             <ClipboardPaste className="h-4 w-4" />
           </span>
           <div>
-            <p className="font-semibold text-textPrimary">Smart paste</p>
-            <p className="text-sm text-textSecondary">
+            <p className="font-bold text-textPrimary text-xs uppercase tracking-wide">Smart Paste Console</p>
+            <p className="text-[9px] text-textMuted uppercase tracking-widest mt-0.5">
               Paste bulk questions from docs, ChatGPT, or Google Forms exports.
             </p>
           </div>
         </div>
         {open ? (
-          <ChevronUp className="h-4 w-4 shrink-0 text-textSecondary" />
+          <ChevronUp className="h-4 w-4 shrink-0 text-textMuted" />
         ) : (
-          <ChevronDown className="h-4 w-4 shrink-0 text-textSecondary" />
+          <ChevronDown className="h-4 w-4 shrink-0 text-textMuted" />
         )}
       </button>
 
       {open ? (
-        <div className="mt-5 space-y-4 border-t border-borderSubtle pt-5">
-          <details className="rounded-xl border border-borderSubtle bg-overlay-subtle px-4 py-3 text-sm text-textSecondary">
-            <summary className="cursor-pointer font-medium text-violet-300">
-              Supported format
+        <div className="mt-5 space-y-4 border-t border-white/5 pt-5">
+          <details className="rounded border border-white/5 bg-[#1C1B1B] px-4 py-3 font-mono text-xs text-textMuted">
+            <summary className="cursor-pointer font-bold text-brand uppercase tracking-widest">
+              Supported Format Template
             </summary>
-            <pre className="mt-3 overflow-x-auto whitespace-pre-wrap font-mono text-xs leading-relaxed text-textSecondary">
+            <pre className="mt-3 overflow-x-auto whitespace-pre-wrap font-mono text-[10px] leading-relaxed text-textSecondary uppercase">
               {EXAMPLE}
             </pre>
-            <p className="mt-3 text-xs">
+            <p className="mt-3 text-[9px] uppercase tracking-wider text-textMuted">
               Numbered or Q1-style prompts, options as A) B) or A. or bullets, and an Answer /
               Correct line. Separate questions with a blank line.
             </p>
@@ -104,10 +104,10 @@ export function QuizSmartPaste({
 
           {preview ? (
             <div
-              className={`rounded-xl border px-4 py-3 text-sm ${
+              className={`rounded border px-4 py-3 font-mono text-xs uppercase tracking-wider ${
                 preview.ok
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                  : "border-rose-500/30 bg-rose-500/10 text-rose-300"
+                  ? "border-brand/20 bg-brand/5 text-brand"
+                  : "border-rose-500/20 bg-rose-500/5 text-rose-400"
               }`}
             >
               {preview.ok ? (
@@ -119,7 +119,7 @@ export function QuizSmartPaste({
                 <p>{preview.error}</p>
               )}
               {preview.ok && preview.warnings.length > 0 ? (
-                <ul className="mt-2 list-inside list-disc text-xs text-amber-300/90">
+                <ul className="mt-2 list-inside list-disc text-[10px] text-amber-400">
                   {preview.warnings.map((w) => (
                     <li key={w}>{w}</li>
                   ))}
@@ -128,9 +128,9 @@ export function QuizSmartPaste({
             </div>
           ) : null}
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 font-mono">
             <AdminButton variant="secondary" size="sm" onClick={handlePreview} disabled={!text.trim()}>
-              Preview
+              Preview Parse
             </AdminButton>
             <AdminButton
               variant="secondary"
@@ -138,10 +138,10 @@ export function QuizSmartPaste({
               onClick={() => handleImport("append")}
               disabled={!text.trim()}
             >
-              Append to builder
+              Append to Builder
             </AdminButton>
             <AdminButton size="sm" onClick={() => handleImport("replace")} disabled={!text.trim()}>
-              Replace all questions
+              Replace All Questions
             </AdminButton>
           </div>
         </div>
