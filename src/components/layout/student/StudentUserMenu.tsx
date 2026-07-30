@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, LogOut, ShoppingBag, User } from "lucide-react";
+import { ChevronDown, LogOut, ShoppingBag, User, ShieldAlert } from "lucide-react";
 
 import { Avatar } from "@/components/ui/Avatar";
 import { ROUTES } from "@/constants/routes";
@@ -13,10 +13,11 @@ import { cn } from "@/lib/utils";
 type StudentUserMenuProps = {
   name: string;
   email?: string;
+  isAdmin?: boolean;
   onLogout: () => void;
 };
 
-export function StudentUserMenu({ name, email, onLogout }: StudentUserMenuProps) {
+export function StudentUserMenu({ name, email, isAdmin, onLogout }: StudentUserMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -72,6 +73,17 @@ export function StudentUserMenu({ name, email, onLogout }: StudentUserMenuProps)
             ) : null}
           </div>
           <div className="p-1.5">
+            {isAdmin ? (
+              <Link
+                href={ROUTES.ADMIN.HOME}
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-brand font-semibold transition hover:bg-overlay-hover"
+              >
+                <ShieldAlert className="h-4 w-4 shrink-0 text-brand" />
+                Admin console
+              </Link>
+            ) : null}
             <Link
               href={ROUTES.STUDENT.PROFILE}
               role="menuitem"

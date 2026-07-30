@@ -59,6 +59,7 @@ export function LoginPageView() {
     loginAsDevUser,
     authReady,
     isAuthenticated,
+    isAdmin,
     devStandalone,
   } = useAuth();
   const { theme, mounted } = useTheme();
@@ -84,16 +85,24 @@ export function LoginPageView() {
 
   useEffect(() => {
     if (authReady && isAuthenticated && !handoffPending) {
-      router.replace(safeNext);
+      if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
+        router.replace(ROUTES.ADMIN.HOME);
+      } else {
+        router.replace(safeNext);
+      }
     }
-  }, [authReady, handoffPending, isAuthenticated, router, safeNext]);
+  }, [authReady, handoffPending, isAuthenticated, isAdmin, router, safeNext]);
 
   useEffect(() => {
     const code = searchParams.get("code")?.trim();
     if (!code || !authReady || handoffStarted.current) return;
     if (isAuthenticated) {
       setHandoffPending(false);
-      router.replace(safeNext);
+      if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
+        router.replace(ROUTES.ADMIN.HOME);
+      } else {
+        router.replace(safeNext);
+      }
       return;
     }
 
@@ -102,7 +111,13 @@ export function LoginPageView() {
     setSubmitting(true);
     setError("");
     void exchangeHandoffCode(code)
-      .then(() => router.replace(safeNext))
+      .then(() => {
+        if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
+          router.replace(ROUTES.ADMIN.HOME);
+        } else {
+          router.replace(safeNext);
+        }
+      })
       .catch((err) => {
         const message = err instanceof Error ? err.message : "SSO sign-in failed.";
         setError(message);
@@ -112,7 +127,7 @@ export function LoginPageView() {
         setSubmitting(false);
         setHandoffPending(false);
       });
-  }, [authReady, exchangeHandoffCode, isAuthenticated, router, safeNext, searchParams]);
+  }, [authReady, exchangeHandoffCode, isAuthenticated, isAdmin, router, safeNext, searchParams]);
 
   useEffect(() => {
     if (!showGoogle) return;

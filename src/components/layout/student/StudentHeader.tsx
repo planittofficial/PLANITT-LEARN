@@ -12,7 +12,7 @@ import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/context/auth-context";
 
 export function StudentHeader() {
-  const { isAuthenticated, authReady, user, logout } = useAuth();
+  const { isAuthenticated, authReady, user, logout, isAdmin } = useAuth();
 
   return (
     <header className="fixed top-0 right-0 w-full md:left-64 md:w-auto h-16 z-40 border-b border-white/5 bg-surface/60 backdrop-blur-md">
@@ -55,6 +55,7 @@ export function StudentHeader() {
             <StudentUserMenu
               name={user?.name ?? "Learner"}
               email={user?.email}
+              isAdmin={isAdmin}
               onLogout={logout}
             />
           ) : null}

@@ -13,8 +13,14 @@ export async function requireAdmin(
 
   const email = auth.user.email.trim().toLowerCase();
   const allowedEmails = adminEmails();
-
   if (allowedEmails.length > 0 && allowedEmails.includes(email)) {
+    return auth;
+  }
+
+  if (
+    auth.user.role?.trim().toLowerCase() === "admin" ||
+    auth.user.isAdmin === true
+  ) {
     return auth;
   }
 

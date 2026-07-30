@@ -20,11 +20,14 @@ type AuthUser = {
   id: string;
   email: string;
   name: string;
+  role?: string;
+  isAdmin?: boolean;
 };
 
 type AuthState = {
   isAuthenticated: boolean;
   user: AuthUser | null;
+  isAdmin: boolean;
 };
 
 type AuthContextValue = AuthState & {
@@ -43,6 +46,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const emptyState: AuthState = {
   isAuthenticated: false,
   user: null,
+  isAdmin: false,
 };
 
 const DEV_STANDALONE = isClientDevStandalone();
@@ -83,7 +87,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (user) {
-        setState({ isAuthenticated: true, user });
+        let isAdmin = false;
+        try {
+          const adminRes = await authedFetch(ROUTES.API.AUTH.ADMIN);
+          if (adminRes.ok) {
+            const adminData = await adminRes.json();
+            isAdmin = !!adminData.isAdmin;
+          }
+        } catch {
+          // Default to false on failure
+        }
+        setState({ isAuthenticated: true, user, isAdmin });
       } else {
         await fetch(
           ROUTES.API.AUTH.LOGOUT,

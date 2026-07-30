@@ -123,7 +123,7 @@ export function StudentLogo({ className }: StudentLogoProps) {
 
 export function StudentSidebar() {
   const pathname = usePathname();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, isAdmin } = useAuth();
 
   const sidebarItems = [
     { href: ROUTES.STUDENT.HOME, label: "COMMAND_CENTER", icon: Home },
@@ -137,6 +137,7 @@ export function StudentSidebar() {
     { href: ROUTES.STUDENT.ACHIEVEMENTS, label: "ACHIEVEMENTS", icon: Award },
     { href: ROUTES.STUDENT.ANALYTICS, label: "ANALYTICS", icon: BarChart3 },
     { href: ROUTES.STUDENT.PROFILE, label: "SETTINGS", icon: User },
+    ...(isAdmin ? [{ href: ROUTES.ADMIN.HOME, label: "ADMIN_CONSOLE", icon: LineChart }] : []),
   ];
 
   return (
