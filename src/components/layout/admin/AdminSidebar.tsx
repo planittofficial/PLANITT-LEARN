@@ -117,6 +117,11 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
         <div className="flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider">
           <Link
             href={ROUTES.STUDENT.HOME}
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                localStorage.setItem("lms-view-mode", "student");
+              }
+            }}
             className="flex items-center justify-center gap-1.5 rounded border border-white/5 py-2.5 text-textSecondary hover:border-brand/40 hover:text-brand transition"
           >
             ← Student Portal
