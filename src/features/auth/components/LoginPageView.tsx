@@ -206,8 +206,8 @@ export function LoginPageView() {
         </div>
 
         {/* Glassmorphic Login Box */}
-        <div className="w-full max-w-[380px] rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 shadow-2xl relative z-10 space-y-6">
-          <div className="flex justify-between items-center border-b border-white/5 pb-4">
+        <div className="w-full max-w-[380px] rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 shadow-2xl relative z-10 space-y-6">
+          <div className="flex justify-between items-center border-b border-borderSubtle pb-4">
             <div>
               <h1 className="font-headline text-lg font-bold text-textPrimary uppercase tracking-tight">
                 Enter Terminal
@@ -231,7 +231,7 @@ export function LoginPageView() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded bg-[#1C1B1B] border border-white/5 px-3.5 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted focus:border-brand focus:ring-1 focus:ring-brand/30 outline-none transition"
+                className="w-full rounded bg-elevated border border-borderSubtle px-3.5 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted focus:border-brand focus:ring-1 focus:ring-brand/30 outline-none transition"
               />
             </div>
 
@@ -259,7 +259,7 @@ export function LoginPageView() {
                 value={mpin}
                 onChange={(e) => setMpin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 placeholder="6-DIGIT MPIN"
-                className="w-full rounded bg-[#1C1B1B] border border-white/5 px-3.5 py-2.5 font-mono text-xs text-textPrimary tracking-[0.4em] placeholder:tracking-normal placeholder:text-textMuted focus:border-brand focus:ring-1 focus:ring-brand/30 outline-none transition"
+                className="w-full rounded bg-elevated border border-borderSubtle px-3.5 py-2.5 font-mono text-xs text-textPrimary tracking-[0.4em] placeholder:tracking-normal placeholder:text-textMuted focus:border-brand focus:ring-1 focus:ring-brand/30 outline-none transition"
               />
             </div>
 

@@ -52,14 +52,14 @@ export function LessonSidebar({
         progress={progress}
       />
 
-      <div className="rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-5 shadow-2xl">
+      <div className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-5 shadow-2xl">
         <div>
           <p className="font-mono text-[9px] uppercase tracking-widest text-brand">THIS_NODE</p>
           <h3 className="mt-2 font-headline text-base font-extrabold text-textPrimary leading-snug tracking-tight">{lesson.title}</h3>
           <p className="mt-2 text-xs leading-relaxed text-textSecondary">{lesson.summary}</p>
         </div>
 
-        <dl className="mt-4 space-y-2 font-mono text-[11px] border-t border-white/5 pt-4">
+        <dl className="mt-4 space-y-2 font-mono text-[11px] border-t border-borderSubtle pt-4">
           <div className="flex justify-between">
             <dt className="text-textMuted">Duration</dt>
             <dd className="font-bold text-textPrimary">{lesson.durationMinutes} min</dd>
@@ -89,12 +89,12 @@ export function LessonSidebar({
           </div>
         </dl>
 
-        <div className="mt-4 border-t border-white/5 pt-4">
+        <div className="mt-4 border-t border-borderSubtle pt-4">
           <div className="mb-2 flex items-center gap-2 font-mono text-[10px] text-textMuted uppercase tracking-wider">
             <Layers className="h-3.5 w-3.5" />
             Module progress
           </div>
-          <div className="w-full h-1 bg-white/5 rounded overflow-hidden mb-1">
+          <div className="w-full h-1 bg-elevated rounded overflow-hidden mb-1">
             <div className="h-full bg-brand" style={{ width: `${moduleStats.percent}%` }} />
           </div>
           <div className="flex justify-between font-mono text-[9px] text-textMuted mt-1">
@@ -125,11 +125,11 @@ type LessonNavProps = {
 
 export function LessonNav({ courseId, previous, next }: LessonNavProps) {
   return (
-    <nav className="mt-10 grid gap-4 border-t border-white/5 pt-8 sm:grid-cols-2">
+    <nav className="mt-10 grid gap-4 border-t border-borderSubtle pt-8 sm:grid-cols-2">
       {previous ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, previous.moduleId, previous.lessonId)}
-          className="group relative flex items-center gap-3 rounded-lg border border-white/5 bg-[#131313]/60 p-4 transition-all duration-200 hover:border-brand/40"
+          className="group relative flex items-center gap-3 rounded-lg border border-borderSubtle bg-surface/60 p-4 transition-all duration-200 hover:border-brand/40"
         >
           <div className="glow-border" />
           <ArrowLeft className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand transition-colors" />
@@ -145,7 +145,7 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       {next ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, next.moduleId, next.lessonId)}
-          className="group relative flex items-center justify-end gap-3 rounded-lg border border-white/5 bg-[#131313]/60 p-4 transition-all duration-200 hover:border-brand/40 sm:col-start-2"
+          className="group relative flex items-center justify-end gap-3 rounded-lg border border-borderSubtle bg-surface/60 p-4 transition-all duration-200 hover:border-brand/40 sm:col-start-2"
         >
           <div className="glow-border" />
           <div className="min-w-0 text-right relative z-10">
@@ -157,7 +157,7 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       ) : (
         <div
           className={cn(
-            "flex items-center justify-center rounded-lg border border-dashed border-white/5 p-4 font-mono text-[10px] text-brand/60 sm:col-start-2",
+            "flex items-center justify-center rounded-lg border border-dashed border-borderSubtle p-4 font-mono text-[10px] text-brand/60 sm:col-start-2",
           )}
         >
           &gt; ALL_NODES_EXECUTED
@@ -177,8 +177,8 @@ type LessonContentProps = {
 export function LessonContent({ lesson, courseId, userId, onComplete }: LessonContentProps) {
   if (lesson.kind === "video") {
     return (
-      <div className="overflow-hidden rounded-lg border border-white/5 bg-black shadow-2xl">
-        <div className="flex items-center justify-between gap-3 border-b border-white/5 bg-[#131313]/60 px-4 py-2.5 font-mono text-[9px] text-brand font-bold uppercase tracking-wider">
+      <div className="overflow-hidden rounded-lg border border-borderSubtle bg-black shadow-2xl">
+        <div className="flex items-center justify-between gap-3 border-b border-borderSubtle bg-surface/60 px-4 py-2.5 font-mono text-[9px] text-brand font-bold uppercase tracking-wider">
           <span>VIDEO_DECODER_NODE</span>
           <span className="text-textSecondary/60">{lesson.durationMinutes} min</span>
         </div>
@@ -222,8 +222,8 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
   }
 
   return (
-    <div id="lesson-content" className="rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 shadow-2xl">
-      <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-3">
+    <div id="lesson-content" className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 shadow-2xl">
+      <div className="flex items-center gap-2 mb-4 border-b border-borderSubtle pb-3">
         <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
         <span className="font-mono text-[9px] text-brand uppercase tracking-widest font-bold">LESSON_CORE_LOG_MD</span>
       </div>

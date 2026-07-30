@@ -54,7 +54,7 @@ export function ContinueLearningCard({
           </span>
         </div>
       </div>
-      <div className="relative w-full md:w-2/5 min-h-[200px] md:min-h-full border-l border-borderSubtle overflow-hidden">
+      <div className="relative w-full md:w-2/5 min-h-[200px] md:min-h-full border-l border-borderSubtle bg-neutral-950 overflow-hidden">
         <img
           className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-700"
           alt="Technical Chart"
