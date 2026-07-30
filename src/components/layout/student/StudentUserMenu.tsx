@@ -77,7 +77,12 @@ export function StudentUserMenu({ name, email, isAdmin, onLogout }: StudentUserM
               <Link
                 href={ROUTES.ADMIN.HOME}
                 role="menuitem"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    localStorage.setItem("lms-view-mode", "admin");
+                  }
+                  setOpen(false);
+                }}
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-brand font-semibold transition hover:bg-overlay-hover"
               >
                 <ShieldAlert className="h-4 w-4 shrink-0 text-brand" />

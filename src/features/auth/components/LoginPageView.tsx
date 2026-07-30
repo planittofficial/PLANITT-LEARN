@@ -95,6 +95,9 @@ export function LoginPageView() {
   useEffect(() => {
     if (authReady && isAuthenticated && !handoffPending) {
       if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("lms-view-mode", "admin");
+        }
         router.replace(ROUTES.ADMIN.HOME);
       } else {
         router.replace(safeNext);
@@ -108,6 +111,9 @@ export function LoginPageView() {
     if (isAuthenticated) {
       setHandoffPending(false);
       if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("lms-view-mode", "admin");
+        }
         router.replace(ROUTES.ADMIN.HOME);
       } else {
         router.replace(safeNext);
@@ -120,7 +126,13 @@ export function LoginPageView() {
     setSubmitting(true);
     setError("");
     void exchangeHandoffCode(code)
-      .then(() => redirectAfterLogin(router, safeNext))
+      .then(() => {
+        const targetPath = (isAdmin && safeNext === ROUTES.STUDENT.HOME) ? ROUTES.ADMIN.HOME : safeNext;
+        if (isAdmin && safeNext === ROUTES.STUDENT.HOME && typeof window !== "undefined") {
+          localStorage.setItem("lms-view-mode", "admin");
+        }
+        redirectAfterLogin(router, targetPath);
+      })
       .catch((err) => {
         const message = err instanceof Error ? err.message : "SSO sign-in failed.";
         setError(message);

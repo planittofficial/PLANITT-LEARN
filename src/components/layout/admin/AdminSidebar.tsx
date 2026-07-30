@@ -97,7 +97,12 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
         </p>
         <Link
           href={ROUTES.STUDENT.HOME}
-          onClick={onMobileClose}
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              localStorage.setItem("lms-view-mode", "student");
+            }
+            if (onMobileClose) onMobileClose();
+          }}
           className="mt-3 flex items-center justify-center rounded-xl border border-borderSubtle px-3 py-2.5 text-xs font-medium text-textSecondary transition hover:border-brand/30 hover:text-brand"
         >
           ← Student portal
