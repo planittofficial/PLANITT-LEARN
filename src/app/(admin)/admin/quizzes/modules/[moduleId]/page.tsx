@@ -16,13 +16,16 @@ export default function Page({ params }: { params: Promise<{ moduleId: string }>
   if (isLoading) return <AdminPageSkeleton />;
 
   return (
-    <div className="space-y-8">
-      <Link href={`/admin/modules/${moduleId}`} className="text-sm text-violet-400 hover:underline">
-        ← Module
+    <div className="space-y-8 animate-in fade-in">
+      <Link
+        href={`/admin/modules/${moduleId}`}
+        className="inline-flex items-center gap-1.5 font-mono text-[10px] text-brand hover:underline uppercase tracking-widest"
+      >
+        ← Back to Module Node
       </Link>
       <AdminPageHeader
-        eyebrow="Assessment"
-        title="Module test builder"
+        eyebrow="Assessment Setup"
+        title="Module Test Builder"
         description="Build an end-of-module assessment to validate learner understanding."
         icon={Target}
       />
