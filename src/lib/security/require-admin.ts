@@ -1,6 +1,6 @@
 import { fail } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
-import { adminEmails, getDatabaseUrl } from "@/lib/env";
+import { adminEmails, getDatabaseUrl, isDevStandalone, devMockUser } from "@/lib/env";
 import { requireUser, type AuthUser } from "@/lib/security/require-user";
 
 export type AdminAuth = { user: AuthUser; token: string };
@@ -13,6 +13,11 @@ export async function requireAdmin(
 
   const email = auth.user.email.trim().toLowerCase();
   const allowedEmails = adminEmails();
+
+  if (isDevStandalone() && email === devMockUser().email.trim().toLowerCase()) {
+    return auth;
+  }
+
   if (allowedEmails.length > 0 && allowedEmails.includes(email)) {
     return auth;
   }
