@@ -50,7 +50,7 @@ export function AdminDashboardView() {
         action={
           <Link
             href={ROUTES.ADMIN.COURSES}
-            className="inline-flex items-center rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 hover:brightness-110"
+            className="inline-flex items-center rounded-xl bg-gradient-to-r from-brand via-brand to-brandBright px-4 py-2.5 text-sm font-semibold text-brandForeground shadow-lg shadow-brand/20 hover:brightness-110"
           >
             Manage courses
           </Link>

@@ -24,11 +24,11 @@ export function LeaderboardRankCard({ className }: LeaderboardRankCardProps) {
     <Link
       href={ROUTES.STUDENT.LEADERBOARD}
       className={cn(
-        "group block rounded-2xl border border-borderSubtle bg-gradient-to-br from-violet-500/10 via-surface to-appBase p-5 transition hover:border-brand/30",
+        "group block rounded-2xl border border-borderSubtle bg-gradient-to-br from-brand/10 via-surface to-appBase p-5 transition hover:border-brand/30",
         className,
       )}
     >
-      <div className="flex items-center gap-2 text-violet-600 dark:text-violet-400">
+      <div className="flex items-center gap-2 text-brand">
         <Trophy className="h-4 w-4" />
         <span className="text-xs font-semibold uppercase tracking-wider">Leaderboard</span>
       </div>

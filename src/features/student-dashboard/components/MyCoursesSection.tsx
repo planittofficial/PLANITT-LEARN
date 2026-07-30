@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
-import { Lock } from "lucide-react";
+import { Lock, Trophy, Zap, Activity } from "lucide-react";
 
 import { DashboardSkeleton } from "@/components/ui/skeletons";
 import { NoCoursesEmpty } from "@/components/shared/EmptyState";
@@ -27,14 +27,18 @@ import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { getRecentlyWatched, getWeeklyActivity } from "@/lib/learning/activity";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { getCourseProgressStats } from "@/lib/learning/course-progress";
+import { getLevelInfo } from "@/lib/learning/gamification";
+import { cn } from "@/lib/utils";
 import type { CourseProgress } from "@/lib/learning/progress";
 
 export function MyCoursesSection() {
-  const { user } = useAuth();
-  const { loading, enrolledIds, isAuthenticated, devPreview, devStandalone } = useEnrollment();
+  const { user, devStandalone } = useAuth();
+  const { loading, enrolledIds, isAuthenticated, devPreview } = useEnrollment();
   const { data: apiCourses, isLoading: coursesLoading } = useCourses();
   const gamification = useGamification(user?.id);
   const achievements = useAchievements(user?.id);
+
+  const [activeFilter, setActiveFilter] = useState<"all" | "purchased" | "new">("all");
 
   const catalog = useMemo(() => {
     if (apiCourses.length > 0) {
@@ -79,36 +83,37 @@ export function MyCoursesSection() {
     ...getCourseProgressStats(user?.id, course, progressByCourseId.get(course.id)),
   }));
 
-  const totalLessons = courseStats.reduce((s, c) => s + c.total, 0);
-  const lessonsCompleted = courseStats.reduce((s, c) => s + c.completed, 0);
-  const avgProgress =
-    courseStats.length > 0
-      ? Math.round(courseStats.reduce((s, c) => s + c.percent, 0) / courseStats.length)
-      : 0;
-
   const continueCourse =
     courseStats.find((c) => c.percent > 0 && c.percent < 100) ??
     courseStats.find((c) => c.percent === 0);
 
+  const level = getLevelInfo(gamification.xp);
   const firstName = user?.name?.split(" ")[0] ?? "Learner";
+
+  // Filtering Logic
+  const filteredEnrolled = courseStats.filter(({ course, percent }) => {
+    if (activeFilter === "purchased") return percent > 0;
+    if (activeFilter === "new") return percent === 0;
+    return true; // "all"
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in">
       {devPreview ? (
-        <div className="rounded-xl border border-brand/30 bg-brand/5 px-4 py-3 text-sm text-textSecondary">
-          <strong className="text-brand">Preview mode</strong> — showing mock enrollments.{" "}
-          <Link href={ROUTES.STUDENT.LOGIN} className="font-medium text-brand hover:underline">
-            Sign in
+        <div className="rounded border border-brand/35 bg-brand/5 px-4 py-3 font-mono text-[11px] tracking-wide text-textSecondary">
+          <strong className="text-brand">PREVIEW_MODE</strong> — showing mock enrollments.{" "}
+          <Link href={ROUTES.STUDENT.LOGIN} className="font-bold text-brand hover:underline">
+            [SIGN_IN]
           </Link>{" "}
           to save progress.
         </div>
       ) : null}
 
       {!isAuthenticated && !devPreview ? (
-        <div className="rounded-2xl border border-borderSubtle bg-surface p-8 text-center">
-          <p className="text-textSecondary">
-            <Link href={ROUTES.STUDENT.LOGIN} className="font-semibold text-brand hover:underline">
-              Sign in
+        <div className="rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-8 text-center font-mono">
+          <p className="text-sm text-textSecondary">
+            <Link href={ROUTES.STUDENT.LOGIN} className="font-bold text-brand hover:underline">
+              [SIGN_IN]
             </Link>{" "}
             with your Alvest Google account to see your courses.
           </p>
@@ -122,7 +127,7 @@ export function MyCoursesSection() {
               href={alvestCheckoutUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover dark:text-black dark:hover:brightness-110"
+              className="inline-flex rounded bg-brand px-5 py-2.5 font-mono text-xs font-bold text-black uppercase tracking-wider transition hover:brightness-110"
             >
               Browse courses on Alvest →
             </a>
@@ -135,42 +140,110 @@ export function MyCoursesSection() {
           {isAuthenticated ? (
             <WelcomeHero
               firstName={firstName}
-              enrolledCount={enrolledCourses.length}
-              lessonsCompleted={lessonsCompleted}
-              totalLessons={totalLessons}
-              avgProgress={avgProgress}
               streak={gamification.streak}
-              xp={gamification.xp}
             />
           ) : null}
 
-          {isAuthenticated && continueCourse && user?.id ? (
-            <ContinueLearningCard
-              course={continueCourse.course}
-              userId={user.id}
-              progressPercent={continueCourse.percent}
-              completedLessons={continueCourse.completed}
-              totalLessons={continueCourse.total}
-            />
-          ) : null}
+          {/* Bento Stats & Continue Learning Card */}
+          {(isAuthenticated || devPreview) && (
+            <div className="grid grid-cols-12 gap-6 mb-8">
+              <div className={cn(continueCourse ? "col-span-12 lg:col-span-8" : "col-span-12")}>
+                {continueCourse && user?.id ? (
+                  <ContinueLearningCard
+                    course={continueCourse.course}
+                    userId={user.id}
+                    progressPercent={continueCourse.percent}
+                    completedLessons={continueCourse.completed}
+                    totalLessons={continueCourse.total}
+                  />
+                ) : (
+                  <div className="p-8 rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md flex flex-col justify-center min-h-[320px] text-center">
+                    <p className="font-headline text-2xl font-extrabold text-textPrimary mb-2 uppercase tracking-tight">All Tasks Executed</p>
+                    <p className="text-xs text-textSecondary font-mono uppercase tracking-wider">You have completed all enrolled courses! Select another course to initialize below.</p>
+                  </div>
+                )}
+              </div>
 
-          <section>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-textPrimary">
-                My courses
-                <span className="ml-2 text-sm font-normal text-textMuted">
-                  ({enrolledCourses.length})
-                </span>
-              </h2>
-              <Link
-                href={ROUTES.STUDENT.ANALYTICS}
-                className="text-sm font-medium text-textSecondary hover:text-brand"
-              >
-                View progress →
-              </Link>
+              {isAuthenticated ? (
+                <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+                  {/* XP Bento Card */}
+                  <div className="p-6 rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] terminal-glow relative group hover:border-brand/40 transition">
+                    <p className="font-mono text-[9px] text-textSecondary uppercase tracking-widest mb-4">Cumulative_XP</p>
+                    <div className="flex items-end justify-between">
+                      <p className="font-mono text-4xl font-extrabold text-brand tracking-tighter leading-none">{gamification.xp.toLocaleString()}</p>
+                      <Zap className="text-brand/35 h-7 w-7 group-hover:text-brand transition-colors animate-pulse-live" />
+                    </div>
+                  </div>
+                  {/* Level Bento Card */}
+                  <div className="p-6 rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] relative group hover:border-brand/40 transition">
+                    <p className="font-mono text-[9px] text-textSecondary uppercase tracking-widest mb-4">Execution_Level</p>
+                    <div className="flex items-end justify-between">
+                      <div className="font-mono leading-none">
+                        <p className="text-2xl font-black text-textPrimary">LEVEL {level.level}</p>
+                        <span className="block text-[9px] text-brand/60 font-bold tracking-widest uppercase mt-1">
+                          {level.title}
+                        </span>
+                      </div>
+                      <Trophy className="text-textPrimary/25 h-7 w-7 group-hover:text-brand transition-colors" />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {courseStats.map(({ course, percent, completed, total }) => (
+          )}
+
+          {/* Courses Header & Filters Section */}
+          <section className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/5 pb-4">
+              <div>
+                <span className="font-mono text-[9px] text-brand tracking-widest uppercase block mb-1.5">KNOWLEDGE_BASE</span>
+                <h2 className="font-headline text-2xl font-extrabold text-textPrimary uppercase tracking-tight">
+                  Trading Academy
+                  <span className="ml-2 text-xs font-mono font-normal text-textMuted uppercase">
+                    ({enrolledCourses.length}_Nodes)
+                  </span>
+                </h2>
+              </div>
+              {/* Filter Tabs */}
+              <div className="flex gap-1.5 p-1 bg-[#131313]/80 rounded border border-white/5 w-fit">
+                <button
+                  onClick={() => setActiveFilter("all")}
+                  className={cn(
+                    "px-4 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider transition-all",
+                    activeFilter === "all"
+                      ? "bg-brand text-black font-bold shadow-[0_0_10px_rgba(20,184,166,0.15)]"
+                      : "text-textSecondary hover:text-brand"
+                  )}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setActiveFilter("purchased")}
+                  className={cn(
+                    "px-4 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider transition-all",
+                    activeFilter === "purchased"
+                      ? "bg-brand text-black font-bold shadow-[0_0_10px_rgba(20,184,166,0.15)]"
+                      : "text-textSecondary hover:text-brand"
+                  )}
+                >
+                  Purchased
+                </button>
+                <button
+                  onClick={() => setActiveFilter("new")}
+                  className={cn(
+                    "px-4 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider transition-all",
+                    activeFilter === "new"
+                      ? "bg-brand text-black font-bold shadow-[0_0_10px_rgba(20,184,166,0.15)]"
+                      : "text-textSecondary hover:text-brand"
+                  )}
+                >
+                  New
+                </button>
+              </div>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {filteredEnrolled.map(({ course, percent, completed, total }) => (
                 <CourseCard
                   key={course.id}
                   course={course}
@@ -184,10 +257,11 @@ export function MyCoursesSection() {
             </div>
           </section>
 
+          {/* Activity Charts & Leaderboard Widget */}
           {isAuthenticated ? (
-            <div className="grid gap-5 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-3 pt-6 border-t border-white/5">
               <WeeklyProgressChart days={weeklyDays} className="lg:col-span-2" />
-              <div className="space-y-5">
+              <div className="space-y-6">
                 <LeaderboardRankCard />
                 <RecentAchievements
                   recentUnlocks={achievements.recentUnlocks}
@@ -201,23 +275,24 @@ export function MyCoursesSection() {
 
           {isAuthenticated && recent.length > 0 ? <RecentlyWatched items={recent} /> : null}
 
+          {/* Locked / Upgrade courses catalog */}
           {lockedCourses.length > 0 ? (
-            <section>
-              <div className="mb-4 flex items-center gap-2">
+            <section className="pt-8 border-t border-white/5 space-y-6">
+              <div className="flex items-center gap-2">
                 <Lock className="h-4 w-4 text-textMuted" />
-                <h2 className="text-lg font-semibold text-textPrimary">Explore more courses</h2>
-                <span className="text-sm text-textMuted">({lockedCourses.length})</span>
+                <h2 className="font-headline text-lg font-bold text-textPrimary uppercase tracking-wider">Explore More Modules</h2>
+                <span className="font-mono text-xs text-textMuted">({lockedCourses.length})</span>
               </div>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {lockedCourses.map((course) => (
                   <CourseCard key={course.id} course={course} enrolled={false} />
                 ))}
               </div>
               {!devStandalone ? (
-                <p className="mt-4 text-center text-xs text-textMuted">
+                <p className="mt-4 text-center font-mono text-[10px] text-textMuted uppercase tracking-wider">
                   Purchase on{" "}
-                  <a href={alvestCheckoutUrl()} className="text-brand hover:underline">
-                    Alvest
+                  <a href={alvestCheckoutUrl()} className="text-brand hover:underline font-bold">
+                    [ALVEST]
                   </a>{" "}
                   to unlock — same Google account works here automatically.
                 </p>

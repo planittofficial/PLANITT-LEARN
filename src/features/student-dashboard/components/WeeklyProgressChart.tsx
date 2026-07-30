@@ -28,7 +28,7 @@ export function WeeklyProgressChart({ days, className }: WeeklyProgressChartProp
                 className={cn(
                   "w-full max-w-[2rem] rounded-t-lg transition-all duration-500",
                   day.lessonsCompleted > 0
-                    ? "bg-gradient-to-t from-brand to-emerald-400"
+                    ? "bg-gradient-to-t from-brand to-brandBright"
                     : "bg-overlay-hover",
                 )}
                 style={{ height: `${Math.max(8, (day.lessonsCompleted / max) * 100)}%` }}

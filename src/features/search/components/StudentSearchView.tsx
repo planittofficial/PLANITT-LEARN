@@ -61,7 +61,7 @@ export function StudentSearchView() {
 
   return (
     <div className="space-y-6 animate-in fade-in">
-      <header className="relative overflow-hidden rounded-2xl border border-brand/15 bg-gradient-to-br from-brand/10 via-surface to-emerald-500/5 p-6 sm:p-8">
+      <header className="relative overflow-hidden rounded-2xl border border-brand/15 bg-gradient-to-br from-brand/12 via-surface to-accent/10 p-6 sm:p-8">
         <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand/10 blur-3xl" />
         <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand">
           <Search className="h-3.5 w-3.5" />

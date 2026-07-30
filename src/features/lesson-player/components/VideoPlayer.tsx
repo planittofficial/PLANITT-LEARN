@@ -68,25 +68,29 @@ export function VideoPlayer({
 
   if (embedUrl) {
     return (
-      <iframe
-        src={embedUrl}
-        title={title}
-        className="aspect-video w-full rounded-lg"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
+      <div className="bg-black p-0 sm:p-3">
+        <iframe
+          src={embedUrl}
+          title={title}
+          className="aspect-video w-full bg-black"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
     );
   }
 
   return (
-    <video
-      src={videoUrl}
-      controls
-      className="aspect-video w-full rounded-lg bg-black"
-      onTimeUpdate={handleTimeUpdate}
-      onEnded={markLocalComplete}
-    >
-      <track kind="captions" />
-    </video>
+    <div className="bg-black p-0 sm:p-3">
+      <video
+        src={videoUrl}
+        controls
+        className="aspect-video w-full bg-black"
+        onTimeUpdate={handleTimeUpdate}
+        onEnded={markLocalComplete}
+      >
+        <track kind="captions" />
+      </video>
+    </div>
   );
 }

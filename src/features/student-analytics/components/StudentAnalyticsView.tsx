@@ -6,6 +6,7 @@ import {
   Layers,
   Target,
   Trophy,
+  Activity
 } from "lucide-react";
 
 import { WeeklyProgressChart } from "@/features/student-dashboard/components/WeeklyProgressChart";
@@ -23,10 +24,10 @@ export function StudentAnalyticsView() {
   if (isLoading || !data) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-32 rounded-2xl bg-overlay-hover" />
+        <div className="h-32 rounded bg-white/5" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-28 rounded-2xl bg-overlay-hover" />
+            <div key={i} className="h-28 rounded bg-white/5" />
           ))}
         </div>
       </div>
@@ -37,23 +38,29 @@ export function StudentAnalyticsView() {
     data.quizAverageScore !== null ? `${data.quizAverageScore}%` : "—";
   const quizHint =
     data.quizAttempts > 0
-      ? `${data.quizAttempts} attempt${data.quizAttempts !== 1 ? "s" : ""}`
-      : "Take a quiz to track scores";
+      ? `${data.quizAttempts} attempts`
+      : "No attempts registered";
 
   return (
     <div className="space-y-8 animate-in fade-in">
-      <header className="relative overflow-hidden rounded-2xl border border-brand/15 bg-gradient-to-br from-brand/10 via-surface to-violet-500/10 p-6 sm:p-8">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand/10 blur-3xl" />
-        <p className="text-xs font-semibold uppercase tracking-widest text-brand">Learning analytics</p>
-        <h1 className="mt-2 text-2xl font-bold sm:text-3xl">
-          Your progress at a glance
+      {/* Premium Header */}
+      <header className="relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
+        <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-brand/40 uppercase tracking-widest">
+          NODE_ANALYTICS_V2.4
+        </div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="w-2 h-[1.5px] bg-brand"></span>
+          <span className="font-mono text-[9px] text-brand uppercase tracking-widest font-bold">MONITORING_SUITE</span>
+        </div>
+        <h1 className="font-headline text-3xl font-extrabold text-textPrimary tracking-tight uppercase">
+          PERFORMANCE_METRICS
         </h1>
-        <p className="mt-2 max-w-xl text-sm text-textSecondary">
-          Track hours learned, completion rates, quiz performance, and how you rank against other
-          learners this week.
+        <p className="mt-2 max-w-xl text-xs text-textSecondary leading-relaxed">
+          Real-time tracking of hours learned, completion matrices, quiz performance indexes, and competitive leaderboard rankings.
         </p>
       </header>
 
+      {/* Stats Cards Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <AnalyticsStatCard
           label="Hours learned"
@@ -108,7 +115,8 @@ export function StudentAnalyticsView() {
         />
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-5">
+      {/* Chart and XP Bento Section */}
+      <div className="grid gap-6 lg:grid-cols-5">
         <WeeklyProgressChart days={data.weeklyActivity} className="lg:col-span-3" />
         <RankXpPanel
           className="lg:col-span-2"

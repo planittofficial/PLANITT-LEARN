@@ -1,27 +1,30 @@
 "use client";
 
-import { Suspense } from "react";
-
+import { LearnShell } from "@/components/layout/student";
 import { MyCoursesSection } from "@/features/student-dashboard";
-import { usePurchasedEnrollmentRefresh } from "@/hooks/enrollment/use-purchased-enrollment-refresh";
+import { LandingView } from "@/components/shared";
+import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
+import { DashboardSkeleton } from "@/components/ui/skeletons";
 
-function HomeContent() {
-  usePurchasedEnrollmentRefresh();
+export default function HomePage() {
+  const { isAuthenticated, devPreview, loading } = useEnrollment();
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
+
+  const showDashboard = isAuthenticated || devPreview;
+
+  if (!showDashboard) {
+    return <LandingView />;
+  }
 
   return (
-    <>
+    <LearnShell>
       <MyCoursesSection />
       <p className="mt-12 text-center text-xs text-textMuted">
         Educational content only — not investment advice. Always perform your own due diligence.
       </p>
-    </>
-  );
-}
-
-export default function HomePage() {
-  return (
-    <Suspense fallback={<MyCoursesSection />}>
-      <HomeContent />
-    </Suspense>
+    </LearnShell>
   );
 }
