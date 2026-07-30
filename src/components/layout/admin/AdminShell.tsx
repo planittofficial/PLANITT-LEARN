@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu, Terminal } from "lucide-react";
 
-import { AlvestLogo } from "@/components/brand";
 import { AdminSidebar } from "@/components/layout/admin/AdminSidebar";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -12,28 +11,34 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-appBase">
+    <div className="flex min-h-screen bg-[#0A0A0A] text-textPrimary">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 radar-grid opacity-10 pointer-events-none" />
+
       <AdminSidebar
         mobileOpen={mobileNavOpen}
         onMobileClose={() => setMobileNavOpen(false)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-borderSubtle bg-appBase/80 backdrop-blur-lg lg:hidden">
+      <div className="flex min-w-0 flex-1 flex-col relative z-10 lg:pl-0">
+        {/* Mobile Header */}
+        <header className="sticky top-0 z-30 border-b border-white/5 bg-[#131313]/80 backdrop-blur-lg lg:hidden">
           <div className="flex items-center gap-3 px-4 py-3">
             <button
               type="button"
               onClick={() => setMobileNavOpen(true)}
-              className="rounded-lg p-2 text-textSecondary hover:bg-overlay-hover hover:text-textPrimary"
+              className="rounded p-2 text-textSecondary hover:bg-white/5 hover:text-textPrimary"
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
             <div className="flex flex-1 items-center gap-2">
-              <AlvestLogo variant="mark" size={28} />
-              <p className="text-sm font-semibold text-textPrimary">
-                Alvest <span className="text-brand">Console</span>
-              </p>
+              <div className="flex h-8 w-8 items-center justify-center rounded bg-brand/10 border border-brand/20">
+                <Terminal className="h-4.5 w-4.5 text-brand" />
+              </div>
+              <span className="font-headline text-md font-black text-brand tracking-tighter uppercase">
+                TRDR<span className="text-textPrimary">_ADMIN</span>
+              </span>
             </div>
             <ThemeToggle />
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Plus, Trash2 } from "lucide-react";
+import { BookOpen, Plus, Trash2, Eye } from "lucide-react";
 
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -25,24 +25,24 @@ export function CoursesAdminView() {
   if (isLoading) return <AdminPageSkeleton />;
   if (error) {
     return (
-      <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-6 text-rose-400">
-        {(error as Error).message}
+      <div className="rounded-lg border border-rose-500/20 bg-rose-500/10 p-6 font-mono text-xs text-rose-400 uppercase tracking-wider">
+        &gt; ERROR: {(error as Error).message}
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in">
       <AdminPageHeader
-        eyebrow="Content"
-        title="Courses"
-        description="Create and publish learning paths, modules, and lessons for students."
+        eyebrow="Content Library"
+        title="Course Management"
+        description="Create and publish learning paths, modules, and lessons for the trading curriculum."
         icon={BookOpen}
         action={
           <Link href="/admin/courses/new">
             <AdminButton>
-              <Plus className="h-4 w-4" />
-              Add course
+              <Plus className="h-3.5 w-3.5" />
+              New Course
             </AdminButton>
           </Link>
         }
@@ -52,7 +52,7 @@ export function CoursesAdminView() {
         <AdminTableElement>
           <AdminTableHead>
             <tr>
-              <AdminTableHeaderCell>Title</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Course Title</AdminTableHeaderCell>
               <AdminTableHeaderCell>Modules</AdminTableHeaderCell>
               <AdminTableHeaderCell>Lessons</AdminTableHeaderCell>
               <AdminTableHeaderCell>Status</AdminTableHeaderCell>
@@ -65,18 +65,22 @@ export function CoursesAdminView() {
                 <AdminTableCell>
                   <Link
                     href={`/admin/courses/${course.id}`}
-                    className="font-medium text-violet-400 hover:underline"
+                    className="font-mono font-bold text-brand hover:underline uppercase tracking-wide"
                   >
                     {course.title}
                   </Link>
-                  <p className="mt-0.5 font-mono text-xs text-textMuted">{course.id}</p>
+                  <p className="mt-0.5 font-mono text-[9px] text-textMuted uppercase tracking-widest">{course.id}</p>
                 </AdminTableCell>
-                <AdminTableCell>{course.moduleCount}</AdminTableCell>
-                <AdminTableCell>{course.lessonCount}</AdminTableCell>
                 <AdminTableCell>
-                  <Badge variant={course.published ? "success" : "warning"}>
-                    {course.published ? "Published" : "Draft"}
-                  </Badge>
+                  <span className="font-mono font-bold text-textPrimary">{course.moduleCount}</span>
+                </AdminTableCell>
+                <AdminTableCell>
+                  <span className="font-mono font-bold text-textPrimary">{course.lessonCount}</span>
+                </AdminTableCell>
+                <AdminTableCell>
+                  <span className={`inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider border ${course.published ? "border-brand/20 bg-brand/5 text-brand" : "border-amber-500/20 bg-amber-500/5 text-amber-400"}`}>
+                    {course.published ? "PUBLISHED" : "DRAFT"}
+                  </span>
                 </AdminTableCell>
                 <AdminTableCell>
                   <div className="flex flex-wrap gap-2">
@@ -92,7 +96,7 @@ export function CoursesAdminView() {
                         if (confirm(`Delete ${course.title}?`)) deleteCourse.mutate(course.id);
                       }}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3 w-3" />
                       Delete
                     </AdminButton>
                   </div>
@@ -104,10 +108,10 @@ export function CoursesAdminView() {
       </AdminTable>
 
       {(courses ?? []).length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-borderSubtle px-6 py-12 text-center text-sm text-textMuted">
-          No courses yet.{" "}
-          <Link href="/admin/courses/new" className="text-violet-400 hover:underline">
-            Create your first course
+        <div className="rounded-lg border border-dashed border-white/10 px-6 py-12 text-center font-mono text-xs text-textMuted uppercase tracking-wider">
+          No courses loaded.{" "}
+          <Link href="/admin/courses/new" className="text-brand hover:underline font-bold">
+            [Create First Course]
           </Link>
         </div>
       ) : null}

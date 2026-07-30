@@ -7,16 +7,16 @@ type AdminButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const VARIANTS = {
   primary:
-    "bg-gradient-to-r from-brand via-brand to-brandBright font-semibold text-brandForeground shadow-lg shadow-brand/20 hover:brightness-110",
+    "bg-brand text-black font-mono font-bold uppercase tracking-wider shadow-[0_0_10px_rgba(20,184,166,0.15)] hover:brightness-110 active:scale-[0.98]",
   secondary:
-    "border border-borderSubtle bg-surface text-textSecondary hover:border-brand/30 hover:text-textPrimary",
-  danger: "border border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500/15",
-  ghost: "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
+    "border border-white/5 bg-[#1C1B1B] text-textSecondary font-mono font-bold uppercase tracking-wider hover:border-brand/40 hover:text-brand active:scale-[0.98]",
+  danger: "border border-red-500/20 bg-red-500/5 text-red-400 font-mono font-bold uppercase tracking-wider hover:bg-red-500/10 active:scale-[0.98]",
+  ghost: "text-textSecondary font-mono uppercase tracking-wider hover:bg-white/5 hover:text-textPrimary",
 };
 
 const SIZES = {
-  sm: "rounded-lg px-3 py-1.5 text-xs",
-  md: "rounded-xl px-4 py-2.5 text-sm",
+  sm: "rounded-sm px-3 py-1.5 text-[10px] tracking-wide",
+  md: "rounded-sm px-4 py-2.5 text-xs tracking-wider",
 };
 
 export function AdminButton({
@@ -30,7 +30,7 @@ export function AdminButton({
     <button
       type="button"
       className={cn(
-        "inline-flex items-center justify-center gap-2 transition disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex items-center justify-center gap-1.5 transition disabled:cursor-not-allowed disabled:opacity-50",
         VARIANTS[variant],
         SIZES[size],
         className,

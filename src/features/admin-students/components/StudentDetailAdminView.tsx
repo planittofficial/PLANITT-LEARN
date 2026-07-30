@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Mail, Target, TrendingUp } from "lucide-react";
+import { BookOpen, Mail, Target, TrendingUp, CheckCircle2, Clock, Activity } from "lucide-react";
 
-import { Badge } from "@/components/ui/Badge";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import {
   AdminCard,
   AdminPageHeader,
@@ -22,12 +20,14 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
   if (isLoading) return <AdminPageSkeleton />;
   if (error) {
     return (
-      <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-6 text-rose-400">
-        {(error as Error).message}
+      <div className="rounded-lg border border-rose-500/20 bg-rose-500/10 p-6 font-mono text-xs text-rose-400 uppercase tracking-wider">
+        &gt; ERROR: {(error as Error).message}
       </div>
     );
   }
-  if (!student) return <p>Student not found.</p>;
+  if (!student) return (
+    <p className="font-mono text-xs text-textMuted uppercase tracking-wider">STUDENT_NOT_FOUND</p>
+  );
 
   const totalLessons = student.enrollments.reduce((sum, e) => {
     const course = COURSE_CATALOG.find((c) => c.id === e.courseId);
@@ -40,91 +40,119 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
       : 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in">
       <Link
         href={ROUTES.ADMIN.STUDENTS}
-        className="text-sm text-violet-400 hover:underline"
+        className="inline-flex items-center gap-1.5 font-mono text-[10px] text-brand hover:underline uppercase tracking-widest"
       >
-        ← Back to students
+        ← Back to Student Roster
       </Link>
 
       <AdminPageHeader
-        eyebrow="Student profile"
+        eyebrow="Student Profile"
         title={student.name ?? student.id}
         description={student.email}
         icon={Mail}
       />
 
+      {/* Overview Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         <AdminStatCard
-          label="Enrolled courses"
+          label="Enrolled Courses"
           value={student.enrolledCourseCount}
           icon={BookOpen}
           accent="violet"
         />
         <AdminStatCard
-          label="Lessons completed"
+          label="Lessons Completed"
           value={student.lessonsCompleted}
           icon={TrendingUp}
           accent="emerald"
         />
         <AdminStatCard
-          label="Overall progress"
+          label="Overall Progress"
           value={`${progressPercent}%`}
           icon={Target}
           accent="indigo"
         />
       </div>
 
+      {/* Progress bar */}
       <AdminCard>
-        <p className="mb-3 text-sm font-medium">Learning progress</p>
-        <ProgressBar value={progressPercent} showLabel size="lg" />
+        <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest mb-3">Learning_Progress_Matrix</p>
+        <div className="w-full h-2 bg-white/5 rounded overflow-hidden mb-2">
+          <div className="h-full bg-brand transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+        </div>
+        <div className="flex justify-between font-mono text-[10px] text-textMuted uppercase tracking-wider">
+          <span>{progressPercent}% Completed</span>
+          <span>{student.lessonsCompleted} / {totalLessons} Nodes</span>
+        </div>
       </AdminCard>
 
-      <AdminSection title="Enrollments">
+      {/* Enrollments */}
+      <AdminSection title="Course Enrollments">
         <div className="space-y-2">
           {student.enrollments.map((e) => (
-            <AdminCard key={e.courseId} className="!p-4 text-sm">
-              <p className="font-medium">{e.courseTitle}</p>
-              <p className="mt-1 text-xs text-textMuted">
-                Enrolled {new Date(e.enrolledAt).toLocaleDateString()}
-              </p>
-            </AdminCard>
+            <div key={e.courseId} className="flex items-center justify-between rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-4 font-mono text-xs hover:border-brand/30 transition">
+              <div className="min-w-0">
+                <p className="font-bold text-textPrimary uppercase tracking-wide truncate">{e.courseTitle}</p>
+                <p className="text-[9px] text-textMuted uppercase tracking-widest mt-1">
+                  Enrolled: {new Date(e.enrolledAt).toLocaleDateString()}
+                </p>
+              </div>
+              <span className="font-mono text-[9px] text-brand border border-brand/20 bg-brand/5 px-2 py-0.5 rounded uppercase tracking-widest font-bold shrink-0 ml-4">
+                ACTIVE
+              </span>
+            </div>
           ))}
         </div>
       </AdminSection>
 
-      <AdminSection title="Lesson progress">
+      {/* Lesson Progress */}
+      <AdminSection title="Lesson Progress Feed">
         <div className="space-y-2">
           {student.progress.map((p) => (
-            <AdminCard
+            <div
               key={p.lessonId}
-              className="flex flex-wrap items-center justify-between gap-3 !p-4 text-sm"
+              className="flex items-center justify-between rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-3.5 hover:border-brand/20 transition"
             >
-              <span>{p.lessonTitle}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-textMuted">{p.watchPercent}%</span>
-                <Badge variant={p.completed ? "success" : "warning"}>
-                  {p.completed ? "Done" : "In progress"}
-                </Badge>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="shrink-0">
+                  {p.completed ? (
+                    <CheckCircle2 className="h-4 w-4 text-brand" />
+                  ) : (
+                    <Activity className="h-4 w-4 text-amber-400" />
+                  )}
+                </div>
+                <p className="font-mono text-xs font-bold text-textPrimary uppercase tracking-wide truncate">{p.lessonTitle}</p>
               </div>
-            </AdminCard>
+              <div className="flex items-center gap-3 shrink-0 ml-4">
+                <span className="font-mono text-[9px] text-textMuted uppercase tracking-wider">{p.watchPercent}% watched</span>
+                <span className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-widest ${p.completed ? "border-brand/20 bg-brand/5 text-brand" : "border-amber-500/20 bg-amber-500/5 text-amber-400"}`}>
+                  {p.completed ? "DONE" : "IN_PROGRESS"}
+                </span>
+              </div>
+            </div>
           ))}
         </div>
       </AdminSection>
 
-      <AdminSection title="Quiz scores">
+      {/* Quiz Results */}
+      <AdminSection title="Quiz Score History">
         <div className="space-y-2">
           {student.quizResults.map((q) => (
-            <AdminCard
+            <div
               key={q.id}
-              className="flex items-center justify-between !p-4 text-sm"
+              className="flex items-center justify-between rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-3.5 hover:border-brand/20 transition"
             >
-              <span className="capitalize">{q.type} quiz</span>
-              <Badge variant={q.passed ? "success" : "warning"}>
-                {q.score}/{q.maxScore}
-              </Badge>
-            </AdminCard>
+              <p className="font-mono text-xs font-bold text-textPrimary uppercase tracking-wide capitalize">{q.type} Quiz</p>
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-[10px] text-textMuted">{q.score} / {q.maxScore} pts</span>
+                <span className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-widest ${q.passed ? "border-brand/20 bg-brand/5 text-brand" : "border-rose-500/20 bg-rose-500/5 text-rose-400"}`}>
+                  {q.passed ? "PASSED" : "FAILED"}
+                </span>
+              </div>
+            </div>
           ))}
         </div>
       </AdminSection>
