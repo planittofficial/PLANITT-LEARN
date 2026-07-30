@@ -24,7 +24,8 @@ export async function requireAdmin(
 
   if (
     auth.user.role?.trim().toLowerCase() === "admin" ||
-    auth.user.isAdmin === true
+    auth.user.isAdmin === true ||
+    auth.user.roles?.some((r) => r.trim().toLowerCase() === "admin")
   ) {
     return auth;
   }
