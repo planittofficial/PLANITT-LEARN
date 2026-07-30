@@ -15,9 +15,9 @@ function getMockYield(score: number): string {
 
 function PodiumCard({ entry, place }: { entry: LeaderboardEntry; place: number }) {
   const borderColors = [
-    "border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.12)] bg-[#131313]/80",
-    "border-slate-400/20 shadow-[0_0_15px_rgba(156,163,175,0.08)] bg-[#131313]/60",
-    "border-orange-500/20 shadow-[0_0_15px_rgba(217,119,6,0.08)] bg-[#131313]/60",
+    "border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.12)] bg-surface/80",
+    "border-slate-400/20 shadow-[0_0_15px_rgba(156,163,175,0.08)] bg-surface/60",
+    "border-orange-500/20 shadow-[0_0_15px_rgba(217,119,6,0.08)] bg-surface/60",
   ];
   
   const initials = entry.name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2);
@@ -50,7 +50,7 @@ function PodiumCard({ entry, place }: { entry: LeaderboardEntry; place: number }
         )}>
           {initials}
         </div>
-        <span className="absolute -bottom-1 -right-1 text-[9px] bg-black border border-white/10 px-2 py-0.5 rounded font-mono font-bold leading-none text-textPrimary">
+        <span className="absolute -bottom-1 -right-1 text-[9px] bg-elevated border border-borderSubtle px-2 py-0.5 rounded font-mono font-bold leading-none text-textPrimary">
           #{place + 1}
         </span>
       </div>
@@ -80,7 +80,7 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md px-5 py-4 transition-all duration-200 hover:border-brand/40 relative overflow-hidden group",
+        "flex items-center gap-4 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md px-5 py-4 transition-all duration-200 hover:border-brand/40 relative overflow-hidden group",
         entry.isCurrentUser && "border-brand/30 bg-brand/5 shadow-[0_0_12px_rgba(20,184,166,0.05)]",
       )}
     >
@@ -90,14 +90,14 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
           "flex h-8 w-8 shrink-0 items-center justify-center rounded font-mono text-xs font-bold border relative z-10",
           entry.rank <= 3 
             ? "bg-brand/10 border-brand/20 text-brand" 
-            : "bg-[#1C1B1B] border-white/5 text-textSecondary",
+            : "bg-elevated border-borderSubtle text-textSecondary",
         )}
       >
         {String(entry.rank).padStart(2, '0')}
       </span>
       
       {/* Avatar in list */}
-      <div className="h-10 w-10 rounded-full bg-[#1C1B1B] border border-white/5 flex items-center justify-center font-mono font-bold text-xs text-textSecondary shrink-0 relative z-10">
+      <div className="h-10 w-10 rounded-full bg-elevated border border-borderSubtle flex items-center justify-center font-mono font-bold text-xs text-textSecondary shrink-0 relative z-10">
         {initials}
       </div>
 
@@ -147,7 +147,7 @@ export function LeaderboardView() {
   return (
     <div className="space-y-8 animate-in fade-in">
       {/* Header section */}
-      <section className="relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
+      <section className="relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
         <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-brand/40 uppercase tracking-widest">
           SYNC: LIVE
         </div>
@@ -185,7 +185,7 @@ export function LeaderboardView() {
       {/* Rankings list */}
       {rest.length > 0 ? (
         <section className="space-y-4">
-          <div className="flex items-center justify-between px-2 border-b border-white/5 pb-3">
+          <div className="flex items-center justify-between px-2 border-b border-borderSubtle pb-3">
             <div className="flex items-center gap-2">
               <Medal className="h-4 w-4 text-brand" />
               <span className="font-headline text-base font-bold text-textPrimary uppercase tracking-wider">All Rankings</span>

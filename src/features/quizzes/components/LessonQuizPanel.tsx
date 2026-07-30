@@ -80,8 +80,8 @@ export function LessonQuizPanel({
     const scorePct = Math.round((result.score / result.maxScore) * 100);
 
     return (
-      <section className="overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md shadow-2xl p-6 md:p-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-6 mb-6">
+      <section className="overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md shadow-2xl p-6 md:p-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-borderSubtle pb-6 mb-6">
           <div className="flex items-center gap-3">
             <div className={cn(
               "flex h-12 w-12 items-center justify-center rounded-lg",
@@ -128,12 +128,12 @@ export function LessonQuizPanel({
             </div>
           </div>
 
-          <div className="border border-white/5 bg-black/40 p-6 rounded font-mono text-[11px] leading-relaxed terminal-glow">
+          <div className="border border-borderSubtle bg-black/40 p-6 rounded font-mono text-[11px] leading-relaxed terminal-glow">
             <p className="text-brand/60 mb-2 uppercase font-bold tracking-widest">&gt; BREAKDOWN_REPORT.LOG</p>
             {quiz.questions.map((q, idx) => {
               const selected = selections[q.id];
               return (
-                <div key={q.id} className="py-2 border-b border-white/5 last:border-0">
+                <div key={q.id} className="py-2 border-b border-borderSubtle last:border-0">
                   <p className="text-textPrimary font-semibold">Q{idx + 1}: {q.prompt}</p>
                   <p className="text-textSecondary mt-1">
                     Your Selection: <span className={selected !== undefined ? "text-textPrimary" : "text-textMuted"}>
@@ -166,9 +166,9 @@ export function LessonQuizPanel({
   const optionPrefixes = ["A", "B", "C", "D", "E"];
 
   return (
-    <section className="overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md shadow-2xl">
+    <section className="overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md shadow-2xl">
       {/* Header */}
-      <div className="border-b border-white/5 p-4 flex items-center justify-between">
+      <div className="border-b border-borderSubtle p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 text-brand">
             <HelpCircle className="h-5 w-5" />
@@ -185,7 +185,7 @@ export function LessonQuizPanel({
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-white/5 h-1">
+      <div className="w-full bg-elevated h-1">
         <div 
           className="bg-brand h-full transition-all duration-300"
           style={{ width: `${((currentIdx + 1) / totalQuestions) * 100}%` }}
@@ -211,14 +211,14 @@ export function LessonQuizPanel({
                     "flex w-full cursor-pointer items-center gap-4 rounded border px-4 py-3.5 text-left text-sm transition-all duration-200",
                     selected
                       ? "border-brand bg-brand/5 text-textPrimary font-semibold shadow-[0_0_12px_rgba(20,184,166,0.1)]"
-                      : "border-white/5 bg-[#1C1B1B]/40 text-textSecondary hover:border-brand/40 hover:bg-white/5"
+                      : "border-borderSubtle bg-elevated/40 text-textSecondary hover:border-brand/40 hover:bg-overlay-hover"
                   )}
                 >
                   <span className={cn(
                     "flex h-6 w-6 shrink-0 items-center justify-center rounded font-mono text-xs border transition-all duration-200",
                     selected
                       ? "bg-brand text-black border-brand font-bold"
-                      : "bg-[#1C1B1B] border-white/5 text-textSecondary"
+                      : "bg-elevated border-borderSubtle text-textSecondary"
                   )}>
                     {optionPrefixes[optionIndex]}
                   </span>
@@ -231,7 +231,7 @@ export function LessonQuizPanel({
 
         {/* Confidence Indicator Widgets (only when option is selected) */}
         {selectedOption !== undefined && (
-          <div className="pt-4 border-t border-white/5 animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="pt-4 border-t border-borderSubtle animate-in fade-in slide-in-from-top-1 duration-200">
             <p className="font-mono text-[9px] text-textSecondary uppercase tracking-widest mb-2 font-bold">Select_Confidence_Level</p>
             <div className="flex gap-2">
               {(["low", "medium", "high"] as const).map((level) => {
@@ -249,7 +249,7 @@ export function LessonQuizPanel({
                           : level === "medium"
                             ? "bg-brand/10 text-brand border-brand/30"
                             : "bg-emerald-500/10 text-emerald-400 border-emerald-500/40"
-                        : "bg-transparent border-white/5 text-textSecondary hover:bg-white/5"
+                        : "bg-transparent border-borderSubtle text-textSecondary hover:bg-overlay-hover"
                     )}
                   >
                     {level}
@@ -261,7 +261,7 @@ export function LessonQuizPanel({
         )}
 
         {/* Navigation / Action buttons */}
-        <div className="flex items-center justify-between pt-6 border-t border-white/5 mt-8">
+        <div className="flex items-center justify-between pt-6 border-t border-borderSubtle mt-8">
           <button
             type="button"
             onClick={prevQuestion}
@@ -296,7 +296,7 @@ export function LessonQuizPanel({
               type="button"
               onClick={nextQuestion}
               disabled={selectedOption === undefined}
-              className="inline-flex items-center gap-1.5 rounded bg-[#131313] border border-white/5 px-5 py-2.5 font-mono text-xs font-bold text-textPrimary hover:border-brand/40 transition active:scale-95 disabled:opacity-40"
+              className="inline-flex items-center gap-1.5 rounded bg-elevated border border-borderSubtle px-5 py-2.5 font-mono text-xs font-bold text-textPrimary hover:border-brand/40 transition active:scale-95 disabled:opacity-40"
             >
               NEXT
               <ChevronRight className="h-4 w-4" />

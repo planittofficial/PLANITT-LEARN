@@ -3,7 +3,13 @@ import { isDevAccessToken, devAuthMeResponse } from "@/lib/dev/standalone";
 import { getAccessTokenFromRequest } from "@/lib/security/auth-cookies";
 import { fetchAuthMe } from "@/services/auth/auth.service";
 
-export type AuthUser = { id: string; email: string; name: string };
+export type AuthUser = {
+  id: string;
+  email: string;
+  name: string;
+  role?: string;
+  isAdmin?: boolean;
+};
 
 export async function requireUser(request: Request): Promise<
   | { user: AuthUser; token: string }

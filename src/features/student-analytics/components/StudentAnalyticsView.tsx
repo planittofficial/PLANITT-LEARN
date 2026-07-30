@@ -44,7 +44,7 @@ export function StudentAnalyticsView() {
   return (
     <div className="space-y-8 animate-in fade-in">
       {/* Premium Header */}
-      <header className="relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
+      <header className="relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
         <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-brand/40 uppercase tracking-widest">
           NODE_ANALYTICS_V2.4
         </div>

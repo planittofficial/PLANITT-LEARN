@@ -26,7 +26,7 @@ export function ContinueLearningCard({
   if (!continueUrl) return null;
 
   return (
-    <div className="group relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md min-h-[320px] flex flex-col md:flex-row shadow-2xl transition-all duration-300 hover:border-brand/40">
+    <div className="group relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md min-h-[320px] flex flex-col md:flex-row shadow-2xl transition-all duration-300 hover:border-brand/40">
       <div className="glow-border" />
       <div className="relative z-10 flex-1 p-8 flex flex-col justify-between">
         <div>
@@ -54,13 +54,13 @@ export function ContinueLearningCard({
           </span>
         </div>
       </div>
-      <div className="relative w-full md:w-2/5 min-h-[200px] md:min-h-full border-l border-white/5 overflow-hidden">
+      <div className="relative w-full md:w-2/5 min-h-[200px] md:min-h-full border-l border-borderSubtle bg-neutral-950 overflow-hidden">
         <img
           className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-700"
           alt="Technical Chart"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1bc_1Pc7nVTaOGr8IEvdoqAu2RxbkMyshu44eVgFNjLvZQg2bbK9KlDjaw9lpg42gDOHyKUtelzK1hnNkps0fupE-QwHf12pwvPm1Pp_4AmXTWpDdZhYBkWqvOCI-TOXkKH6ue5D2yVNnGUcDmGoxCShHT6CciSN92IrnBpLCWetM5AZrGix-SKeRtiMvOfqMswUhqg_R4NYyVHYJ0gk51chL7xPrIMZagUTtqh0xx50zFRjAePcPDvqJ0qepCf3635tvn7SpBTU"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#131313] via-[#131313]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/60 to-transparent" />
       </div>
     </div>
   );

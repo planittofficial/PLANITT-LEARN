@@ -32,7 +32,7 @@ export function AnalyticsStatCard({
   const accentStyle = ACCENT_COLORS[accent] || ACCENT_COLORS.brand;
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-5 shadow-2xl group hover:border-brand/40 transition">
+    <div className="relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-5 shadow-2xl group hover:border-brand/40 transition">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
           <p className="font-mono text-[9px] uppercase tracking-widest text-textMuted">{label}</p>

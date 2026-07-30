@@ -30,7 +30,7 @@ export function AdminStatCard({
   return (
     <div
       className={cn(
-        "rounded-lg border border-white/5 bg-[#131313]/60 p-5 backdrop-blur-md transition hover:border-brand/40 shadow-2xl relative overflow-hidden group",
+        "rounded-lg border border-borderSubtle bg-surface/60 p-5 backdrop-blur-md transition hover:border-brand/40 shadow-2xl relative overflow-hidden group",
         className,
       )}
     >

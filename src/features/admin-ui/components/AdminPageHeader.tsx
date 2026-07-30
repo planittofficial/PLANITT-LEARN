@@ -21,7 +21,7 @@ export function AdminPageHeader({
   return (
     <header
       className={cn(
-        "relative overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl",
+        "relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl",
         className,
       )}
     >

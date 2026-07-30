@@ -32,7 +32,7 @@ export function RankXpPanel({
   className,
 }: RankXpPanelProps) {
   return (
-    <section className={cn("rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-5 shadow-2xl relative", className)}>
+    <section className={cn("rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-5 shadow-2xl relative", className)}>
       <div className="flex items-center gap-4">
         <Avatar name={name} size="lg" highlight={rank !== null && rank <= 10} className="ring-1 ring-white/10" />
         <div className="min-w-0 flex-1">
@@ -57,14 +57,14 @@ export function RankXpPanel({
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded border border-white/5 bg-[#1C1B1B]/40 px-3 py-2.5">
+        <div className="rounded border border-borderSubtle bg-elevated/40 px-3 py-2.5">
           <p className="flex items-center gap-1 font-mono text-[9px] text-textMuted uppercase tracking-wider">
             <Flame className="h-3.5 w-3.5 text-orange-400" />
             Current streak
           </p>
           <p className="mt-1 font-mono text-sm font-bold text-textPrimary">{streak} day{streak !== 1 ? "s" : ""}</p>
         </div>
-        <div className="rounded border border-white/5 bg-[#1C1B1B]/40 px-3 py-2.5">
+        <div className="rounded border border-borderSubtle bg-elevated/40 px-3 py-2.5">
           <p className="flex items-center gap-1 font-mono text-[9px] text-textMuted uppercase tracking-wider">
             <Zap className="h-3.5 w-3.5 text-amber-400" />
             Best streak
@@ -73,7 +73,7 @@ export function RankXpPanel({
         </div>
       </div>
 
-      <div className="mt-5 pt-4 border-t border-white/5 flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider">
+      <div className="mt-5 pt-4 border-t border-borderSubtle flex flex-col gap-2 font-mono text-[10px] uppercase tracking-wider">
         <Link
           href={ROUTES.STUDENT.ACHIEVEMENTS}
           className="inline-flex items-center gap-1.5 text-brand hover:underline"

@@ -57,12 +57,12 @@ export function LessonCourseNav({
   const coursePercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
   return (
-    <div className="rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md shadow-2xl">
-      <div className="border-b border-white/5 p-4">
+    <div className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md shadow-2xl">
+      <div className="border-b border-borderSubtle p-4">
         <p className="font-mono text-[9px] uppercase tracking-widest text-brand">COURSE_PROGRESS</p>
         <p className="mt-1 font-headline text-sm font-extrabold text-textPrimary leading-snug tracking-tight">{course.title}</p>
         <div className="mt-3">
-          <div className="w-full h-1 bg-white/5 rounded overflow-hidden">
+          <div className="w-full h-1 bg-elevated rounded overflow-hidden">
             <div className="h-full bg-brand transition-all duration-500" style={{ width: `${coursePercent}%` }} />
           </div>
           <div className="flex justify-between font-mono text-[9px] text-textMuted mt-1">
@@ -83,7 +83,7 @@ export function LessonCourseNav({
               <button
                 type="button"
                 onClick={() => toggle(mod.id)}
-                className="flex w-full items-center gap-2 rounded px-2 py-2.5 text-left text-xs transition hover:bg-white/5 font-mono"
+                className="flex w-full items-center gap-2 rounded px-2 py-2.5 text-left text-xs transition hover:bg-overlay-hover font-mono"
               >
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-bold text-brand border border-brand/20">
                   {modIndex + 1}
@@ -100,7 +100,7 @@ export function LessonCourseNav({
               </button>
 
               {isOpen ? (
-                <ul className="ml-2 border-l border-white/5 pl-2">
+                <ul className="ml-2 border-l border-borderSubtle pl-2">
                   {mod.lessons.map((lesson) => {
                     const done = progress[lesson.id]?.completed;
                     const active = lesson.id === currentLessonId;
@@ -114,7 +114,7 @@ export function LessonCourseNav({
                             "group flex items-center gap-2 rounded px-2 py-2 font-mono text-[11px] uppercase tracking-wide transition border border-transparent",
                             active
                               ? "bg-brand/5 border-l-2 border-l-brand text-brand font-bold"
-                              : "text-textSecondary hover:text-textPrimary hover:bg-white/5",
+                              : "text-textSecondary hover:text-textPrimary hover:bg-overlay-hover",
                           )}
                         >
                           {done ? (
