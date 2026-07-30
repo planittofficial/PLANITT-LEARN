@@ -80,10 +80,25 @@ export function getRefreshTokenFromRequest(request: Request): string | undefined
   return undefined;
 }
 
-export function stripTokensFromAuthPayload<T extends Record<string, unknown>>(body: T): T {
-  const next = { ...body };
+export function stripTokensFromAuthPayload(body: Record<string, unknown>): Record<string, unknown> {
+  const next: Record<string, unknown> = { ...body };
   delete next.access_token;
+  delete next.accessToken;
   delete next.refresh_token;
+  delete next.refreshToken;
+
+  for (const key of ["tokens", "data"] as const) {
+    const value = next[key];
+    if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+
+    const nested = { ...(value as Record<string, unknown>) };
+    delete nested.access_token;
+    delete nested.accessToken;
+    delete nested.refresh_token;
+    delete nested.refreshToken;
+    next[key] = nested;
+  }
+
   return next;
 }
 

@@ -49,6 +49,15 @@ function resolvePostLoginPath(searchParams: URLSearchParams): string {
   return ROUTES.STUDENT.HOME;
 }
 
+function redirectAfterLogin(router: ReturnType<typeof useRouter>, path: string) {
+  if (typeof window !== "undefined") {
+    window.location.replace(path);
+    return;
+  }
+
+  router.replace(path);
+}
+
 export function LoginPageView() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -111,13 +120,7 @@ export function LoginPageView() {
     setSubmitting(true);
     setError("");
     void exchangeHandoffCode(code)
-      .then(() => {
-        if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
-          router.replace(ROUTES.ADMIN.HOME);
-        } else {
-          router.replace(safeNext);
-        }
-      })
+      .then(() => redirectAfterLogin(router, safeNext))
       .catch((err) => {
         const message = err instanceof Error ? err.message : "SSO sign-in failed.";
         setError(message);
@@ -142,7 +145,7 @@ export function LoginPageView() {
         setSubmitting(true);
         setError("");
         void loginWithGoogleIdToken(token)
-          .then(() => router.replace(safeNext))
+          .then(() => redirectAfterLogin(router, safeNext))
           .catch((err) => {
             const message =
               err instanceof Error ? err.message : "Google sign-in failed. Try again.";
@@ -174,7 +177,7 @@ export function LoginPageView() {
     setError("");
     try {
       await loginWithMpin(email.trim(), mpin.trim());
-      router.replace(safeNext);
+      redirectAfterLogin(router, safeNext);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Sign-in failed.";
       setError(message);
@@ -187,7 +190,7 @@ export function LoginPageView() {
     setSubmitting(true);
     setError("");
     void loginAsDevUser()
-      .then(() => router.replace(safeNext))
+      .then(() => redirectAfterLogin(router, safeNext))
       .catch(() => setError("Dev sign-in failed."))
       .finally(() => setSubmitting(false));
   };
