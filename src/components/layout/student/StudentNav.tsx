@@ -160,6 +160,11 @@ export function StudentSidebar() {
             <Link
               key={item.label}
               href={item.href}
+              onClick={() => {
+                if (item.href === ROUTES.ADMIN.HOME && typeof window !== "undefined") {
+                  localStorage.setItem("lms-view-mode", "admin");
+                }
+              }}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded font-mono text-xs tracking-wider transition-all duration-200 border border-transparent",
                 active
