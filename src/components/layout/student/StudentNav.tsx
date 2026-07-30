@@ -163,7 +163,7 @@ export function StudentSidebar() {
                 "flex items-center gap-3 px-4 py-3 rounded font-mono text-xs tracking-wider transition-all duration-200 border border-transparent",
                 active
                   ? "bg-brand/5 text-brand font-bold border-l-2 border-l-brand"
-                  : "text-textSecondary hover:text-textPrimary hover:bg-white/5"
+                  : "text-textSecondary hover:text-textPrimary hover:bg-overlay-hover"
               )}
             >
               <item.icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.25 : 2} />
@@ -174,7 +174,7 @@ export function StudentSidebar() {
       </nav>
 
       {/* Sidebar Footer User Info */}
-      <div className="mt-auto border-t border-white/5 pt-6 space-y-4">
+      <div className="mt-auto border-t border-borderSubtle pt-6 space-y-4">
         {isAuthenticated && user && (
           <div className="flex items-center gap-3">
             <Avatar name={user.name ?? "Learner"} className="h-10 w-10 ring-1 ring-white/10" />
@@ -187,14 +187,14 @@ export function StudentSidebar() {
             <button
               onClick={() => logout()}
               title="Sign Out"
-              className="text-textMuted hover:text-red-400 p-1.5 rounded hover:bg-white/5 transition"
+              className="text-textMuted hover:text-red-400 p-1.5 rounded hover:bg-overlay-hover transition"
             >
               <LogOut className="h-4 w-4" />
             </button>
           </div>
         )}
 
-        <div className="p-4 bg-elevated border border-white/5 rounded-lg terminal-glow">
+        <div className="p-4 bg-elevated border border-borderSubtle rounded-lg terminal-glow">
           <p className="font-mono text-[9px] text-brand mb-1 opacity-60 uppercase tracking-widest">SYSTEM_LOG</p>
           <p className="font-mono text-[10px] text-textSecondary leading-relaxed">
             &gt; Status: Active<br/>

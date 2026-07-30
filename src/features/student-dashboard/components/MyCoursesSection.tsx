@@ -110,7 +110,7 @@ export function MyCoursesSection() {
       ) : null}
 
       {!isAuthenticated && !devPreview ? (
-        <div className="rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-8 text-center font-mono">
+        <div className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-8 text-center font-mono">
           <p className="text-sm text-textSecondary">
             <Link href={ROUTES.STUDENT.LOGIN} className="font-bold text-brand hover:underline">
               [SIGN_IN]
@@ -157,7 +157,7 @@ export function MyCoursesSection() {
                     totalLessons={continueCourse.total}
                   />
                 ) : (
-                  <div className="p-8 rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md flex flex-col justify-center min-h-[320px] text-center">
+                  <div className="p-8 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md flex flex-col justify-center min-h-[320px] text-center">
                     <p className="font-headline text-2xl font-extrabold text-textPrimary mb-2 uppercase tracking-tight">All Tasks Executed</p>
                     <p className="text-xs text-textSecondary font-mono uppercase tracking-wider">You have completed all enrolled courses! Select another course to initialize below.</p>
                   </div>
@@ -167,7 +167,7 @@ export function MyCoursesSection() {
               {isAuthenticated ? (
                 <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
                   {/* XP Bento Card */}
-                  <div className="p-6 rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] terminal-glow relative group hover:border-brand/40 transition">
+                  <div className="p-6 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] terminal-glow relative group hover:border-brand/40 transition">
                     <p className="font-mono text-[9px] text-textSecondary uppercase tracking-widest mb-4">Cumulative_XP</p>
                     <div className="flex items-end justify-between">
                       <p className="font-mono text-4xl font-extrabold text-brand tracking-tighter leading-none">{gamification.xp.toLocaleString()}</p>
@@ -175,7 +175,7 @@ export function MyCoursesSection() {
                     </div>
                   </div>
                   {/* Level Bento Card */}
-                  <div className="p-6 rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] relative group hover:border-brand/40 transition">
+                  <div className="p-6 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] relative group hover:border-brand/40 transition">
                     <p className="font-mono text-[9px] text-textSecondary uppercase tracking-widest mb-4">Execution_Level</p>
                     <div className="flex items-end justify-between">
                       <div className="font-mono leading-none">
@@ -194,7 +194,7 @@ export function MyCoursesSection() {
 
           {/* Courses Header & Filters Section */}
           <section className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/5 pb-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-borderSubtle pb-4">
               <div>
                 <span className="font-mono text-[9px] text-brand tracking-widest uppercase block mb-1.5">KNOWLEDGE_BASE</span>
                 <h2 className="font-headline text-2xl font-extrabold text-textPrimary uppercase tracking-tight">
@@ -205,7 +205,7 @@ export function MyCoursesSection() {
                 </h2>
               </div>
               {/* Filter Tabs */}
-              <div className="flex gap-1.5 p-1 bg-[#131313]/80 rounded border border-white/5 w-fit">
+              <div className="flex gap-1.5 p-1 bg-surface/80 rounded border border-borderSubtle w-fit">
                 <button
                   onClick={() => setActiveFilter("all")}
                   className={cn(
@@ -259,7 +259,7 @@ export function MyCoursesSection() {
 
           {/* Activity Charts & Leaderboard Widget */}
           {isAuthenticated ? (
-            <div className="grid gap-6 lg:grid-cols-3 pt-6 border-t border-white/5">
+            <div className="grid gap-6 lg:grid-cols-3 pt-6 border-t border-borderSubtle">
               <WeeklyProgressChart days={weeklyDays} className="lg:col-span-2" />
               <div className="space-y-6">
                 <LeaderboardRankCard />
@@ -277,7 +277,7 @@ export function MyCoursesSection() {
 
           {/* Locked / Upgrade courses catalog */}
           {lockedCourses.length > 0 ? (
-            <section className="pt-8 border-t border-white/5 space-y-6">
+            <section className="pt-8 border-t border-borderSubtle space-y-6">
               <div className="flex items-center gap-2">
                 <Lock className="h-4 w-4 text-textMuted" />
                 <h2 className="font-headline text-lg font-bold text-textPrimary uppercase tracking-wider">Explore More Modules</h2>

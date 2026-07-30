@@ -83,8 +83,8 @@ export function CourseCard({
   const inner = (
     <article
       className={cn(
-        "course-card-stitch relative group flex flex-col h-full bg-[#131313]/60 border rounded-lg overflow-hidden transition-all duration-300",
-        enrolled ? "border-white/5 hover:border-brand/40" : "border-white/5 opacity-80 hover:opacity-100",
+        "course-card-stitch relative group flex flex-col h-full bg-surface/60 border rounded-lg overflow-hidden transition-all duration-300",
+        enrolled ? "border-borderSubtle hover:border-brand/40" : "border-borderSubtle opacity-80 hover:opacity-100",
         variant === "compact" && "flex-row",
       )}
     >
@@ -117,7 +117,7 @@ export function CourseCard({
               {isComplete ? "COMPLETED" : inProgress ? "IN_PROGRESS" : "UNLOCKED"}
             </span>
           ) : (
-            <span className="bg-white/5 backdrop-blur-md text-textMuted border border-white/10 px-2.5 py-0.5 rounded-sm font-mono text-[9px] uppercase tracking-wider font-bold flex items-center gap-1">
+            <span className="bg-white/5 backdrop-blur-md text-textMuted border border-borderSubtle px-2.5 py-0.5 rounded-sm font-mono text-[9px] uppercase tracking-wider font-bold flex items-center gap-1">
               <Lock className="h-2.5 w-2.5" /> LOCKED
             </span>
           )}
@@ -152,7 +152,7 @@ export function CourseCard({
           {course.blurb}
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] text-textMuted border-t border-white/5 pt-3">
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] text-textMuted border-t border-borderSubtle pt-3">
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {course.duration}
