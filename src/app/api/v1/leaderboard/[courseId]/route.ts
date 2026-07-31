@@ -7,6 +7,7 @@ import {
 import { getLeaderboard } from "@/services/leaderboard/leaderboard.service";
 import { requireUser } from "@/lib/security/require-user";
 import { enforceApiRateLimit } from "@/lib/security/rate-limit";
+import { isDevStandalone } from "@/lib/env";
 
 type Params = { params: Promise<{ courseId: string }> };
 
@@ -16,6 +17,8 @@ export async function GET(request: Request, { params }: Params) {
 
   const auth = await requireUser(request);
   if (!("user" in auth)) return auth;
+
+  if (isDevStandalone()) return ok({ ok: true, leaderboard: [] });
 
   const dbError = requireDatabase();
   if (dbError) return dbError;

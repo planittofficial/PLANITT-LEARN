@@ -152,24 +152,30 @@ export async function getCourseProgressForUser(
 ): Promise<CourseProgressMap> {
   if (!getDatabaseUrl()) return {};
 
-  const lessons = await prisma.lesson.findMany({
-    where: { module: { courseId, published: true }, published: true },
-    select: { id: true },
-  });
+  try {
+    const lessons = await prisma.lesson.findMany({
+      where: { module: { courseId, published: true }, published: true },
+      select: { id: true },
+    });
 
-  if (lessons.length === 0) return {};
+    if (lessons.length === 0) return {};
 
-  const lessonIds = lessons.map((lesson) => lesson.id);
-  const rows = await prisma.lessonProgress.findMany({
-    where: { userId, lessonId: { in: lessonIds } },
-  });
+    const lessonIds = lessons.map((lesson) => lesson.id);
+    const rows = await prisma.lessonProgress.findMany({
+      where: { userId, lessonId: { in: lessonIds } },
+    });
 
-  const progress: CourseProgressMap = {};
-  for (const row of rows) {
-    progress[row.lessonId] = {
-      completed: row.completed,
-      completedAt: row.completedAt?.toISOString(),
-    };
+    const progress: CourseProgressMap = {};
+    for (const row of rows) {
+      progress[row.lessonId] = {
+        completed: row.completed,
+        completedAt: row.completedAt?.toISOString(),
+      };
+    }
+    return progress;
+  } catch {
+    // The static catalog is supported in standalone/local mode; an unavailable
+    // database should leave progress empty rather than break the dashboard.
+    return {};
   }
-  return progress;
 }

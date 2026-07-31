@@ -38,6 +38,30 @@ function moduleWithIntro(
   };
 }
 
+function videoModule(
+  id: string,
+  title: string,
+  summary: string,
+  durationMinutes: number,
+): CourseModule {
+  return {
+    id,
+    title,
+    summary,
+    lessons: [
+      {
+        id: `${id}-l1`,
+        title,
+        durationMinutes,
+        kind: "video",
+        summary,
+        // Add the unlisted YouTube URL from the admin lesson editor.
+        content: {},
+      },
+    ],
+  };
+}
+
 /** Full catalog — metadata matches Alvest Learn marketing pages. */
 export const COURSE_CATALOG_DATA: CourseDefinition[] = [
   {
@@ -56,9 +80,18 @@ export const COURSE_CATALOG_DATA: CourseDefinition[] = [
     modules: [
       {
         id: "in-m1",
-        title: "Stock Market Foundations",
-        summary: "NSE/BSE structure, indices, and how equities trade in India.",
+        title: "Financial Markets Foundation",
+        summary: "Build a strong foundation for understanding how financial markets work.",
         lessons: [
+          {
+            id: "in-m1-video",
+            title: "Module 1 — Financial Markets Foundation",
+            durationMinutes: 6,
+            kind: "video",
+            summary: "Introduction to financial markets and the core concepts every investor should understand.",
+            // Add the unlisted YouTube URL from the admin lesson editor.
+            content: {},
+          },
           articleLesson(
             "in-m1-l1",
             "Welcome to Indian equities",
@@ -85,41 +118,29 @@ export const COURSE_CATALOG_DATA: CourseDefinition[] = [
           ),
         ],
       },
-      moduleWithIntro(
+      videoModule(
         "in-m2",
-        "Chart Reading & Candlesticks",
-        "OHLC, timeframes, and basic price-action vocabulary.",
-        "Reading your first chart",
+        "Indian Stock Market Basics",
+        "Understand the Indian stock market and how investors participate in it.",
+        4,
       ),
-      moduleWithIntro(
+      videoModule(
         "in-m3",
-        "Technical Strategy Stack",
-        "Trend, support/resistance, and setup identification.",
-        "Building a setup checklist",
+        "Basics of Investing",
+        "Learn the core principles every successful investor understands before investing.",
+        6,
       ),
-      moduleWithIntro(
+      videoModule(
         "in-m4",
-        "Swing Trading Playbook",
-        "Multi-day holds, entry triggers, and invalidation rules.",
-        "Swing trade framework",
+        "Fundamental Analysis",
+        "Learn how to evaluate companies before investing in them.",
+        14,
       ),
-      moduleWithIntro(
+      videoModule(
         "in-m5",
-        "Mutual Funds & SIP Strategy",
-        "Fund categories, expense ratios, and systematic investing.",
-        "Mutual fund basics",
-      ),
-      moduleWithIntro(
-        "in-m6",
-        "Sector Rotation & Themes",
-        "How macro themes flow into Indian sector leadership.",
-        "Sector analysis intro",
-      ),
-      moduleWithIntro(
-        "in-m7",
-        "Portfolio & Risk Discipline",
-        "Position sizing, drawdown limits, and review routines.",
-        "Portfolio rules",
+        "Technical Analysis",
+        "Learn how traders read charts, identify trends, and make data-driven decisions.",
+        23,
       ),
     ],
   },
@@ -137,49 +158,13 @@ export const COURSE_CATALOG_DATA: CourseDefinition[] = [
       "Risk and position sizing framework for consistency",
     ],
     modules: [
-{
-  id: "fx-m1",
-  title: "FX Foundations",
-  summary: "How currency markets work.",
-  lessons: [
-    articleLesson(
-      "fx-m1-l1",
-      "What moves currency pairs",
-      "Introduction to Forex markets",
-      "## Forex Basics\n\nCurrencies move because of supply, demand, interest rates and economic conditions."
-    ),
-
-    {
-      id: "fx-m1-l2",
-      title: "Forex Market Overview Video",
-      durationMinutes: 12,
-      kind: "video",
-      summary: "Introduction to global currency markets.",
-      content: {
-        videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
-      },
-    },
-
-    articleLesson(
-      "fx-m1-l3",
-      "Major Currency Pairs",
-      "Understanding EUR/USD and other major pairs",
-      "## Major Currency Pairs\n\nEUR/USD, GBP/USD and USD/JPY are among the most traded forex pairs."
-    ),
-  ],
-},      moduleWithIntro("fx-m2", "Reading Forex Quotes", "Bid, ask, spread, pip value, and lot sizes.", "Reading a forex quote"),
-      moduleWithIntro("fx-m3", "Major Pairs & Sessions", "London, New York, Asia session behavior.", "Session timing edge"),
-      moduleWithIntro("fx-m4", "Trend Analysis", "Higher-high / lower-low structure and trend filters.", "Identifying trend direction"),
-      moduleWithIntro("fx-m5", "Breakout Setups", "Range breaks, volatility expansion, and confirmation.", "Breakout framework"),
-      moduleWithIntro("fx-m6", "Pullback Entries", "Retracements in established trends.", "Pullback entry rules"),
-      moduleWithIntro("fx-m7", "Support & Resistance", "Zones, flips, and confluence on FX charts.", "Key levels mapping"),
-      moduleWithIntro("fx-m8", "Risk Per Trade", "Fixed fractional risk and stop placement.", "Calculating pip risk"),
-      moduleWithIntro("fx-m9", "Position Sizing", "Lot size from account risk percentage.", "Position size worksheet"),
-      moduleWithIntro("fx-m10", "Trade Journaling", "Logging setups, outcomes, and emotional notes.", "Journal template walkthrough"),
-      moduleWithIntro("fx-m11", "News & Fundamentals", "CPI, rates, and event risk management.", "Trading around news"),
-      moduleWithIntro("fx-m12", "Multi-Timeframe Analysis", "Aligning higher TF bias with entry TF.", "MTF confluence"),
-      moduleWithIntro("fx-m13", "Live Execution Routine", "Pre-market prep through post-trade review.", "Daily workflow"),
-      moduleWithIntro("fx-m14", "Capstone Review", "Integrating all modules into one playbook.", "Course capstone"),
+      videoModule("fx-m1", "Definition of Forex Market", "Understand what the forex market is and how currency trading works.", 2),
+      videoModule("fx-m2", "Major Participants in the Forex Market — Part 1", "Learn who participates in the forex market and how the market moves.", 4),
+      videoModule("fx-m3", "Major Participants in the Forex Market — Part 2", "Continue learning about the institutions and participants that influence forex markets.", 5),
+      videoModule("fx-m4", "Major Participants in the Forex Market — Part 3", "Complete the overview of the major participants in the forex market.", 3),
+      videoModule("fx-m5", "Key Sessions", "Learn the major forex trading sessions and when the market moves most.", 4),
+      videoModule("fx-m6", "Basics of Currency Pairs", "Understand currency pairs and how forex quotes are structured.", 6),
+      videoModule("fx-m7", "Pips and Spread", "Learn pips, spreads, and the essential measurement concepts used in forex trading.", 13),
     ],
   },
   {
@@ -242,18 +227,19 @@ export const COURSE_CATALOG_DATA: CourseDefinition[] = [
       "Execution routine and capital protection rules",
     ],
     modules: [
-      moduleWithIntro(
-        "cr-m1",
-        "Crypto Market Structure",
-        "Exchanges, liquidity, funding, and market cycles.",
-        "How crypto markets differ",
-      ),
-      moduleWithIntro(
-        "cr-m2",
-        "Volatility Trading Systems",
-        "Breakouts, mean reversion, and 24x7 risk controls.",
-        "Volatility setup stack",
-      ),
+      videoModule("cr-m1", "Introduction to Crypto", "Learn what cryptocurrency is and how the crypto market works.", 1),
+      videoModule("cr-m2", "Setting up an Account in Exchanges and Buying your first Crypto", "Create an exchange account, complete verification, fund it safely, and buy your first crypto asset.", 3),
+      videoModule("cr-m3", "Types of Crypto Trading, Spot and Futures", "Understand the difference between spot trading and futures trading in cryptocurrency.", 3),
+      videoModule("cr-m4", "What is Leverage?", "Learn how leverage works in crypto trading and understand its risks.", 3),
+      videoModule("cr-m5", "Types of Wallets / Setting up your crypto wallet", "Understand different crypto wallet types and how to set up a wallet safely.", 6),
+      videoModule("cr-m6", "Transfer funds between Wallets and Exchanges", "Learn how to transfer cryptocurrency between wallets and exchanges safely.", 2),
+      videoModule("cr-m7", "How to manage Risk and Reward ratio?", "Learn risk-reward planning and the importance of risk management in crypto trading.", 6),
+      videoModule("cr-m8", "Basic Fundamentals of MemeCoins", "Understand what memecoins are and the basic factors that influence them.", 6),
+      videoModule("cr-m9", "Why does Memecoins BlowUP?!", "Learn why memecoins can rise or fall rapidly and understand the risks involved.", 4),
+      videoModule("cr-m10", "How to generate profits from Memecoins", "Explore memecoin trading strategies while understanding timing and risk.", 1),
+      videoModule("cr-m11", "How to Avoid Rug Pulls?", "Identify common rug-pull warning signs and protect your crypto investments.", 7),
+      videoModule("cr-m12", "Useful tools to trade better", "Discover practical tools for research, analysis, risk management, and better crypto decisions.", 10),
+      videoModule("cr-m13", "What are Airdrops?", "Understand crypto airdrops, how they work, and how to evaluate them safely.", 2),
     ],
   },
   {

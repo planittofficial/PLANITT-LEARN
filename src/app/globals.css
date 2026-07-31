@@ -4,6 +4,10 @@
 
 /* Light theme — calm education surface with restrained Alvest gold accents */
 :root {
+  /* Local system fallbacks keep builds deterministic when external font fetching is unavailable. */
+  --font-headline: "Trebuchet MS", Arial, sans-serif;
+  --font-body: "Segoe UI", Arial, sans-serif;
+  --font-mono: Consolas, "Courier New", monospace;
   color-scheme: light;
   --bg-base: #f6f7f4;
   --bg-surface: #ffffff;
@@ -417,4 +421,3 @@ body {
   background: var(--brand);
   border-radius: 2px;
 }
-
