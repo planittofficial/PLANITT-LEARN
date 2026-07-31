@@ -3,6 +3,7 @@
 import { ExternalLink, FileText, Link2, Video } from "lucide-react";
 
 import type { Lesson } from "@/lib/catalog/courses";
+import { isYoutubeUrl } from "@/lib/video/video-url";
 
 type LessonResourcesProps = {
   lesson: Lesson;
@@ -11,7 +12,9 @@ type LessonResourcesProps = {
 export function LessonResources({ lesson }: LessonResourcesProps) {
   const resources: Array<{ label: string; href: string; icon: typeof Video }> = [];
 
-  if (lesson.content.videoUrl) {
+  // YouTube lessons are intentionally embed-only. Showing the source URL here
+  // would create an unnecessary copy/share path for unlisted videos.
+  if (lesson.content.videoUrl && !isYoutubeUrl(lesson.content.videoUrl)) {
     resources.push({ label: "Video source", href: lesson.content.videoUrl, icon: Video });
   }
   if (lesson.content.externalUrl) {

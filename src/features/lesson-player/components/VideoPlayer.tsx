@@ -74,8 +74,12 @@ export function VideoPlayer({
           title={title}
           className="aspect-video w-full bg-black"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
+        <p className="px-2 pt-2 text-center font-mono text-[9px] uppercase tracking-wider text-textMuted">
+          Protected course content — do not share or redistribute this lesson.
+        </p>
       </div>
     );
   }
