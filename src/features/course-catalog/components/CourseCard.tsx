@@ -93,7 +93,7 @@ export function CourseCard({
       {/* Course Banner Image */}
       <div
         className={cn(
-          "relative overflow-hidden bg-gradient-to-br from-[#1C1B1B] to-[#0A0A0A]",
+          "relative overflow-hidden bg-gradient-to-br from-brand/10 via-surface to-accent/10",
           variant === "default" ? "h-44 sm:h-48" : "h-auto w-28 shrink-0 sm:w-32",
         )}
       >
@@ -117,19 +117,19 @@ export function CourseCard({
               {isComplete ? "COMPLETED" : inProgress ? "IN_PROGRESS" : "UNLOCKED"}
             </span>
           ) : (
-            <span className="bg-white/5 backdrop-blur-md text-textMuted border border-borderSubtle px-2.5 py-0.5 rounded-sm font-mono text-[9px] uppercase tracking-wider font-bold flex items-center gap-1">
+            <span className="bg-overlay-subtle backdrop-blur-md text-textMuted border border-borderSubtle px-2.5 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1">
               <Lock className="h-2.5 w-2.5" /> LOCKED
             </span>
           )}
           
-          <span className="bg-black/60 backdrop-blur-md text-textSecondary px-2 py-0.5 rounded-sm font-mono text-[9px] uppercase tracking-wider">
+          <span className="bg-overlay-medium backdrop-blur-md text-textSecondary px-2 py-0.5 rounded-md text-xs">
             {riskLabel}
           </span>
         </div>
 
         {/* Emoji Icon */}
         <div className="absolute bottom-3 left-3 flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/45 text-2xl shadow-lg backdrop-blur-md ring-1 ring-white/15">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface/80 text-2xl shadow-lg backdrop-blur-md ring-1 ring-borderSubtle">
             {courseIcon(course.category)}
           </span>
         </div>
@@ -174,7 +174,7 @@ export function CourseCard({
               <span>Progress</span>
               <span className="text-brand font-bold">{progressPercent}%</span>
             </div>
-            <div className="w-full h-1 bg-white/5 rounded overflow-hidden">
+            <div className="w-full h-1 bg-overlay-subtle rounded overflow-hidden">
               <div className="h-full bg-brand transition-all duration-500" style={{ width: `${progressPercent}%` }} />
             </div>
           </div>
@@ -183,7 +183,7 @@ export function CourseCard({
         {/* Button Call-to-action */}
         <div className="mt-5">
           {enrolled ? (
-            <button className="w-full bg-brand text-black py-2.5 rounded font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-[0_0_12px_rgba(20,184,166,0.1)]">
+            <button className="w-full bg-brand text-brandForeground py-2.5 rounded-lg text-sm font-semibold hover:bg-brandHover active:scale-95 transition-all flex items-center justify-center gap-2 shadow-card">
               {notStarted ? <Sparkles className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current" />}
               {ctaLabel}
             </button>

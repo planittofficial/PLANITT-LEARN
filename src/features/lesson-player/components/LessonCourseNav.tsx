@@ -59,20 +59,20 @@ export function LessonCourseNav({
   return (
     <div className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md shadow-2xl">
       <div className="border-b border-borderSubtle p-4">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-brand">COURSE_PROGRESS</p>
+        <p className="text-xs font-semibold text-brand">Course progress</p>
         <p className="mt-1 font-headline text-sm font-extrabold text-textPrimary leading-snug tracking-tight">{course.title}</p>
         <div className="mt-3">
           <div className="w-full h-1 bg-elevated rounded overflow-hidden">
             <div className="h-full bg-brand transition-all duration-500" style={{ width: `${coursePercent}%` }} />
           </div>
-          <div className="flex justify-between font-mono text-[9px] text-textMuted mt-1">
+          <div className="mt-1 flex justify-between text-xs text-textMuted">
             <span>{coursePercent}% complete</span>
-            <span>{completedCount}/{totalLessons} nodes</span>
+            <span>{completedCount}/{totalLessons} lessons</span>
           </div>
         </div>
       </div>
 
-      <div className="max-h-[440px] overflow-y-auto p-2 terminal-scroll">
+      <div className="max-h-[440px] overflow-y-auto p-2">
         {course.modules.map((mod, modIndex) => {
           const lessonIds = mod.lessons.map((l) => l.id);
           const modStats = getModuleProgressStats(progress, lessonIds);
@@ -83,13 +83,13 @@ export function LessonCourseNav({
               <button
                 type="button"
                 onClick={() => toggle(mod.id)}
-                className="flex w-full items-center gap-2 rounded px-2 py-2.5 text-left text-xs transition hover:bg-overlay-hover font-mono"
+                className="flex w-full items-center gap-2 rounded px-2 py-2.5 text-left text-sm transition hover:bg-overlay-hover"
               >
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-bold text-brand border border-brand/20">
                   {modIndex + 1}
                 </span>
-                <span className="min-w-0 flex-1 truncate font-bold text-textPrimary uppercase tracking-tight">{mod.title}</span>
-                <span className="shrink-0 text-[10px] text-textMuted">
+                <span className="min-w-0 flex-1 truncate font-semibold text-textPrimary">{mod.title}</span>
+                <span className="shrink-0 text-xs text-textMuted">
                   {modStats.completed}/{modStats.total}
                 </span>
                 {isOpen ? (
@@ -111,7 +111,7 @@ export function LessonCourseNav({
                         <Link
                           href={ROUTES.STUDENT.lesson(courseId, mod.id, lesson.id)}
                           className={cn(
-                            "group flex items-center gap-2 rounded px-2 py-2 font-mono text-[11px] uppercase tracking-wide transition border border-transparent",
+                            "group flex items-center gap-2 rounded px-2 py-2 text-sm transition border border-transparent",
                             active
                               ? "bg-brand/5 border-l-2 border-l-brand text-brand font-bold"
                               : "text-textSecondary hover:text-textPrimary hover:bg-overlay-hover",

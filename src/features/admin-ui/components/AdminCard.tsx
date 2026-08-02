@@ -10,7 +10,7 @@ export function AdminCard({ children, className, highlight }: AdminCardProps) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md p-5 shadow-2xl relative overflow-hidden",
+        "rounded-xl border border-borderSubtle bg-surface p-5 shadow-card relative overflow-hidden",
         highlight && "border-brand/20 bg-brand/5",
         className,
       )}

@@ -128,7 +128,7 @@ export function LessonQuizPanel({
             </div>
           </div>
 
-          <div className="border border-borderSubtle bg-black/40 p-6 rounded font-mono text-[11px] leading-relaxed terminal-glow">
+          <div className="border border-borderSubtle bg-elevated p-6 rounded-xl text-sm leading-relaxed terminal-glow">
             <p className="text-brand/60 mb-2 uppercase font-bold tracking-widest">&gt; BREAKDOWN_REPORT.LOG</p>
             {quiz.questions.map((q, idx) => {
               const selected = selections[q.id];

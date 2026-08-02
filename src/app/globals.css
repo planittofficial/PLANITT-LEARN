@@ -2,37 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme — calm education surface with restrained Alvest gold accents */
+/* Shared theme tokens: a calm, warm study workspace with clear learning accents. */
 :root {
-  /* Local system fallbacks keep builds deterministic when external font fetching is unavailable. */
-  --font-headline: "Trebuchet MS", Arial, sans-serif;
-  --font-body: "Segoe UI", Arial, sans-serif;
+  /* Readable fonts are loaded in layout.tsx and retain local fallbacks. */
+  --font-headline: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-mono: Consolas, "Courier New", monospace;
   color-scheme: light;
-  --bg-base: #f6f7f4;
+  --bg-base: #f7f8f6;
   --bg-surface: #ffffff;
-  --bg-elevated: #eef2ed;
-  --border-subtle: #d9ded6;
-  --text-primary: #17201d;
-  --text-secondary: #46524d;
-  --text-muted: #707a75;
-  --brand: #b8892f;
-  --brand-hover: #9f7425;
-  --brand-bright: #d9b45f;
-  --brand-foreground: #17120b;
-  --brand-subtle: rgba(184, 137, 47, 0.12);
-  --accent: #4f6f64;
-  --accent-bright: #7c948b;
-  --accent-subtle: rgba(79, 111, 100, 0.1);
-  --overlay-subtle: rgba(23, 32, 29, 0.04);
-  --overlay-medium: rgba(23, 32, 29, 0.07);
-  --overlay-strong: rgba(23, 32, 29, 0.1);
-  --overlay-hover: rgba(23, 32, 29, 0.055);
-  --overlay-faint: rgba(23, 32, 29, 0.025);
-  --shadow-soft: 0 14px 36px rgba(23, 32, 29, 0.1);
-  --shadow-card: 0 8px 24px rgba(23, 32, 29, 0.07);
-  --scrollbar-thumb-hover: #a5ada8;
-  --page-gradient: linear-gradient(180deg, #fbfcfa 0%, #f6f7f4 48%, #eef2ed 100%);
+  --bg-elevated: #eef3f1;
+  --border-subtle: #d7e1de;
+  --text-primary: #18302f;
+  --text-secondary: #4e6562;
+  --text-muted: #71827f;
+  --brand: #0f8f87;
+  --brand-hover: #08746e;
+  --brand-bright: #2aa99f;
+  --brand-foreground: #ffffff;
+  --brand-subtle: rgba(15, 143, 135, 0.12);
+  --accent: #4d7890;
+  --accent-bright: #6696ad;
+  --accent-subtle: rgba(77, 120, 144, 0.11);
+  --overlay-subtle: rgba(24, 48, 47, 0.04);
+  --overlay-medium: rgba(24, 48, 47, 0.07);
+  --overlay-strong: rgba(24, 48, 47, 0.12);
+  --overlay-hover: rgba(15, 143, 135, 0.07);
+  --overlay-faint: rgba(24, 48, 47, 0.025);
+  --shadow-soft: 0 18px 42px rgba(24, 48, 47, 0.12);
+  --shadow-card: 0 8px 24px rgba(24, 48, 47, 0.08);
+  --scrollbar-thumb-hover: #7f9d98;
+  --page-gradient: linear-gradient(180deg, #fbfcfa 0%, #f7f8f6 55%, #eef3f1 100%);
 }
 
 /* Dark theme — optional low-glare study mode */
@@ -241,12 +241,11 @@ body {
   background: var(--scrollbar-thumb-hover);
 }
 
-/* Custom Redesign Styling */
-
-/* Glassmorphism Panel */
+/* Shared surface helpers */
 .glass-panel {
-  background: var(--bg-surface);
+  background: color-mix(in srgb, var(--bg-surface) 94%, transparent);
   border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -287,8 +286,8 @@ body {
 
 /* Glowing Animations & Shadows */
 .glow-brand {
-  box-shadow: 0 0 18px rgba(20, 184, 166, 0.18);
-  border-color: rgba(20, 184, 166, 0.3);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--brand) 16%, transparent);
+  border-color: color-mix(in srgb, var(--brand) 34%, transparent);
 }
 
 .dark .glow-brand {
@@ -297,8 +296,8 @@ body {
 }
 
 .glow-amber {
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 8px 24px rgba(180, 122, 24, 0.14);
+  border-color: rgba(180, 122, 24, 0.28);
 }
 
 .glow-purple {
@@ -340,11 +339,11 @@ body {
 /* Premium Redesign Layout Utilities */
 .glass-effect {
   backdrop-filter: blur(24px) saturate(180%);
-  background: rgba(10, 10, 10, 0.75);
+  background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
 }
 
 .terminal-glow {
-  box-shadow: inset 0 0 20px rgba(20, 184, 166, 0.05);
+  box-shadow: inset 0 0 20px color-mix(in srgb, var(--brand) 6%, transparent);
 }
 
 .grain-overlay {
@@ -357,21 +356,15 @@ body {
   background: linear-gradient(180deg, rgba(20, 184, 166, 0.5) 0%, rgba(20, 184, 166, 0.1) 100%);
 }
 
-/* Additional Stitch MCP Premium Utilities */
+/* Compatibility utilities retained for existing components. */
 :root {
   --glass-blur: blur(16px);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-  --glass-glow: inset 0px 1px 0px rgba(255, 255, 255, 0.1);
-}
-
-.dark {
-  --bg-base: #0a0a0a;
-  --bg-surface: #131313;
-  --bg-elevated: #1a1a1a;
+  --glass-border: 1px solid var(--border-subtle);
+  --glass-glow: inset 0px 1px 0px rgba(255, 255, 255, 0.8);
 }
 
 .glass-panel-stitch {
-  background: rgba(23, 23, 23, 0.6);
+  background: color-mix(in srgb, var(--bg-surface) 92%, transparent);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
@@ -415,9 +408,48 @@ body {
   height: 4px;
 }
 .terminal-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--overlay-subtle);
 }
 .terminal-scroll::-webkit-scrollbar-thumb {
   background: var(--brand);
   border-radius: 2px;
+}
+
+/* The admin area historically used literal dark utility classes. Normalize
+   those classes only in light mode so the dark theme remains untouched. */
+:root:not(.dark) .admin-area [class~="bg-[#0A0A0A]"] {
+  background-color: var(--bg-base) !important;
+}
+
+:root:not(.dark) .admin-area [class~="bg-[#131313]"] {
+  background-color: var(--bg-surface) !important;
+}
+
+:root:not(.dark) .admin-area [class~="bg-[#131313]/60"] {
+  background-color: color-mix(in srgb, var(--bg-surface) 94%, transparent) !important;
+}
+
+:root:not(.dark) .admin-area [class~="bg-[#1C1B1B]"] {
+  background-color: var(--bg-elevated) !important;
+}
+
+:root:not(.dark) .admin-area [class~="bg-black/40"] {
+  background-color: var(--overlay-subtle) !important;
+}
+
+:root:not(.dark) .admin-area [class~="bg-white/5"] {
+  background-color: var(--overlay-subtle) !important;
+}
+
+:root:not(.dark) .admin-area [class~="border-white/5"],
+:root:not(.dark) .admin-area [class~="border-white/10"] {
+  border-color: var(--border-subtle) !important;
+}
+
+:root:not(.dark) .admin-area [class~="divide-white/5"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border-subtle) !important;
+}
+
+:root:not(.dark) .admin-area [class~="hover:bg-white/5"]:hover {
+  background-color: var(--overlay-hover) !important;
 }

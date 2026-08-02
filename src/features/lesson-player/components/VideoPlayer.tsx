@@ -77,7 +77,7 @@ export function VideoPlayer({
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
-        <p className="px-2 pt-2 text-center font-mono text-[9px] uppercase tracking-wider text-textMuted">
+        <p className="px-2 pt-2 text-center text-xs text-textMuted">
           Protected course content — do not share or redistribute this lesson.
         </p>
       </div>

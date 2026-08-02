@@ -67,8 +67,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "first_lesson",
     category: "lessons",
-    title: "First Steps 📈",
-    description: "Complete your first trading lesson",
+    title: "First Steps",
+    description: "Complete your first lesson",
     icon: "book",
     target: 1,
     rarity: "common",
@@ -76,8 +76,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "lessons_5",
     category: "lessons",
-    title: "Mini Portfolio 💼",
-    description: "Complete 5 trading lessons",
+    title: "Mini Milestone",
+    description: "Complete 5 lessons",
     icon: "book",
     target: 5,
     rarity: "common",
@@ -85,8 +85,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "lessons_10",
     category: "lessons",
-    title: "Swing Trader 📊",
-    description: "Complete 10 trading lessons",
+    title: "Consistent Learner",
+    description: "Complete 10 lessons",
     icon: "book",
     target: 10,
     rarity: "rare",
@@ -94,8 +94,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "lessons_25",
     category: "lessons",
-    title: "Position Builder 🏦",
-    description: "Complete 25 trading lessons",
+    title: "Course Builder",
+    description: "Complete 25 lessons",
     icon: "star",
     target: 25,
     rarity: "rare",
@@ -103,8 +103,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "lessons_50",
     category: "lessons",
-    title: "Fund Analyst 💎",
-    description: "Complete 50 trading lessons",
+    title: "Learning Marathon",
+    description: "Complete 50 lessons",
     icon: "star",
     target: 50,
     rarity: "epic",
@@ -112,8 +112,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "streak_3",
     category: "streak",
-    title: "Green Candle Row 🕯️",
-    description: "Reach a 3-day trading streak",
+    title: "Steady Start",
+    description: "Reach a 3-day learning streak",
     icon: "flame",
     target: 3,
     rarity: "common",
@@ -121,8 +121,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "streak_7",
     category: "streak",
-    title: "Weekly Bull Run 🐂",
-    description: "Reach a 7-day trading streak",
+    title: "Weekly Rhythm",
+    description: "Reach a 7-day learning streak",
     icon: "flame",
     target: 7,
     rarity: "rare",
@@ -130,8 +130,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "streak_14",
     category: "streak",
-    title: "Breakout Trader 🚀",
-    description: "Reach a 14-day trading streak",
+    title: "Focus Breakthrough",
+    description: "Reach a 14-day learning streak",
     icon: "flame",
     target: 14,
     rarity: "rare",
@@ -139,8 +139,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "streak_30",
     category: "streak",
-    title: "Market Veteran 🎓",
-    description: "Reach a 30-day trading streak",
+    title: "Study Veteran",
+    description: "Reach a 30-day learning streak",
     icon: "flame",
     target: 30,
     rarity: "epic",
@@ -148,8 +148,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "streak_100",
     category: "streak",
-    title: "Diamond Hands 💎",
-    description: "Reach a 100-day trading streak",
+    title: "Long Game",
+    description: "Reach a 100-day learning streak",
     icon: "flame",
     target: 100,
     rarity: "legendary",
@@ -157,8 +157,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "level_2",
     category: "level",
-    title: "Paper Account Master 💰",
-    description: "Reach trading level 2",
+    title: "Practice Starter",
+    description: "Reach level 2",
     icon: "zap",
     target: 2,
     rarity: "common",
@@ -166,8 +166,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "level_3",
     category: "level",
-    title: "Chart Whisperer 🔍",
-    description: "Reach trading level 3",
+    title: "Pattern Reader",
+    description: "Reach level 3",
     icon: "zap",
     target: 3,
     rarity: "rare",
@@ -175,8 +175,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "level_4",
     category: "level",
-    title: "Technical Guru 🖥️",
-    description: "Reach trading level 4",
+    title: "Concept Coach",
+    description: "Reach level 4",
     icon: "zap",
     target: 4,
     rarity: "epic",
@@ -184,8 +184,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "level_5",
     category: "level",
-    title: "Arbitrage Master ⚙️",
-    description: "Reach trading level 5",
+    title: "Skill Mentor",
+    description: "Reach level 5",
     icon: "trophy",
     target: 5,
     rarity: "epic",
@@ -193,8 +193,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "level_6",
     category: "level",
-    title: "Wall Street Guru 👑",
-    description: "Reach trading level 6",
+    title: "Learning Guide",
+    description: "Reach level 6",
     icon: "trophy",
     target: 6,
     rarity: "legendary",
@@ -202,7 +202,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "first_module",
     category: "course",
-    title: "Module Cleared 🟢",
+    title: "Module Complete",
     description: "Finish every lesson in a module",
     icon: "layers",
     target: 1,
@@ -211,8 +211,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "first_course",
     category: "course",
-    title: "Licensed Trader 🎓",
-    description: "Complete an entire trading course",
+    title: "Course Graduate",
+    description: "Complete an entire course",
     icon: "graduation",
     target: 1,
     rarity: "epic",
@@ -220,7 +220,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "first_note",
     category: "engagement",
-    title: "Trading Journal 📝",
+    title: "Learning Journal",
     description: "Save your first lesson note",
     icon: "pen",
     target: 1,
@@ -229,7 +229,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "notes_5",
     category: "engagement",
-    title: "Journal Veteran 📔",
+    title: "Note Keeper",
     description: "Save notes on 5 lessons",
     icon: "pen",
     target: 5,
@@ -238,7 +238,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "first_bookmark",
     category: "engagement",
-    title: "Ticker Alert 🔔",
+    title: "Saved for Later",
     description: "Bookmark a lesson to watch again",
     icon: "bookmark",
     target: 1,
@@ -247,7 +247,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "first_quiz",
     category: "quiz",
-    title: "Mock Trading Test 📝",
+    title: "Practice Quiz",
     description: "Pass your first lesson quiz",
     icon: "target",
     target: 1,
@@ -256,7 +256,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "perfect_quiz",
     category: "quiz",
-    title: "Market Masterclass 🌟",
+    title: "Perfect Quiz",
     description: "Score 100% on any quiz",
     icon: "target",
     target: 1,
@@ -265,7 +265,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "time_60",
     category: "time",
-    title: "Trading Hours ⏳",
+    title: "Study Time",
     description: "Learn for 1 hour total",
     icon: "clock",
     target: 60,
@@ -274,7 +274,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "time_600",
     category: "time",
-    title: "Market Veteran ⌛",
+    title: "Focused Hours",
     description: "Learn for 10 hours total",
     icon: "clock",
     target: 600,
@@ -283,7 +283,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDef[] = [
   {
     id: "active_7_days",
     category: "streak",
-    title: "Daily Trader 🗓️",
+    title: "Daily Learner",
     description: "Learn on 7 different days",
     icon: "calendar",
     target: 7,
@@ -511,3 +511,4 @@ export function getNextStreakMilestone(longestStreak: number): {
   const progress = span > 0 ? Math.round(((longestStreak - previous) / span) * 100) : 0;
   return { next, previous, progress: Math.min(100, Math.max(0, progress)) };
 }
+

@@ -32,23 +32,23 @@ export function ContinueLearningCard({
         <div>
           <div className="flex items-center gap-2 mb-4">
             <span className="w-2 h-[1.5px] bg-brand"></span>
-            <span className="font-mono text-[9px] text-brand font-bold uppercase tracking-widest">ACTIVE_INTELLIGENCE_NODE</span>
+            <span className="text-[9px] text-brand font-semibold uppercase tracking-[0.18em]">Continue learning</span>
           </div>
           <h3 className="font-headline text-2xl md:text-3xl font-extrabold text-textPrimary mb-3 leading-tight tracking-tight">
             {course.title}
           </h3>
           <p className="text-textSecondary max-w-md text-sm leading-relaxed">
-            {course.blurb || "Systematic analysis of market imbalances and quantitative portfolios."}
+            {course.blurb || "Pick up where you left off and keep building your skills at your own pace."}
           </p>
         </div>
         <div className="flex items-center gap-6 mt-8">
           <Link
             href={continueUrl}
-            className="bg-brand text-black px-6 py-3 rounded font-mono text-xs font-bold transition-all hover:brightness-110 active:scale-95 flex items-center gap-2 tracking-wider shadow-[0_0_12px_rgba(20,184,166,0.15)]"
+            className="bg-brand text-black px-6 py-3 rounded text-xs font-semibold transition-all hover:brightness-110 active:scale-95 flex items-center gap-2 tracking-wide shadow-[0_0_12px_rgba(20,184,166,0.15)]"
           >
-            INITIALIZE_LESSON <Zap className="h-3.5 w-3.5 fill-current" />
+            Resume lesson <Zap className="h-3.5 w-3.5 fill-current" />
           </Link>
-          <span className="font-mono text-[10px] text-textSecondary flex items-center gap-1.5 uppercase">
+          <span className="text-[10px] text-textSecondary flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
             {progressPercent}% completed ({completedLessons}/{totalLessons} lessons)
           </span>
