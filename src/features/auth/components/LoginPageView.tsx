@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Script from "next/script";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, BookOpen, LineChart, Loader2 } from "lucide-react";
+import { ArrowRight, BookOpen, LineChart, Loader2, Sparkles } from "lucide-react";
 
 import { AlvestLogo } from "@/components/brand/AlvestLogo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -53,9 +53,11 @@ export function LoginPageView() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [handoffPending, setHandoffPending] = useState(() => Boolean(searchParams.get("code")));
+  const [focusedField, setFocusedField] = useState<"email" | "mpin" | null>(null);
   const safeNext = useMemo(() => resolvePostLoginPath(searchParams), [searchParams]);
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID;
   const showGoogle = !devStandalone && Boolean(googleClientId);
+  const mpinProgress = Math.min(mpin.length, 6);
 
   useEffect(() => { if (emailFromQuery) setEmail(emailFromQuery); }, [emailFromQuery]);
 
@@ -127,9 +129,10 @@ export function LoginPageView() {
           </section>
 
           <section className="w-full">
-            <div className="rounded-2xl border border-borderSubtle bg-surface p-6 shadow-theme sm:p-8">
+            <div className="login-card rounded-2xl border border-borderSubtle bg-surface p-6 shadow-theme sm:p-8">
               <div className="mb-8"><p className="mb-3 text-sm font-medium text-brand">Welcome back</p><h2 className="font-headline text-3xl font-semibold tracking-[-0.03em] text-textPrimary">Sign in to Alvest Learn</h2><p className="mt-2 text-sm leading-6 text-textSecondary">{handoffPending ? "Finishing your secure sign-in…" : "Continue your learning journey."}</p></div>
-              <form onSubmit={handleMpinSubmit} className="space-y-5">
+              <form onSubmit={handleMpinSubmit} onFocus={(event) => { if (event.target instanceof HTMLInputElement) setFocusedField(event.target.id === "login-mpin" ? "mpin" : "email"); }} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocusedField(null); }} className="space-y-5">
+                <div className="login-interaction-hint"><span className="login-hint-icon"><Sparkles className="h-3.5 w-3.5" /></span><span>{focusedField ? `Focused on ${focusedField === "mpin" ? "your secure MPIN" : "your email"}` : "Your secure learning space is ready"}</span><span className="ml-auto font-mono text-[10px] text-textMuted">LIVE</span></div>
                 <div><label htmlFor="login-email" className="mb-2 block text-sm font-medium text-textPrimary">Email address</label><input id="login-email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="h-12 w-full rounded-lg border border-borderSubtle bg-elevated px-3.5 text-sm text-textPrimary outline-none transition placeholder:text-textMuted focus:border-brand focus:ring-4 focus:ring-brand/10" /></div>
                 <div><div className="mb-2 flex items-center justify-between"><label htmlFor="login-mpin" className="text-sm font-medium text-textPrimary">MPIN</label>{!devStandalone ? <a href={`${MAIN_WEBSITE_URL}/login`} className="rounded text-xs font-medium text-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50">Forgot MPIN?</a> : null}</div><input id="login-mpin" type="password" inputMode="numeric" autoComplete="one-time-code" required maxLength={6} pattern="\d{6}" value={mpin} onChange={(e) => setMpin(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Enter your 6-digit MPIN" className="h-12 w-full rounded-lg border border-borderSubtle bg-elevated px-3.5 text-sm tracking-[0.35em] text-textPrimary outline-none transition placeholder:tracking-normal placeholder:text-textMuted focus:border-brand focus:ring-4 focus:ring-brand/10" /></div>
                 {error ? <p role="alert" className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2.5 text-sm leading-5 text-red-500">{error}</p> : null}
