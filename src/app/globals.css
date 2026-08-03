@@ -376,6 +376,25 @@ body {
   background-size: 20px 20px;
 }
 
+/* Login page: quiet editorial texture and a responsive market-line motif. */
+.login-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--brand) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--brand) 7%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 70% 40%, color-mix(in srgb, var(--brand) 10%, transparent), transparent 32%);
+  background-size: 72px 72px, 72px 72px, auto;
+  mask-image: linear-gradient(90deg, black, transparent 85%);
+  opacity: 0.7;
+}
+
+.login-chart {
+  background:
+    linear-gradient(145deg, transparent 0 14%, color-mix(in srgb, var(--brand) 85%, transparent) 14.5% 15%, transparent 15.5% 30%, color-mix(in srgb, var(--brand) 85%, transparent) 30.5% 31%, transparent 31.5% 46%, color-mix(in srgb, var(--brand) 85%, transparent) 46.5% 47%, transparent 47.5% 64%, color-mix(in srgb, var(--brand) 85%, transparent) 64.5% 65%, transparent 65.5% 78%, color-mix(in srgb, var(--brand) 85%, transparent) 78.5% 79%, transparent 79.5%),
+    linear-gradient(to top, color-mix(in srgb, var(--brand) 12%, transparent), transparent 70%);
+  clip-path: polygon(0 78%, 14% 68%, 27% 73%, 39% 43%, 51% 56%, 65% 27%, 78% 39%, 91% 8%, 100% 0, 100% 100%, 0 100%);
+  opacity: 0.8;
+}
+
 .glow-border {
   position: absolute;
   inset: 0;
