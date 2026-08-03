@@ -395,6 +395,76 @@ body {
   opacity: 0.8;
 }
 
+.login-card {
+  position: relative;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.login-card::before {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 35%, transparent), transparent 38% 72%, color-mix(in srgb, var(--accent) 22%, transparent));
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  padding: 1px;
+}
+
+.login-card:hover {
+  border-color: color-mix(in srgb, var(--brand) 28%, var(--border-subtle));
+  box-shadow: 0 22px 60px color-mix(in srgb, var(--brand) 12%, transparent), var(--shadow-card);
+  transform: translateY(-3px);
+}
+
+.login-card:hover::before { opacity: 1; }
+
+.login-float { animation: loginFloat 4s ease-in-out infinite; }
+
+.login-visual { transition: transform 240ms ease, border-color 240ms ease; }
+.login-visual:hover { border-color: color-mix(in srgb, var(--brand) 35%, var(--border-subtle)); transform: translateY(-4px) rotate(-0.4deg); }
+
+.login-spark { animation: loginSpark 3.2s ease-in-out infinite; box-shadow: 0 0 14px 4px color-mix(in srgb, var(--brand) 45%, transparent); }
+.login-status-dot { animation: loginPulse 2s ease-in-out infinite; }
+
+.login-interaction-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--overlay-faint);
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 9px 10px;
+}
+
+.login-hint-icon { display: inline-flex; color: var(--brand); }
+
+@keyframes loginFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes loginSpark {
+  0%, 100% { opacity: 0.4; transform: translate(0, 0) scale(0.8); }
+  50% { opacity: 1; transform: translate(-26px, 16px) scale(1.25); }
+}
+
+@keyframes loginPulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 28%, transparent); }
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 10%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-float, .login-spark, .login-status-dot { animation: none; }
+  .login-card, .login-visual { transition: none; }
+}
+
 .glow-border {
   position: absolute;
   inset: 0;

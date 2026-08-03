@@ -44,6 +44,9 @@ export function AlvestLogo({
       width={width}
       height={height}
       priority={priority}
+      // Keep public brand assets as direct static files. This avoids the
+      // image optimizer returning a broken URL for user-provided PNGs.
+      unoptimized
       className={cn(
         "object-contain",
         variant === "mark" && "rounded-lg",
