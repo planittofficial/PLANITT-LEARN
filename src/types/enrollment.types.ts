@@ -12,6 +12,7 @@ export type EnrollmentMeResponse = {
   enrolledCourseIds: string[];
   items: PaymentTransaction[];
   source: EnrollmentSource;
+  paymentHistoryError?: "unavailable" | "unauthorized";
 };
 
 export type EnrollmentPreviewResponse = {

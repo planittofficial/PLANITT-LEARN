@@ -66,6 +66,7 @@ export function useEnrollment() {
     /** Raw payment rows from appbackend (paid learn-* plan_ids). */
     paymentItems: enrollmentQuery.data?.items ?? [],
     enrollmentSource: enrollmentQuery.data?.source,
+    paymentHistoryError: enrollmentQuery.data?.paymentHistoryError,
     refetch: isAuthenticated ? enrollmentQuery.refetch : previewQuery.refetch,
     isEnrolledIn: (courseId: string) => isEnrolledInCourse(enrolledIds, courseId),
   };

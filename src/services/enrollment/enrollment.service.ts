@@ -27,20 +27,38 @@ export function courseIdsForPlan(planId: string): string[] {
   return [normalized];
 }
 
-export async function fetchPaymentHistory(accessToken: string): Promise<PaymentTransaction[]> {
-  const response = await fetch(`${requireAppBackendUrl()}/api/v1/payments/me/history`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    cache: "no-store",
-  });
+export type PaymentHistoryError = "unavailable" | "unauthorized";
 
-  if (!response.ok) return [];
+export type PaymentHistoryResult = {
+  transactions: PaymentTransaction[];
+  error?: PaymentHistoryError;
+};
 
-  const data = (await response.json()) as { items?: PaymentTransaction[] };
-  return Array.isArray(data.items) ? data.items : [];
+export async function fetchPaymentHistory(accessToken: string): Promise<PaymentHistoryResult> {
+  try {
+    const response = await fetch(`${requireAppBackendUrl()}/api/v1/payments/me/history`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return {
+        transactions: [],
+        error: response.status === 401 ? "unauthorized" : "unavailable",
+      };
+    }
+
+    const data = (await response.json()) as { items?: PaymentTransaction[] };
+    return {
+      transactions: Array.isArray(data.items) ? data.items : [],
+    };
+  } catch {
+    return { transactions: [], error: "unavailable" };
+  }
 }
 
 async function enrolledCourseIdsFromDatabase(userId: string): Promise<Set<string>> {
@@ -84,7 +102,7 @@ export async function getEnrolledCourseIds(
       ids.add(planId);
     }
   } else if (token) {
-    const transactions = await fetchPaymentHistory(token);
+    const { transactions } = await fetchPaymentHistory(token);
     for (const courseId of enrolledCourseIdsFromTransactions(transactions)) {
       ids.add(courseId);
     }
@@ -124,18 +142,23 @@ export async function ensureUserProfile(user: {
 }): Promise<void> {
   if (!getDatabaseUrl()) return;
 
-  await prisma.user.upsert({
-    where: { id: user.id },
-    create: {
-      id: user.id,
-      email: user.email.toLowerCase(),
-      name: user.name ?? null,
-    },
-    update: {
-      email: user.email.toLowerCase(),
-      ...(user.name !== undefined ? { name: user.name } : {}),
-    },
-  });
+  try {
+    await prisma.user.upsert({
+      where: { id: user.id },
+      create: {
+        id: user.id,
+        email: user.email.toLowerCase(),
+        name: user.name ?? null,
+      },
+      update: {
+        email: user.email.toLowerCase(),
+        ...(user.name !== undefined ? { name: user.name } : {}),
+      },
+    });
+  } catch {
+    // DB unavailable — auth and payment-history enrollment still work
+    return;
+  }
 
   // Sync dev mock enrollments to database if standalone/dev-preview is active
   try {
@@ -174,6 +197,7 @@ export type EnrollmentSnapshot = {
   enrolledCourseIds: string[];
   transactions: PaymentTransaction[];
   source: "dev_mock" | "alvest" | "mixed";
+  paymentHistoryError?: PaymentHistoryError;
 };
 
 /**
@@ -187,13 +211,17 @@ export async function getEnrollmentSnapshot(
   const enrolledSet = await getEnrolledCourseIds(userId, { accessToken });
 
   let transactions: PaymentTransaction[] = [];
+  let paymentHistoryError: PaymentHistoryError | undefined;
+
   if (isDevAccessToken(accessToken)) {
     transactions = devMockEnrollments().map((plan_id) => ({
       plan_id,
       status: "paid",
     }));
   } else {
-    transactions = await fetchPaymentHistory(accessToken);
+    const paymentHistory = await fetchPaymentHistory(accessToken);
+    transactions = paymentHistory.transactions;
+    paymentHistoryError = paymentHistory.error;
   }
 
   const fromPayments = enrolledCourseIdsFromTransactions(transactions);
@@ -210,5 +238,6 @@ export async function getEnrollmentSnapshot(
     enrolledCourseIds: [...enrolledSet],
     transactions,
     source,
+    paymentHistoryError,
   };
 }

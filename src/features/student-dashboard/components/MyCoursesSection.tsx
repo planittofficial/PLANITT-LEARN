@@ -33,7 +33,7 @@ import type { CourseProgress } from "@/lib/learning/progress";
 
 export function MyCoursesSection() {
   const { user, devStandalone } = useAuth();
-  const { loading, enrolledIds, isAuthenticated, devPreview } = useEnrollment();
+  const { loading, enrolledIds, isAuthenticated, devPreview, paymentHistoryError } = useEnrollment();
   const { data: apiCourses, isLoading: coursesLoading } = useCourses();
   const gamification = useGamification(user?.id);
   const achievements = useAchievements(user?.id);
@@ -105,6 +105,17 @@ export function MyCoursesSection() {
             [SIGN_IN]
           </Link>{" "}
           to save progress.
+        </div>
+      ) : null}
+
+      {isAuthenticated && paymentHistoryError ? (
+        <div
+          role="alert"
+          className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200"
+        >
+          {paymentHistoryError === "unauthorized"
+            ? "Your session may have expired. Sign out and sign in again to refresh your course access."
+            : "We could not verify your purchases right now. Your enrolled courses may be incomplete — try refreshing or check back shortly."}
         </div>
       ) : null}
 

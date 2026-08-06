@@ -73,7 +73,7 @@ export function CourseCard({
   const riskLabel = RISK_BADGES[course.id] ?? "Spread: Low";
 
   const ctaLabel = !enrolled
-    ? "BUY FOR $249"
+    ? "UNLOCK ON ALVEST"
     : isComplete
       ? "REVIEW MODULE"
       : inProgress

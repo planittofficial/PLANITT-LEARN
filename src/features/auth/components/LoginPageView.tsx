@@ -34,9 +34,12 @@ function resolvePostLoginPath(searchParams: URLSearchParams): string {
   return ROUTES.STUDENT.HOME;
 }
 
-function redirectAfterLogin(router: ReturnType<typeof useRouter>, path: string) {
-  if (typeof window !== "undefined") { window.location.replace(path); return; }
-  router.replace(path);
+function postLoginPath(isAdmin: boolean, safeNext: string): string {
+  if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
+    if (typeof window !== "undefined") localStorage.setItem("lms-view-mode", "admin");
+    return ROUTES.ADMIN.HOME;
+  }
+  return safeNext;
 }
 
 export function LoginPageView() {
@@ -63,8 +66,7 @@ export function LoginPageView() {
 
   useEffect(() => {
     if (authReady && isAuthenticated && !handoffPending) {
-      if (isAdmin && safeNext === ROUTES.STUDENT.HOME) { if (typeof window !== "undefined") localStorage.setItem("lms-view-mode", "admin"); router.replace(ROUTES.ADMIN.HOME); }
-      else router.replace(safeNext);
+      router.replace(postLoginPath(isAdmin, safeNext));
     }
   }, [authReady, handoffPending, isAuthenticated, isAdmin, router, safeNext]);
 
@@ -73,18 +75,22 @@ export function LoginPageView() {
     if (!code || !authReady || handoffStarted.current) return;
     if (isAuthenticated) {
       setHandoffPending(false);
-      if (isAdmin && safeNext === ROUTES.STUDENT.HOME && typeof window !== "undefined") {
-        localStorage.setItem("lms-view-mode", "admin");
-      }
-      router.replace(isAdmin && safeNext === ROUTES.STUDENT.HOME ? ROUTES.ADMIN.HOME : safeNext);
+      router.replace(postLoginPath(isAdmin, safeNext));
       return;
     }
-    handoffStarted.current = true; setHandoffPending(true); setSubmitting(true); setError("");
-    void exchangeHandoffCode(code).then(() => {
-      const targetPath = isAdmin && safeNext === ROUTES.STUDENT.HOME ? ROUTES.ADMIN.HOME : safeNext;
-      if (isAdmin && safeNext === ROUTES.STUDENT.HOME && typeof window !== "undefined") localStorage.setItem("lms-view-mode", "admin");
-      redirectAfterLogin(router, targetPath);
-    }).catch((err) => { setError(err instanceof Error ? err.message : "SSO sign-in failed."); handoffStarted.current = false; }).finally(() => { setSubmitting(false); setHandoffPending(false); });
+    handoffStarted.current = true;
+    setHandoffPending(true);
+    setSubmitting(true);
+    setError("");
+    void exchangeHandoffCode(code)
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : "SSO sign-in failed.");
+        handoffStarted.current = false;
+      })
+      .finally(() => {
+        setSubmitting(false);
+        setHandoffPending(false);
+      });
   }, [authReady, exchangeHandoffCode, isAuthenticated, isAdmin, router, safeNext, searchParams]);
 
   useEffect(() => {
@@ -93,21 +99,31 @@ export function LoginPageView() {
     window.google.accounts.id.initialize({ client_id: googleClientId, callback: (response) => {
       const token = response.credential; if (!token) return;
       setSubmitting(true); setError("");
-      void loginWithGoogleIdToken(token).then(() => redirectAfterLogin(router, safeNext)).catch((err) => setError(err instanceof Error ? err.message : "Google sign-in failed. Try again.")).finally(() => setSubmitting(false));
+      void loginWithGoogleIdToken(token)
+        .catch((err) => setError(err instanceof Error ? err.message : "Google sign-in failed. Try again."))
+        .finally(() => setSubmitting(false));
     } });
     window.google.accounts.id.renderButton(googleButtonRef.current, { theme: mounted && theme === "light" ? "outline" : "filled_black", size: "large", width: 340, text: "continue_with" });
   }, [googleClientId, loginWithGoogleIdToken, mounted, router, safeNext, scriptReady, showGoogle, theme]);
 
   const handleMpinSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); setSubmitting(true); setError("");
-    try { await loginWithMpin(email.trim(), mpin.trim()); redirectAfterLogin(router, safeNext); }
-    catch (err) { setError(err instanceof Error ? err.message : "Sign-in failed."); }
-    finally { setSubmitting(false); }
+    event.preventDefault();
+    setSubmitting(true);
+    setError("");
+    try {
+      await loginWithMpin(email.trim(), mpin.trim());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign-in failed.");
+      setSubmitting(false);
+    }
   };
 
   const handleDevLogin = () => {
-    setSubmitting(true); setError("");
-    void loginAsDevUser().then(() => redirectAfterLogin(router, safeNext)).catch(() => setError("Dev sign-in failed.")).finally(() => setSubmitting(false));
+    setSubmitting(true);
+    setError("");
+    void loginAsDevUser()
+      .catch(() => setError("Dev sign-in failed."))
+      .finally(() => setSubmitting(false));
   };
 
   return <>
