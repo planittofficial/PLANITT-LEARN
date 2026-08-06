@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 
+import { AlvestLogo } from "@/components/brand";
 import { AdminSidebar } from "@/components/layout/admin/AdminSidebar";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -33,9 +34,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <Menu className="h-5 w-5" />
             </button>
             <div className="flex flex-1 items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/10 border border-brand/20">
-                <BookOpen className="h-4.5 w-4.5 text-brand" />
-              </div>
+              <AlvestLogo variant="markClear" size={28} priority />
               <span className="font-headline text-md font-bold text-textPrimary tracking-tight">
                 Alvest Learn <span className="text-brand">Admin</span>
               </span>

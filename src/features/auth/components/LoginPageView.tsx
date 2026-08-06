@@ -132,7 +132,9 @@ export function LoginPageView() {
       <div className="login-grid pointer-events-none absolute inset-0" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 lg:px-12">
         <header className="flex items-center justify-between">
-          <Link href={ROUTES.STUDENT.HOME} aria-label="Alvest Learn home" className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"><AlvestLogo variant="wordmark" size={38} priority /></Link>
+          <Link href={ROUTES.STUDENT.HOME} aria-label="Alvest Learn home" className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50">
+            <AlvestLogo variant="wordmark" size={52} priority className="drop-shadow-md" />
+          </Link>
           <ThemeToggle showLabel />
         </header>
 

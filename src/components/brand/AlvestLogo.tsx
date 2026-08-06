@@ -5,54 +5,65 @@ type AlvestLogoVariant = "mark" | "markClear" | "wordmark";
 
 type AlvestLogoProps = {
   variant?: AlvestLogoVariant;
-  /** Pixel height for the image. Width follows intrinsic aspect ratio. */
+  /** Rendered height in pixels; width scales from the asset aspect ratio. */
   size?: number;
   className?: string;
   priority?: boolean;
   alt?: string;
 };
 
-const SRC: Record<AlvestLogoVariant, string> = {
-  mark: BRAND.mark,
-  markClear: BRAND.markClear,
-  wordmark: BRAND.wordmark,
-};
-
-/** Approximate width/height ratios from the source assets. */
-const ASPECT: Record<AlvestLogoVariant, number> = {
-  mark: 1,
-  markClear: 738 / 629,
-  // The current public logo asset is a square lockup, not a horizontal wordmark.
-  wordmark: 1,
+const VARIANT_CONFIG: Record<
+  AlvestLogoVariant,
+  { src: string; aspect: number; fallbacks: string[] }
+> = {
+  mark: {
+    src: BRAND.mark,
+    aspect: 1,
+    fallbacks: [BRAND.markClearPng, BRAND.wordmark],
+  },
+  markClear: {
+    src: BRAND.markClear,
+    aspect: 738 / 629,
+    fallbacks: [BRAND.markClearPng, BRAND.mark],
+  },
+  wordmark: {
+    src: BRAND.wordmark,
+    aspect: 1,
+    fallbacks: [BRAND.markClearPng, BRAND.markClear, BRAND.mark],
+  },
 };
 
 export function AlvestLogo({
-  variant = "mark",
+  variant = "markClear",
   size = 40,
   className,
   priority = false,
-  alt = BRAND.name,
+  alt = BRAND.product,
 }: AlvestLogoProps) {
-  const height = size;
-  const width = Math.round(size * ASPECT[variant]);
+  const { src, aspect, fallbacks } = VARIANT_CONFIG[variant];
+  const width = Math.max(Math.round(size * aspect), size);
 
   return (
     <img
-      src={SRC[variant]}
+      src={src}
       alt={alt}
       width={width}
-      height={height}
+      height={size}
       loading={priority ? "eager" : "lazy"}
+      decoding="async"
       onError={(event) => {
-        // Keep the brand visible even if a stale deployment is missing the PNG.
-        event.currentTarget.onerror = null;
-        event.currentTarget.src = BRAND.markClear;
+        const img = event.currentTarget;
+        const idx = Number(img.dataset.fallbackIdx ?? "0");
+        if (idx >= fallbacks.length) return;
+        img.dataset.fallbackIdx = String(idx + 1);
+        img.src = fallbacks[idx];
       }}
       className={cn(
-        "object-contain",
+        "block shrink-0 object-contain object-left",
         variant === "mark" && "rounded-lg",
         className,
       )}
+      style={{ height: size, width: "auto", minHeight: size, maxHeight: size }}
     />
   );
 }
