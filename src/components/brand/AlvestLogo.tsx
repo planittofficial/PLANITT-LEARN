@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { BRAND } from "@/constants/brand";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +22,8 @@ const SRC: Record<AlvestLogoVariant, string> = {
 const ASPECT: Record<AlvestLogoVariant, number> = {
   mark: 1,
   markClear: 738 / 629,
-  wordmark: 2.2,
+  // The current public logo asset is a square lockup, not a horizontal wordmark.
+  wordmark: 1,
 };
 
 export function AlvestLogo({
@@ -38,15 +37,17 @@ export function AlvestLogo({
   const width = Math.round(size * ASPECT[variant]);
 
   return (
-    <Image
+    <img
       src={SRC[variant]}
       alt={alt}
       width={width}
       height={height}
-      priority={priority}
-      // Keep public brand assets as direct static files. This avoids the
-      // image optimizer returning a broken URL for user-provided PNGs.
-      unoptimized
+      loading={priority ? "eager" : "lazy"}
+      onError={(event) => {
+        // Keep the brand visible even if a stale deployment is missing the PNG.
+        event.currentTarget.onerror = null;
+        event.currentTarget.src = BRAND.markClear;
+      }}
       className={cn(
         "object-contain",
         variant === "mark" && "rounded-lg",
