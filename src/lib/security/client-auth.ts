@@ -63,3 +63,11 @@ export function isClientDevStandalone(): boolean {
   const flag = process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE?.trim().toLowerCase();
   return flag === "true" || flag === "1" || flag === "yes";
 }
+
+/** When standalone, auto-login dev user on bootstrap (disable with NEXT_PUBLIC_LEARN_DEV_AUTO_LOGIN=false). */
+export function isClientDevAutoLogin(): boolean {
+  if (!isClientDevStandalone()) return false;
+  const flag = process.env.NEXT_PUBLIC_LEARN_DEV_AUTO_LOGIN?.trim().toLowerCase();
+  if (flag === "false" || flag === "0" || flag === "no") return false;
+  return true;
+}

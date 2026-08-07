@@ -161,6 +161,13 @@ export async function processEnrollmentWebhook(
       enrollmentsCreated += 1;
     }
 
+    if (enrollmentsCreated === 0) {
+      throw new WebhookError(
+        `No courses in Learn DB match plan_id "${payload.plan_id}". Run db:seed to sync the catalog.`,
+        422,
+      );
+    }
+
     await prisma.enrollmentEvent.update({
       where: { id: event.id },
       data: { processed: true },

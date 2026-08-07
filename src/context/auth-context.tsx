@@ -12,6 +12,7 @@ import {
 import { ROUTES } from "@/constants/routes";
 import {
   authedFetch,
+  isClientDevAutoLogin,
   isClientDevStandalone,
   withApiCredentials,
 } from "@/lib/security/client-auth";
@@ -73,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       let user = await loadSession();
 
-      if (!user && DEV_STANDALONE) {
+      if (!user && DEV_STANDALONE && isClientDevAutoLogin()) {
         const devRes = await fetch(
           ROUTES.API.AUTH.DEV_LOGIN,
           withApiCredentials({

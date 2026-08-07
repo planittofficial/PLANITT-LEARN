@@ -8,12 +8,12 @@ import {
   Home,
   Trophy,
   User,
-  TrendingUp,
   LogOut,
   LineChart,
   BookOpen
 } from "lucide-react";
 
+import { AlvestLogo } from "@/components/brand";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
@@ -111,9 +111,7 @@ export function StudentLogo({ className }: StudentLogoProps) {
         className,
       )}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 border border-brand/20">
-        <TrendingUp className="h-5 w-5 text-brand" />
-      </div>
+      <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm" />
       <span className="hidden whitespace-nowrap text-lg font-headline font-extrabold tracking-tighter text-brand uppercase md:inline">
         Alvest<span className="text-textPrimary"> Learn</span>
       </span>
@@ -144,9 +142,7 @@ export function StudentSidebar() {
     <aside className="hidden md:flex flex-col p-6 h-screen w-64 fixed left-0 top-0 z-40 bg-surface border-r border-borderSubtle">
       {/* Sidebar Header Logo */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 border border-brand/20">
-          <TrendingUp className="h-5 w-5 text-brand" />
-        </div>
+        <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm" />
         <span className="font-headline text-[20px] font-black text-brand tracking-tight">
           Alvest Learn
         </span>

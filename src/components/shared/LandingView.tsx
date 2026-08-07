@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Shield, Cpu, Activity, ArrowRight, TrendingUp } from "lucide-react";
+import { BookOpen, Shield, Cpu, Activity, ArrowRight } from "lucide-react";
+import { AlvestLogo } from "@/components/brand";
 import { ROUTES } from "@/constants/routes";
 
 export function LandingView() {
@@ -34,9 +35,7 @@ export function LandingView() {
       <header className="w-full bg-surface/90 backdrop-blur-md border-b border-borderSubtle z-50">
         <div className="flex justify-between items-center px-6 md:px-12 py-4 max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand/10 border border-brand/20">
-              <TrendingUp className="h-5 w-5 text-brand" />
-            </div>
+            <AlvestLogo variant="markClear" size={40} priority className="drop-shadow-sm" />
             <span className="font-headline text-[20px] font-black text-brand tracking-tight">
               Alvest Learn
             </span>

@@ -5,6 +5,7 @@ export type PresignResult = {
   videoKey: string;
   publicUrl: string;
   expiresIn: number;
+  configured: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ export function createVideoUploadPresign(input: {
       videoKey,
       publicUrl: `${publicBase.replace(/\/$/, "")}/${videoKey}`,
       expiresIn: 3600,
+      configured: true,
     };
   }
 
@@ -39,5 +41,6 @@ export function createVideoUploadPresign(input: {
     videoKey,
     publicUrl: "",
     expiresIn: 0,
+    configured: false,
   };
 }

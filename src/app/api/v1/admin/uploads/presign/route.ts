@@ -29,5 +29,12 @@ export async function POST(request: Request) {
     lessonId,
   });
 
+  if (!presign.configured) {
+    return fail(
+      "Video storage is not configured. Set LEARN_R2_ACCOUNT_ID, LEARN_R2_BUCKET, and LEARN_R2_PUBLIC_URL.",
+      503,
+    );
+  }
+
   return ok({ ok: true, presign });
 }

@@ -37,5 +37,6 @@ export async function GET(request: Request) {
     enrolledCourseIds: snapshot.enrolledCourseIds,
     items: snapshot.transactions,
     source: snapshot.source,
+    paymentHistoryError: snapshot.paymentHistoryError,
   });
 }

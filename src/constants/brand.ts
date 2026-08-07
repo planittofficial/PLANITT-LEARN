@@ -2,12 +2,13 @@
 export const BRAND = {
   name: "Alvest",
   product: "Alvest Learn",
-  /** Square mark with gold border (nav, favicon). */
+  /** Square app icon with gold border (favicon, app icon). */
   mark: "/alvest.svg",
-  markPng: "/alvest.png",
-  /** Mark only, no square background. */
+  /** Transparent mark — best for nav/sidebar on any background. */
   markClear: "/alvest-without-bg.svg",
   markClearPng: "/alvest-without-bg.png",
-  /** Full wordmark + tagline (login / marketing). */
+  /** Full lockup with ALVEST wordmark + tagline (login, marketing). */
   wordmark: "/alvest-logo.png",
+  /** PNG favicon fallback (do not use /alvest.png — file does not exist). */
+  markPng: "/alvest-without-bg.png",
 } as const;

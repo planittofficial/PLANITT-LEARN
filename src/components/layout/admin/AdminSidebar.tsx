@@ -12,9 +12,9 @@ import {
   LineChart,
   LogOut,
   Sliders,
-  GraduationCap
 } from "lucide-react";
 
+import { AlvestLogo } from "@/components/brand";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -47,9 +47,7 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
       {/* Header Logo */}
       <div className="flex items-center justify-between gap-3 px-6 py-5 border-b border-borderSubtle">
         <Link href={ROUTES.ADMIN.HOME} className="flex items-center gap-3" onClick={onMobileClose}>
-          <div className="flex h-10 w-10 items-center justify-center rounded bg-brand/10 border border-brand/20">
-            <GraduationCap className="h-5 w-5 text-brand" />
-          </div>
+          <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm" />
           <div>
             <span className="font-headline text-lg font-bold text-textPrimary tracking-tight">
               Alvest <span className="text-brand">Learn</span>

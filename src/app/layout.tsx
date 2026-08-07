@@ -22,7 +22,10 @@ export const metadata: Metadata = {
   title: BRAND.product,
   description: "Alvest course portal — educational content only.",
   icons: {
-    icon: [{ url: BRAND.markPng, type: "image/png" }, { url: BRAND.mark, type: "image/svg+xml" }],
+    icon: [
+      { url: BRAND.mark, type: "image/svg+xml" },
+      { url: BRAND.markPng, type: "image/png" },
+    ],
     apple: BRAND.markPng,
   },
 };

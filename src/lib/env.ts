@@ -45,6 +45,14 @@ export function isDevStandalone(): boolean {
   return envFlag(process.env.LEARN_DEV_STANDALONE);
 }
 
+/** When standalone, auto-login dev user on bootstrap (disable with LEARN_DEV_AUTO_LOGIN=false). */
+export function isDevAutoLogin(): boolean {
+  if (!isDevStandalone()) return false;
+  const flag = process.env.LEARN_DEV_AUTO_LOGIN?.trim().toLowerCase();
+  if (flag === "false" || flag === "0" || flag === "no") return false;
+  return true;
+}
+
 /** Mock user profile for dev standalone login (server-side). */
 export function devMockUser(): { id: string; email: string; name: string } {
   return {
