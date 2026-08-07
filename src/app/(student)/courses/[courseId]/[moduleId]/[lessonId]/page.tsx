@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 
@@ -25,7 +25,6 @@ import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { useCourseProgress } from "@/hooks/progress/use-course-progress";
 import { useLessonQuiz } from "@/hooks/quizzes/use-lesson-quiz";
 import { apiCourseDetailToDefinition } from "@/lib/catalog/map-api-course";
-import { getCourseById, getLessonByPath } from "@/lib/catalog/courses";
 import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
 import { recordRecentlyWatched } from "@/lib/learning/activity";
 import { recordLearningActivity, touchDailyActivity, loadGamification } from "@/lib/learning/gamification";
@@ -74,12 +73,11 @@ export default function LessonPage() {
     if (!user?.id) return;
     touchDailyActivity(user.id);
 
-    const fallback = getLessonByPath(courseId, moduleId, lessonId);
     const apiMod = courseQuery.data?.modules.find((m) => m.id === moduleId);
     const apiLesson = apiMod?.lessons.find((l) => l.id === lessonId);
-    const courseTitle = courseQuery.data?.title ?? fallback?.course.title;
-    const lessonTitle = apiLesson?.title ?? fallback?.lesson.title;
-    const kind = apiLesson?.kind ?? fallback?.lesson.kind ?? "article";
+    const courseTitle = courseQuery.data?.title;
+    const lessonTitle = apiLesson?.title;
+    const kind = apiLesson?.kind ?? "article";
 
     if (courseTitle && lessonTitle) {
       recordRecentlyWatched(user.id, {
@@ -132,11 +130,10 @@ export default function LessonPage() {
     );
   }
 
-  const course = apiCourseDetailToDefinition(apiCourse);
-  const module = course.modules.find((m) => m.id === moduleId);
-  const apiLesson = module?.lessons.find((l) => l.id === lessonId);
+  const apiMod = apiCourse.modules.find((m) => m.id === moduleId);
+  const apiLesson = apiMod?.lessons.find((l) => l.id === lessonId);
 
-  if (!module || !apiLesson) {
+  if (!apiMod || !apiLesson) {
     return (
       <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-200">
         This lesson was not found. It may be unpublished or the link is outdated.{" "}
@@ -145,6 +142,12 @@ export default function LessonPage() {
         </Link>
       </div>
     );
+  }
+
+  const course = apiCourseDetailToDefinition(apiCourse);
+  const module = course.modules.find((m) => m.id === moduleId);
+  if (!module) {
+    return <LessonPageSkeleton />;
   }
 
   const lesson = mapApiLesson(apiLesson);

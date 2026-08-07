@@ -41,7 +41,7 @@ function CourseHubContent() {
           { label: course?.title ?? courseId },
         ]}
       />
-      {!course || loading || courseQuery.isLoading ? (
+      {!course || loading || courseQuery.isPending || !courseQuery.isFetched ? (
         <CoursePageSkeleton />
       ) : (
         <CourseHubView
