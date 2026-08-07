@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { authedFetch } from "@/lib/security/client-auth";
+import { parseApiError } from "@/lib/admin/lesson-video";
 
 export type AdminModuleRow = {
   id: string;
@@ -19,11 +20,24 @@ export function useAdminModules(courseId: string) {
     queryKey: ["admin", "modules", courseId],
     queryFn: async () => {
       const res = await authedFetch(`/api/v1/admin/modules?courseId=${courseId}`);
-      if (!res.ok) throw new Error("Failed to load modules");
+      if (!res.ok) throw new Error(await parseApiError(res, "Failed to load modules"));
       const data = (await res.json()) as { ok: true; modules: AdminModuleRow[] };
       return data.modules;
     },
     enabled: Boolean(courseId),
+  });
+}
+
+export function useAdminModule(moduleId: string) {
+  return useQuery({
+    queryKey: ["admin", "module", moduleId],
+    queryFn: async () => {
+      const res = await authedFetch(`/api/v1/admin/modules/${moduleId}`);
+      if (!res.ok) throw new Error(await parseApiError(res, "Failed to load module"));
+      const data = (await res.json()) as { ok: true; module: AdminModuleRow };
+      return data.module;
+    },
+    enabled: Boolean(moduleId),
   });
 }
 
@@ -36,8 +50,8 @@ export function useCreateModule(courseId: string) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...body, courseId }),
       });
-      if (!res.ok) throw new Error("Failed to create module");
-      return res.json();
+      if (!res.ok) throw new Error(await parseApiError(res, "Failed to create module"));
+      return res.json() as Promise<{ ok: true; module: AdminModuleRow }>;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "modules", courseId] }),
   });

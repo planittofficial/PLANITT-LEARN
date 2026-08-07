@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Layers, Plus, Trash2, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import { Layers, Plus, Trash2, ChevronRight, Upload } from "lucide-react";
 
 import {
   AdminButton,
@@ -12,27 +13,131 @@ import {
   AdminSection,
 } from "@/features/admin-ui";
 import {
+  defaultLessonId,
+  inferLessonVideoFields,
+} from "@/lib/admin/lesson-video";
+import {
   useAdminModules,
   useCreateModule,
   useDeleteModule,
 } from "@/hooks/admin/use-admin-modules";
 import { useAdminCourse } from "@/hooks/admin/use-admin-courses";
+import { usePresignUpload } from "@/hooks/admin/use-admin-lessons";
 
 export function CourseDetailAdminView({ courseId }: { courseId: string }) {
+  const router = useRouter();
   const { data: course } = useAdminCourse(courseId);
   const { data: modules, isLoading } = useAdminModules(courseId);
   const createModule = useCreateModule(courseId);
   const deleteModule = useDeleteModule(courseId);
+  const presign = usePresignUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [showForm, setShowForm] = useState(false);
   const [id, setId] = useState("");
   const [title, setTitle] = useState("");
+  const [lectureTitle, setLectureTitle] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [skipAutoLesson, setSkipAutoLesson] = useState(false);
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  function resetForm() {
+    setId("");
+    setTitle("");
+    setLectureTitle("");
+    setVideoUrl("");
+    setVideoFile(null);
+    setSkipAutoLesson(false);
+    setError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  async function uploadVideoForLesson(lessonId: string, file: File) {
+    const result = await presign.mutateAsync({
+      filename: file.name,
+      contentType: file.type || "video/mp4",
+      lessonId,
+    });
+
+    if (result.uploadUrl) {
+      await fetch(result.uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type || "video/mp4" },
+      });
+      return { videoKey: result.videoKey, videoUrl: result.publicUrl || undefined };
+    }
+
+    return { videoKey: result.videoKey };
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    await createModule.mutateAsync({ id, title });
-    setShowForm(false);
-    setId("");
-    setTitle("");
+    setError("");
+    setSubmitting(true);
+
+    const moduleId = id.trim();
+    const moduleTitle = title.trim();
+    const lessonTitle = (lectureTitle.trim() || moduleTitle).trim();
+
+    try {
+      await createModule.mutateAsync({ id: moduleId, title: moduleTitle });
+
+      if (!skipAutoLesson) {
+        const lessonId = defaultLessonId(moduleId);
+        const videoFields = inferLessonVideoFields(videoUrl);
+        const kind = videoFile ? "video" : videoFields.kind;
+
+        const createRes = await fetch("/api/v1/admin/lessons", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            id: lessonId,
+            moduleId,
+            title: lessonTitle,
+            kind,
+            videoUrl: kind === "video" ? videoFields.videoUrl : undefined,
+            externalUrl: kind === "external" ? videoFields.externalUrl : undefined,
+          }),
+        });
+
+        if (!createRes.ok) {
+          const detail = await createRes.json().catch(() => null);
+          throw new Error(
+            (detail as { detail?: string })?.detail ??
+              "Module created, but the lecture could not be saved.",
+          );
+        }
+
+        if (videoFile) {
+          const uploaded = await uploadVideoForLesson(lessonId, videoFile);
+          await fetch(`/api/v1/admin/lessons/${lessonId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              kind: "video",
+              videoKey: uploaded.videoKey,
+              videoUrl: uploaded.videoUrl,
+            }),
+          });
+        }
+
+        router.push(`/admin/modules/${moduleId}`);
+      } else {
+        router.push(`/admin/modules/${moduleId}`);
+      }
+
+      setShowForm(false);
+      resetForm();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create module.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -51,7 +156,7 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
 
       <AdminSection
         title="Module Index"
-        description="Each module groups related lessons. Open a module to add lessons and upload videos."
+        description="Each module is one lecture by default. Add extra lessons later only if you need them."
         action={
           <AdminButton onClick={() => setShowForm((v) => !v)}>
             <Plus className="h-3.5 w-3.5" />
@@ -61,33 +166,109 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
       >
         {showForm ? (
           <AdminCard highlight className="mb-4">
-            <p className="font-mono text-[9px] text-brand uppercase tracking-widest mb-3">// New Module Configuration</p>
-            <form onSubmit={handleCreate} className="grid gap-4 sm:grid-cols-3">
-              <AdminInput
-                label="Module ID"
-                placeholder="e.g. fx-module-1"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                required
-              />
-              <div className="sm:col-span-2">
+            <p className="font-mono text-[9px] text-brand uppercase tracking-widest mb-3">
+              // New Module Configuration
+            </p>
+            <form onSubmit={handleCreate} className="grid gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <AdminInput
+                  label="Module ID"
+                  placeholder="e.g. crypto-intro"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                  required
+                />
                 <AdminInput
                   label="Module Title"
-                  placeholder="Module title"
+                  placeholder="Introduction to Cryptocurrency"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
                 />
               </div>
-              <div className="sm:col-span-3">
-                <AdminButton type="submit">Create Module</AdminButton>
+
+              {!skipAutoLesson ? (
+                <>
+                  <AdminInput
+                    label="Lecture Title"
+                    placeholder="Defaults to module title"
+                    value={lectureTitle}
+                    onChange={(e) => setLectureTitle(e.target.value)}
+                  />
+
+                  <div className="rounded-lg border border-white/10 bg-[#131313]/60 p-4 space-y-4">
+                    <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest">
+                      Primary video (optional now — you can upload later)
+                    </p>
+                    <AdminInput
+                      label="Video link"
+                      placeholder="YouTube, Vimeo, or direct .mp4 URL"
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                    />
+                    <div>
+                      <span className="font-mono text-[9px] text-textMuted uppercase tracking-widest">
+                        Or upload video file
+                      </span>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-3">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="video/*"
+                          className="block max-w-full text-xs text-textSecondary file:mr-3 file:rounded file:border-0 file:bg-brand/15 file:px-3 file:py-2 file:font-mono file:text-[10px] file:uppercase file:text-brand"
+                          onChange={(e) => setVideoFile(e.target.files?.[0] ?? null)}
+                        />
+                        {videoFile ? (
+                          <span className="font-mono text-[10px] text-brand">{videoFile.name}</span>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : null}
+
+              <label className="flex items-start gap-2 text-sm text-textSecondary">
+                <input
+                  type="checkbox"
+                  className="mt-1 accent-brand"
+                  checked={skipAutoLesson}
+                  onChange={(e) => setSkipAutoLesson(e.target.checked)}
+                />
+                <span>
+                  Skip auto-lecture — I&apos;ll add lessons manually later from the module page.
+                </span>
+              </label>
+
+              {error ? (
+                <p role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+                  {error}
+                </p>
+              ) : null}
+
+              <div className="flex flex-wrap gap-2">
+                <AdminButton type="submit" disabled={submitting}>
+                  <Upload className="h-3.5 w-3.5" />
+                  {submitting ? "Creating…" : skipAutoLesson ? "Create Module" : "Create Module & Lecture"}
+                </AdminButton>
+                <AdminButton
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    setShowForm(false);
+                    resetForm();
+                  }}
+                >
+                  Cancel
+                </AdminButton>
               </div>
             </form>
           </AdminCard>
         ) : null}
 
         {isLoading ? (
-          <p className="font-mono text-xs text-textMuted uppercase tracking-widest animate-pulse">Loading modules…</p>
+          <p className="font-mono text-xs text-textMuted uppercase tracking-widest animate-pulse">
+            Loading modules…
+          </p>
         ) : null}
 
         <div className="space-y-3">
@@ -109,6 +290,11 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
+                <Link href={`/admin/modules/${mod.id}`}>
+                  <AdminButton variant="secondary" size="sm">
+                    Open Module
+                  </AdminButton>
+                </Link>
                 <Link href={`/admin/quizzes/modules/${mod.id}`}>
                   <AdminButton variant="secondary" size="sm">
                     Module Test

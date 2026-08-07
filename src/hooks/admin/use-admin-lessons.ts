@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { authedFetch } from "@/lib/security/client-auth";
+import { parseApiError } from "@/lib/admin/lesson-video";
 import type { LessonKind } from "@/types/course.types";
 
 export type AdminLessonRow = {
@@ -58,8 +59,8 @@ export function useCreateLesson(moduleId: string) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...body, moduleId }),
       });
-      if (!res.ok) throw new Error("Failed to create lesson");
-      return res.json();
+      if (!res.ok) throw new Error(await parseApiError(res, "Failed to create lesson"));
+      return res.json() as Promise<{ ok: true; lesson: AdminLessonRow }>;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "lessons", moduleId] }),
   });
