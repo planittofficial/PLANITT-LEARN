@@ -81,25 +81,37 @@ export async function createLesson(input: CreateLessonInput): Promise<AdminLesso
     _max: { sortOrder: true },
   });
   const sortOrder = input.sortOrder ?? (maxOrder._max.sortOrder ?? -1) + 1;
+  const published = input.published ?? true;
 
-  const row = await prisma.lesson.create({
-    data: {
-      id: input.id,
-      moduleId: input.moduleId,
-      title: input.title,
-      summary: input.summary,
-      kind: input.kind,
-      durationMinutes: input.durationMinutes ?? 10,
-      durationSeconds: input.durationSeconds,
-      minWatchPercent: input.minWatchPercent ?? 75,
-      markdown: input.markdown,
-      videoUrl: input.videoUrl,
-      videoKey: input.videoKey,
-      externalUrl: input.externalUrl,
-      published: input.published ?? true,
-      sortOrder,
-    },
-    include: { module: { select: { courseId: true } } },
+  const row = await prisma.$transaction(async (tx) => {
+    const lesson = await tx.lesson.create({
+      data: {
+        id: input.id,
+        moduleId: input.moduleId,
+        title: input.title,
+        summary: input.summary,
+        kind: input.kind,
+        durationMinutes: input.durationMinutes ?? 10,
+        durationSeconds: input.durationSeconds,
+        minWatchPercent: input.minWatchPercent ?? 75,
+        markdown: input.markdown,
+        videoUrl: input.videoUrl,
+        videoKey: input.videoKey,
+        externalUrl: input.externalUrl,
+        published,
+        sortOrder,
+      },
+      include: { module: { select: { courseId: true } } },
+    });
+
+    if (published) {
+      await tx.module.update({
+        where: { id: input.moduleId },
+        data: { published: true },
+      });
+    }
+
+    return lesson;
   });
 
   return toAdminLesson(row);
@@ -112,23 +124,36 @@ export async function updateLesson(
   const existing = await prisma.lesson.findUnique({ where: { id: lessonId } });
   if (!existing) return null;
 
-  const row = await prisma.lesson.update({
-    where: { id: lessonId },
-    data: {
-      title: input.title,
-      summary: input.summary,
-      kind: input.kind,
-      durationMinutes: input.durationMinutes,
-      durationSeconds: input.durationSeconds,
-      minWatchPercent: input.minWatchPercent,
-      markdown: input.markdown,
-      videoUrl: input.videoUrl,
-      videoKey: input.videoKey,
-      externalUrl: input.externalUrl,
-      published: input.published,
-      sortOrder: input.sortOrder,
-    },
-    include: { module: { select: { courseId: true } } },
+  const published = input.published ?? existing.published;
+
+  const row = await prisma.$transaction(async (tx) => {
+    const lesson = await tx.lesson.update({
+      where: { id: lessonId },
+      data: {
+        title: input.title,
+        summary: input.summary,
+        kind: input.kind,
+        durationMinutes: input.durationMinutes,
+        durationSeconds: input.durationSeconds,
+        minWatchPercent: input.minWatchPercent,
+        markdown: input.markdown,
+        videoUrl: input.videoUrl,
+        videoKey: input.videoKey,
+        externalUrl: input.externalUrl,
+        published: input.published,
+        sortOrder: input.sortOrder,
+      },
+      include: { module: { select: { courseId: true } } },
+    });
+
+    if (published) {
+      await tx.module.update({
+        where: { id: existing.moduleId },
+        data: { published: true },
+      });
+    }
+
+    return lesson;
   });
 
   return toAdminLesson(row);

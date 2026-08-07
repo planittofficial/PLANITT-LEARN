@@ -69,7 +69,10 @@ export function useUpdateModule(moduleId: string, courseId: string) {
       if (!res.ok) throw new Error("Failed to update module");
       return res.json();
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "modules", courseId] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "modules", courseId] });
+      qc.invalidateQueries({ queryKey: ["admin", "module", moduleId] });
+    },
   });
 }
 

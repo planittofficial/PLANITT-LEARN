@@ -5,8 +5,9 @@ export const ROUTES = {
     COURSES: "/courses",
     course: (courseId: string) => `/courses/${courseId}`,
     lesson: (courseId: string, moduleId: string, lessonId: string) =>
-      `/courses/${courseId}/${moduleId}/${lessonId}`,
-    moduleTest: (courseId: string, moduleId: string) => `/courses/${courseId}/${moduleId}/test`,
+      `/courses/${encodeURIComponent(courseId)}/${encodeURIComponent(moduleId)}/${encodeURIComponent(lessonId)}`,
+    moduleTest: (courseId: string, moduleId: string) =>
+      `/courses/${encodeURIComponent(courseId)}/${encodeURIComponent(moduleId)}/test`,
     LEADERBOARD: "/leaderboard",
     ANALYTICS: "/analytics",
     ACHIEVEMENTS: "/achievements",

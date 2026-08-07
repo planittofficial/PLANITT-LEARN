@@ -22,6 +22,7 @@ import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/cours
 import { getModuleProgressStats } from "@/lib/learning/course-progress";
 import type { CourseProgress } from "@/lib/learning/progress";
 import { cn } from "@/lib/utils";
+import { toYoutubeEmbedUrl, isYoutubeUrl } from "@/lib/video/video-url";
 
 type LessonSidebarProps = {
   lesson: Lesson;
@@ -174,30 +175,53 @@ type LessonContentProps = {
   onComplete: () => void;
 };
 
+function resolvePlayableVideoUrl(lesson: Lesson): string | undefined {
+  if (lesson.content.videoUrl?.trim()) return lesson.content.videoUrl.trim();
+  if (lesson.content.externalUrl && isYoutubeUrl(lesson.content.externalUrl)) {
+    return lesson.content.externalUrl.trim();
+  }
+  return undefined;
+}
+
 export function LessonContent({ lesson, courseId, userId, onComplete }: LessonContentProps) {
-  if (lesson.kind === "video") {
+  const videoUrl = resolvePlayableVideoUrl(lesson);
+  const isPlayableVideo =
+    lesson.kind === "video" || Boolean(videoUrl && isYoutubeUrl(videoUrl));
+
+  if (isPlayableVideo) {
     return (
       <div className="overflow-hidden rounded-lg border border-borderSubtle bg-black shadow-2xl">
         <div className="flex items-center justify-between gap-3 border-b border-borderSubtle bg-surface/60 px-4 py-2.5 text-sm font-medium text-textSecondary">
           <span>Lesson video</span>
           <span className="text-textSecondary/60">{lesson.durationMinutes} min</span>
         </div>
-        {lesson.content.videoUrl && userId ? (
+        {videoUrl && userId ? (
           <VideoPlayer
             lessonId={lesson.id}
             courseId={courseId}
             userId={userId}
-            videoUrl={lesson.content.videoUrl}
+            videoUrl={videoUrl}
             title={lesson.title}
             onComplete={onComplete}
           />
-        ) : lesson.content.videoUrl ? (
-          <video
-            src={lesson.content.videoUrl}
-            controls
-            className="aspect-video w-full bg-black"
-            title={lesson.title}
-          />
+        ) : videoUrl ? (
+          toYoutubeEmbedUrl(videoUrl) ? (
+            <iframe
+              src={toYoutubeEmbedUrl(videoUrl)!}
+              title={lesson.title}
+              className="aspect-video w-full bg-black"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          ) : (
+            <video
+              src={videoUrl}
+              controls
+              className="aspect-video w-full bg-black"
+              title={lesson.title}
+            />
+          )
         ) : (
           <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black text-sm text-textMuted">
             <Video className="h-8 w-8 opacity-30 text-brand" />

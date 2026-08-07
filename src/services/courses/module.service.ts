@@ -60,7 +60,7 @@ export async function createModule(input: CreateModuleInput): Promise<AdminModul
       courseId: input.courseId,
       title: input.title,
       summary: input.summary,
-      published: input.published ?? false,
+      published: input.published ?? true,
       sortOrder,
     },
     include: { _count: { select: { lessons: true } } },

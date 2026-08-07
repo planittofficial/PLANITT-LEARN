@@ -3,6 +3,10 @@
  * Do not import from apps/website — keep this app isolated.
  */
 
+import { loadLocalEnv } from "@/lib/load-local-env";
+
+loadLocalEnv();
+
 function trimUrl(value: string | undefined): string | undefined {
   const trimmed = value?.trim();
   return trimmed ? trimmed.replace(/\/+$/, "") : undefined;

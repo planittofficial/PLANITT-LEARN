@@ -14,7 +14,7 @@ import {
   AdminSection,
 } from "@/features/admin-ui";
 import { defaultLessonId, inferLessonVideoFields } from "@/lib/admin/lesson-video";
-import { useAdminModule } from "@/hooks/admin/use-admin-modules";
+import { useAdminModule, useUpdateModule } from "@/hooks/admin/use-admin-modules";
 import {
   useAdminLessons,
   useCreateLesson,
@@ -30,6 +30,7 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
   const createLesson = useCreateLesson(moduleId);
   const deleteLesson = useDeleteLesson(moduleId);
   const courseId = moduleRow?.courseId ?? lessons?.[0]?.courseId;
+  const updateModule = useUpdateModule(moduleId, courseId ?? "");
 
   const [showForm, setShowForm] = useState(false);
   const [id, setId] = useState("");
@@ -98,10 +99,32 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
         }
         icon={Video}
         action={
-          <AdminButton onClick={() => setShowForm((v) => !v)}>
-            <Plus className="h-3.5 w-3.5" />
-            Add Lesson
-          </AdminButton>
+          <div className="flex flex-wrap items-center gap-2">
+            {moduleRow ? (
+              <span
+                className={`rounded px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-widest border ${
+                  moduleRow.published
+                    ? "border-brand/20 bg-brand/5 text-brand"
+                    : "border-amber-500/20 bg-amber-500/5 text-amber-400"
+                }`}
+              >
+                {moduleRow.published ? "Live for students" : "Draft — hidden"}
+              </span>
+            ) : null}
+            {!moduleRow?.published ? (
+              <AdminButton
+                variant="secondary"
+                onClick={() => updateModule.mutate({ published: true })}
+                disabled={updateModule.isPending}
+              >
+                Publish module
+              </AdminButton>
+            ) : null}
+            <AdminButton onClick={() => setShowForm((v) => !v)}>
+              <Plus className="h-3.5 w-3.5" />
+              Add Lesson
+            </AdminButton>
+          </div>
         }
       />
 

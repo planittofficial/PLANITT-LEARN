@@ -25,7 +25,7 @@ function CourseHubContent() {
   usePurchasedEnrollmentRefresh();
 
   const course =
-    courseQuery.data && courseQuery.data.modules.length > 0
+    courseQuery.data != null
       ? apiCourseDetailToDefinition(courseQuery.data)
       : staticCourse;
 

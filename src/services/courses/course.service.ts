@@ -113,7 +113,7 @@ export async function listPublishedCourses(): Promise<ApiCourseListItem[]> {
       },
     });
 
-    if (rows.length === 0) return courseListFromStatic();
+    if (rows.length === 0) return [];
 
     return rows.map((course) => {
       const lessonCount = course.modules.reduce((sum, mod) => sum + mod.lessons.length, 0);
@@ -130,7 +130,7 @@ export async function listPublishedCourses(): Promise<ApiCourseListItem[]> {
       };
     });
   } catch {
-    return courseListFromStatic();
+    return [];
   }
 }
 
@@ -152,7 +152,7 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
       },
     });
 
-    if (!course) return courseDetailFromStatic(normalized);
+    if (!course) return null;
 
     const modules: ApiModule[] = course.modules.map((mod) => ({
       id: mod.id,
@@ -160,8 +160,6 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
       summary: mod.summary ?? "",
       lessons: mod.lessons.map(lessonFromDb),
     }));
-
-    if (modules.length === 0) return courseDetailFromStatic(normalized);
 
     const lessonCount = modules.reduce((sum, mod) => sum + mod.lessons.length, 0);
 
@@ -178,7 +176,7 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
       modules,
     };
   } catch {
-    return courseDetailFromStatic(normalized);
+    return null;
   }
 }
 

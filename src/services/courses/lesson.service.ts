@@ -55,8 +55,8 @@ export async function getLessonContext(lessonId: string): Promise<LessonContext 
       include: { module: { select: { id: true, courseId: true } } },
     });
 
-    if (!row) return resolveFromCatalog(normalized);
-    if (!row.published) return resolveFromCatalog(normalized);
+    if (!row) return null;
+    if (!row.published) return null;
 
     return {
       lesson: {
@@ -76,7 +76,7 @@ export async function getLessonContext(lessonId: string): Promise<LessonContext 
       courseId: row.module.courseId,
     };
   } catch {
-    return resolveFromCatalog(normalized);
+    return null;
   }
 }
 

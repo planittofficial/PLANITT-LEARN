@@ -30,6 +30,8 @@ export function useCourseDetail(courseId: string) {
   return {
     data: query.data,
     isLoading: query.isLoading,
+    isPending: query.isPending,
+    isFetched: query.isFetched,
     error: query.error,
     refetch: query.refetch,
   };

@@ -1,13 +1,41 @@
+import { loadLocalEnv } from "@/lib/load-local-env";
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
+loadLocalEnv();
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+const databaseUrl = process.env.DATABASE_URL?.trim();
+if (databaseUrl) {
+  process.env.DATABASE_URL = databaseUrl;
+}
+
+type PrismaGlobal = {
+  prisma?: PrismaClient;
+  prismaUrl?: string;
+};
+
+const globalForPrisma = globalThis as unknown as PrismaGlobal;
+
+function createPrismaClient(): PrismaClient {
+  return new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
 }
+
+function getPrismaClient(): PrismaClient {
+  if (!databaseUrl) {
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = createPrismaClient();
+    }
+    return globalForPrisma.prisma;
+  }
+
+  if (!globalForPrisma.prisma || globalForPrisma.prismaUrl !== databaseUrl) {
+    void globalForPrisma.prisma?.$disconnect();
+    globalForPrisma.prisma = createPrismaClient();
+    globalForPrisma.prismaUrl = databaseUrl;
+  }
+
+  return globalForPrisma.prisma;
+}
+
+export const prisma = getPrismaClient();

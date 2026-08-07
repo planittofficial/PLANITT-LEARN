@@ -21,12 +21,13 @@ import {
   useCreateModule,
   useDeleteModule,
 } from "@/hooks/admin/use-admin-modules";
-import { useAdminCourse } from "@/hooks/admin/use-admin-courses";
+import { useAdminCourse, useUpdateCourse } from "@/hooks/admin/use-admin-courses";
 import { usePresignUpload } from "@/hooks/admin/use-admin-lessons";
 
 export function CourseDetailAdminView({ courseId }: { courseId: string }) {
   const router = useRouter();
   const { data: course } = useAdminCourse(courseId);
+  const updateCourse = useUpdateCourse(courseId);
   const { data: modules, isLoading } = useAdminModules(courseId);
   const createModule = useCreateModule(courseId);
   const deleteModule = useDeleteModule(courseId);
@@ -83,7 +84,11 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
     const lessonTitle = (lectureTitle.trim() || moduleTitle).trim();
 
     try {
-      await createModule.mutateAsync({ id: moduleId, title: moduleTitle });
+      await createModule.mutateAsync({ id: moduleId, title: moduleTitle, published: true });
+
+      if (!course?.published) {
+        await updateCourse.mutateAsync({ published: true });
+      }
 
       if (!skipAutoLesson) {
         const lessonId = defaultLessonId(moduleId);

@@ -1,5 +1,4 @@
 import type { CourseDefinition } from "@/lib/catalog/courses";
-import { getCourseById } from "@/lib/catalog/courses";
 import type { ApiCourseDetail, ApiCourseListItem } from "@/types/course.types";
 
 /** Map API course detail to the student-facing CourseDefinition shape. */
@@ -32,21 +31,8 @@ export function apiCourseDetailToDefinition(api: ApiCourseDetail): CourseDefinit
   };
 }
 
-/** List item → CourseDefinition using static catalog modules when API has counts only. */
+/** List item → CourseDefinition (metadata only — modules come from course detail API). */
 export function apiCourseListItemToDefinition(item: ApiCourseListItem): CourseDefinition {
-  const staticCourse = getCourseById(item.id);
-  if (staticCourse) {
-    return {
-      ...staticCourse,
-      title: item.title,
-      category: item.category,
-      level: item.level,
-      duration: item.duration,
-      blurb: item.blurb,
-      outcomes: item.outcomes,
-    };
-  }
-
   return {
     id: item.id,
     title: item.title,
