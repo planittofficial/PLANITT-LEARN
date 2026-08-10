@@ -15,7 +15,7 @@ export function StudentHeader() {
 
   return (
     <header className="fixed top-0 right-0 w-full md:left-64 md:w-auto h-16 z-40 border-b border-borderSubtle bg-surface/90 backdrop-blur-md">
-      <div className="flex h-full items-center justify-between px-6">
+      <div className="flex h-full items-center justify-between gap-2 px-4 sm:px-6">
         
         {/* Left Section: Branding on Mobile / Navigation Status on Desktop */}
         <div className="flex items-center gap-4">
@@ -33,7 +33,7 @@ export function StudentHeader() {
         </div>
 
         {/* Right Section: Core Action Buttons & User Menu */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <GlobalSearch className="md:hidden" compact />
 
           <ThemeToggle />

@@ -78,18 +78,27 @@ export function StudentNav() {
     >
       <div className="mx-auto flex h-16 items-stretch px-4">
         {STUDENT_NAV_ITEMS.map((item) => {
-          const active = pathname === item.href;
+          const active =
+            item.href === ROUTES.STUDENT.HOME
+              ? pathname === item.href || pathname.startsWith("/courses")
+              : pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[10px] font-medium tracking-wide transition",
+                "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1 py-2 text-[10px] font-medium tracking-wide transition",
                 active ? "text-brand" : "text-textMuted",
               )}
             >
-              <item.icon className="h-5 w-5" strokeWidth={active ? 2.25 : 2} />
-              <span className="truncate leading-none uppercase">{item.shortLabel}</span>
+              {active ? (
+                <span
+                  className="absolute top-0 left-1/2 h-0.5 w-10 -translate-x-1/2 rounded-full bg-brand"
+                  aria-hidden
+                />
+              ) : null}
+              <item.icon className="h-5 w-5 shrink-0" strokeWidth={active ? 2.25 : 2} />
+              <span className="max-w-full truncate leading-none uppercase">{item.shortLabel}</span>
             </Link>
           );
         })}
