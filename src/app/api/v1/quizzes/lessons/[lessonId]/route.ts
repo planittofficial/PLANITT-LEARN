@@ -33,7 +33,5 @@ export async function GET(request: Request, { params }: Params) {
   }
 
   const quiz = await getLessonQuizForStudent(lessonId.trim());
-  if (!quiz) return fail("Quiz not available", 404);
-
-  return ok({ ok: true, quiz });
+  return ok({ ok: true, quiz: quiz ?? null });
 }

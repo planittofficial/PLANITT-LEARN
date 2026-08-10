@@ -38,7 +38,5 @@ export async function GET(request: Request, { params }: Params) {
   }
 
   const test = await getModuleTestForStudent(normalized);
-  if (!test) return fail("Module test not available", 404);
-
-  return ok({ ok: true, test });
+  return ok({ ok: true, test: test ?? null });
 }
