@@ -190,11 +190,12 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
 
   if (isPlayableVideo) {
     return (
-      <div className="overflow-hidden rounded-lg border border-borderSubtle bg-black shadow-2xl">
-        <div className="flex items-center justify-between gap-3 border-b border-borderSubtle bg-surface/60 px-4 py-2.5 text-sm font-medium text-textSecondary">
+      <div className="rounded-lg border border-borderSubtle bg-black shadow-2xl">
+        <div className="flex items-center justify-between gap-3 border-b border-borderSubtle bg-surface/60 px-3 py-2 text-sm font-medium text-textSecondary sm:px-4 sm:py-2.5">
           <span>Lesson video</span>
-          <span className="text-textSecondary/60">{lesson.durationMinutes} min</span>
+          <span className="shrink-0 text-textSecondary/60">{lesson.durationMinutes} min</span>
         </div>
+        <div className="overflow-hidden rounded-b-lg">
         {videoUrl && userId ? (
           <VideoPlayer
             lessonId={lesson.id}
@@ -228,6 +229,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
             This lesson video is not available yet.
           </div>
         )}
+        </div>
       </div>
     );
   }
@@ -261,16 +263,27 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
 }
 
 export function LessonMetaBar({ lesson, module }: { lesson: Lesson; module: CourseModule }) {
+  const isVideoLesson =
+    lesson.kind === "video" ||
+    Boolean(lesson.content.videoUrl) ||
+    Boolean(lesson.content.externalUrl && isYoutubeUrl(lesson.content.externalUrl));
+
   return (
-    <div className="flex flex-wrap items-center gap-3 text-sm text-textMuted">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-textMuted sm:text-sm">
       <span className="inline-flex items-center gap-1">
-        <Clock className="h-3.5 w-3.5" />
+        <Clock className="h-3.5 w-3.5 shrink-0" />
         {lesson.durationMinutes} min
       </span>
-      <span aria-hidden="true">•</span>
-      <Badge className="py-0.5 text-xs">{lesson.kind === "video" ? "Video" : lesson.kind === "external" ? "Resource" : "Reading"}</Badge>
-      <span aria-hidden="true">•</span>
-      <span>{module.title}</span>
+      <span aria-hidden="true" className="hidden sm:inline">
+        •
+      </span>
+      <Badge className="py-0.5 text-xs">
+        {isVideoLesson ? "Video" : lesson.kind === "external" ? "Resource" : "Reading"}
+      </Badge>
+      <span aria-hidden="true" className="hidden sm:inline">
+        •
+      </span>
+      <span className="hidden min-w-0 truncate sm:inline">{module.title}</span>
     </div>
   );
 }

@@ -183,7 +183,15 @@ export default function LessonPage() {
 
   return (
     <>
+      <Link
+        href={ROUTES.STUDENT.course(courseId)}
+        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-brand sm:hidden"
+      >
+        ← Back to course
+      </Link>
+
       <Breadcrumb
+        className="hidden sm:block"
         items={[
           { label: "Dashboard", href: ROUTES.STUDENT.HOME },
           { label: course.title, href: ROUTES.STUDENT.course(courseId) },
@@ -191,22 +199,22 @@ export default function LessonPage() {
         ]}
       />
 
-      <section className="border-b border-borderSubtle pb-6 mb-8 mt-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="w-2 h-[1px] bg-brand"></span>
-          <span className="font-mono text-[10px] text-brand uppercase tracking-widest font-bold">
+      <section className="mb-6 mt-2 border-b border-borderSubtle pb-4 sm:mb-8 sm:mt-4 sm:pb-6">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-[1px] w-2 shrink-0 bg-brand" />
+          <span className="line-clamp-2 font-mono text-[10px] font-bold uppercase tracking-widest text-brand">
             {module.title}
           </span>
         </div>
-        <h1 className="font-headline text-3xl font-bold tracking-tight text-textPrimary leading-tight">
+        <h1 className="break-words font-headline text-xl font-bold leading-snug tracking-tight text-textPrimary sm:text-2xl md:text-3xl">
           {lesson.title}
         </h1>
-        <div className="mt-4">
+        <div className="mt-3 sm:mt-4">
           <LessonMetaBar lesson={lesson} module={module} />
         </div>
       </section>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="mt-4 grid gap-6 sm:mt-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-5">
           <LessonContent
             lesson={lesson}
@@ -215,12 +223,12 @@ export default function LessonPage() {
             onComplete={() => void markComplete()}
           />
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <button
               type="button"
               onClick={() => void markComplete()}
               disabled={completed || isMarking}
-              className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50 sm:w-auto"
             >
               {completed ? (
                 <>

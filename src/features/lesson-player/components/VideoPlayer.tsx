@@ -68,7 +68,7 @@ export function VideoPlayer({
 
   if (embedUrl) {
     return (
-      <div className="bg-black p-0 sm:p-3">
+      <div className="bg-black">
         <iframe
           src={embedUrl}
           title={title}
@@ -77,7 +77,7 @@ export function VideoPlayer({
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
-        <p className="px-2 pt-2 text-center text-xs text-textMuted">
+        <p className="border-t border-white/10 bg-black px-3 py-2.5 text-center text-[11px] leading-relaxed text-textMuted sm:px-4 sm:text-xs">
           Protected course content — do not share or redistribute this lesson.
         </p>
       </div>
