@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 
@@ -25,7 +25,6 @@ import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { useCourseProgress } from "@/hooks/progress/use-course-progress";
 import { useLessonQuiz } from "@/hooks/quizzes/use-lesson-quiz";
 import { apiCourseDetailToDefinition } from "@/lib/catalog/map-api-course";
-import { getCourseById, getLessonByPath } from "@/lib/catalog/courses";
 import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
 import { recordRecentlyWatched } from "@/lib/learning/activity";
 import { recordLearningActivity, touchDailyActivity, loadGamification } from "@/lib/learning/gamification";
@@ -55,7 +54,9 @@ function mapApiLesson(lesson: ApiLesson): Lesson {
 
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
-  const { courseId, moduleId, lessonId } = params;
+  const courseId = decodeURIComponent(params.courseId ?? "");
+  const moduleId = decodeURIComponent(params.moduleId ?? "");
+  const lessonId = decodeURIComponent(params.lessonId ?? "");
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
   const courseQuery = useCourseDetail(courseId);
@@ -72,12 +73,11 @@ export default function LessonPage() {
     if (!user?.id) return;
     touchDailyActivity(user.id);
 
-    const fallback = getLessonByPath(courseId, moduleId, lessonId);
     const apiMod = courseQuery.data?.modules.find((m) => m.id === moduleId);
     const apiLesson = apiMod?.lessons.find((l) => l.id === lessonId);
-    const courseTitle = courseQuery.data?.title ?? fallback?.course.title;
-    const lessonTitle = apiLesson?.title ?? fallback?.lesson.title;
-    const kind = apiLesson?.kind ?? fallback?.lesson.kind ?? "article";
+    const courseTitle = courseQuery.data?.title;
+    const lessonTitle = apiLesson?.title;
+    const kind = apiLesson?.kind ?? "article";
 
     if (courseTitle && lessonTitle) {
       recordRecentlyWatched(user.id, {
@@ -92,19 +92,11 @@ export default function LessonPage() {
   }, [courseId, moduleId, lessonId, user?.id, courseQuery.data]);
 
   if (!courseId || !moduleId || !lessonId) {
-    return (
-      <>
-        <LessonPageSkeleton />
-      </>
-    );
+    return <LessonPageSkeleton />;
   }
 
-  if (loading || courseQuery.isLoading || progressLoading) {
-    return (
-      <>
-        <LessonPageSkeleton />
-      </>
-    );
+  if (loading || courseQuery.isPending || !courseQuery.isFetched || progressLoading) {
+    return <LessonPageSkeleton />;
   }
 
   // Enrollment gate (fast client-side check) — API also enforces enrollment.
@@ -125,38 +117,41 @@ export default function LessonPage() {
     );
   }
 
-  // Prefer API course tree (DB-backed) so admin video edits reflect immediately.
-  // Fall back to static catalog when API isn't available or doesn't include this lesson.
   const apiCourse = courseQuery.data;
-  const fallback = getLessonByPath(courseId, moduleId, lessonId);
-  const staticCourse = getCourseById(courseId);
-  if (!apiCourse && !fallback && !staticCourse) notFound();
-
-  const course =
-    apiCourse && apiCourse.modules.length > 0
-      ? apiCourseDetailToDefinition(apiCourse)
-      : (staticCourse ?? fallback!.course);
-
-  const apiLesson = apiCourse?.modules
-    .find((m) => m.id === moduleId)
-    ?.lessons.find((l) => l.id === lessonId);
-
-  let module: CourseModule | undefined = course.modules.find((m) => m.id === moduleId);
-  let lesson: Lesson | undefined = module?.lessons.find((l) => l.id === lessonId);
-
-  if (apiLesson) {
-    lesson = mapApiLesson(apiLesson);
+  if (!apiCourse) {
+    return (
+      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-200">
+        Could not load this lesson. Go back to the{" "}
+        <Link href={ROUTES.STUDENT.course(courseId)} className="text-brand underline">
+          course page
+        </Link>{" "}
+        and try again.
+      </div>
+    );
   }
 
-  if ((!module || !lesson) && fallback) {
-    module = fallback.module;
-    lesson = apiLesson ? mapApiLesson(apiLesson) : fallback.lesson;
+  const apiMod = apiCourse.modules.find((m) => m.id === moduleId);
+  const apiLesson = apiMod?.lessons.find((l) => l.id === lessonId);
+
+  if (!apiMod || !apiLesson) {
+    return (
+      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-200">
+        This lesson was not found. It may be unpublished or the link is outdated.{" "}
+        <Link href={ROUTES.STUDENT.course(courseId)} className="text-brand underline">
+          Return to course
+        </Link>
+      </div>
+    );
   }
 
-  if (!module || !lesson) notFound();
+  const course = apiCourseDetailToDefinition(apiCourse);
+  const module = course.modules.find((m) => m.id === moduleId);
+  if (!module) {
+    return <LessonPageSkeleton />;
+  }
 
-  const navCourse =
-    staticCourse && staticCourse.modules.length > course.modules.length ? staticCourse : course;
+  const lesson = mapApiLesson(apiLesson);
+  const navCourse = course;
 
   const allLessons = navCourse.modules.flatMap((m) =>
     m.lessons.map((l) => ({ lesson: l, moduleId: m.id })),

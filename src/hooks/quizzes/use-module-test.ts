@@ -6,12 +6,11 @@ import { ROUTES } from "@/constants/routes";
 import { authedFetch } from "@/lib/security/client-auth";
 import type { QuizAnswer, QuizAttemptResult, QuizPublicView } from "@/types/quiz.types";
 
-type TestResponse = { ok: true; test: QuizPublicView };
+type TestResponse = { ok: true; test: QuizPublicView | null };
 type AttemptResponse = { ok: true; result: QuizAttemptResult };
 
 async function fetchModuleTest(moduleId: string): Promise<QuizPublicView | null> {
   const res = await authedFetch(ROUTES.API.QUIZZES.module(moduleId));
-  if (res.status === 404) return null;
   if (!res.ok) return null;
   const data = (await res.json()) as TestResponse;
   return data.test ?? null;

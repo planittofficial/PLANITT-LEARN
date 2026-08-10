@@ -3,9 +3,9 @@ import { existsSync } from "node:fs";
 import { config } from "dotenv";
 
 if (existsSync(".env.local")) {
-  config({ path: ".env.local" });
+  config({ path: ".env.local", override: true });
 } else if (existsSync(".env")) {
-  config({ path: ".env" });
+  config({ path: ".env", override: true });
 }
 
 const args = process.argv.slice(2);

@@ -17,8 +17,17 @@ export async function GET(request: Request) {
     return fail("DATABASE_URL is required for admin course management", 503);
   }
 
-  const courses = await listAdminCourses();
-  return ok({ ok: true, courses });
+  try {
+    const courses = await listAdminCourses();
+    return ok({ ok: true, courses });
+  } catch (err) {
+    console.error("[admin/courses] list failed:", err);
+    const message =
+      process.env.NODE_ENV === "development" && err instanceof Error
+        ? `Database connection failed: ${err.message}`
+        : "Database connection failed — check DATABASE_URL in .env.local";
+    return fail(message, 503);
+  }
 }
 
 export async function POST(request: Request) {

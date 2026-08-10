@@ -1,4 +1,5 @@
 import type { LessonKind } from "@/types/course.types";
+import { isYoutubeUrl } from "@/lib/video/video-url";
 
 const EXTERNAL_HOST_PATTERN =
   /youtube\.com|youtu\.be|vimeo\.com|drive\.google\.com|loom\.com|wistia\.com/i;
@@ -25,6 +26,11 @@ export function inferLessonVideoFields(url: string): {
 } {
   const trimmed = url.trim();
   if (!trimmed) return { kind: "video" };
+
+  // YouTube/Vimeo play inline in the lesson player — store as hosted video URL.
+  if (isYoutubeUrl(trimmed) || /vimeo\.com/i.test(trimmed)) {
+    return { kind: "video", videoUrl: trimmed };
+  }
 
   if (EXTERNAL_HOST_PATTERN.test(trimmed)) {
     return { kind: "external", externalUrl: trimmed };
