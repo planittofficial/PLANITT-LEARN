@@ -7,113 +7,54 @@ import {
   CheckCircle2,
   Clock,
   FileText,
-  Layers,
-  Video
+  Video,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/Badge";
 import { ROUTES } from "@/constants/routes";
 import { MarkdownLesson } from "@/features/lesson-player/components/MarkdownLesson";
 import { LessonCourseNav } from "@/features/lesson-player/components/LessonCourseNav";
-import { LessonNotes } from "@/features/lesson-player/components/LessonNotes";
-import { LessonResources } from "@/features/lesson-player/components/LessonResources";
 import { VideoPlayer } from "@/features/lesson-player/components/VideoPlayer";
 import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
-import { getModuleProgressStats } from "@/lib/learning/course-progress";
 import type { CourseProgress } from "@/lib/learning/progress";
 import { cn } from "@/lib/utils";
 import { toYoutubeEmbedUrl, isYoutubeUrl } from "@/lib/video/video-url";
 
 type LessonSidebarProps = {
-  lesson: Lesson;
-  module: CourseModule;
   course: CourseDefinition;
+  courseId: string;
+  currentLessonId: string;
   progress: CourseProgress;
-  completed: boolean;
 };
 
 export function LessonSidebar({
-  lesson,
-  module,
   course,
   courseId,
+  currentLessonId,
   progress,
-  completed,
-  userId,
-}: LessonSidebarProps & { courseId: string; userId?: string }) {
-  const moduleLessonIds = module.lessons.map((l) => l.id);
-  const moduleStats = getModuleProgressStats(progress, moduleLessonIds);
-
+}: LessonSidebarProps) {
   return (
     <aside className="space-y-4 xl:sticky xl:top-20">
       <LessonCourseNav
         course={course}
         courseId={courseId}
-        currentLessonId={lesson.id}
+        currentLessonId={currentLessonId}
         progress={progress}
       />
 
-      <div className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-5 shadow-2xl">
-        <div>
-          <p className="text-xs font-semibold text-brand">Current lesson</p>
-          <h3 className="mt-2 font-headline text-base font-extrabold text-textPrimary leading-snug tracking-tight">{lesson.title}</h3>
-          <p className="mt-2 text-xs leading-relaxed text-textSecondary">{lesson.summary}</p>
-        </div>
-
-        <dl className="mt-4 space-y-2 border-t border-borderSubtle pt-4 text-sm">
-          <div className="flex justify-between">
-            <dt className="text-textMuted">Duration</dt>
-            <dd className="font-bold text-textPrimary">{lesson.durationMinutes} min</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-textMuted">Lesson type</dt>
-            <dd>
-              <Badge className="py-0.5 text-xs">
-                {lesson.kind === "video" ? (
-                  <Video className="mr-1 h-3 w-3" />
-                ) : (
-                  <FileText className="mr-1 h-3 w-3" />
-                )}
-                {lesson.kind === "video" ? "Video" : lesson.kind === "external" ? "Resource" : "Reading"}
-              </Badge>
-            </dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-textMuted">Status</dt>
-            <dd>
-              {completed ? (
-                <span className="font-semibold text-brand">Completed</span>
-              ) : (
-                <span className="font-semibold text-amber-400">In progress</span>
-              )}
-            </dd>
-          </div>
-        </dl>
-
-        <div className="mt-4 border-t border-borderSubtle pt-4">
-          <div className="mb-2 flex items-center gap-2 text-xs font-medium text-textMuted">
-            <Layers className="h-3.5 w-3.5" />
-            Module progress
-          </div>
-          <div className="w-full h-1 bg-elevated rounded overflow-hidden mb-1">
-            <div className="h-full bg-brand" style={{ width: `${moduleStats.percent}%` }} />
-          </div>
-          <div className="mt-1 flex justify-between text-xs text-textMuted">
-            <span>{moduleStats.percent}% complete</span>
-            <span>{moduleStats.completed}/{moduleStats.total} lessons</span>
-          </div>
-        </div>
-
+      <div className="rounded-xl border border-borderSubtle bg-surface/80 p-4 shadow-card">
+        <p className="text-xs font-semibold uppercase tracking-wide text-textMuted">Course</p>
+        <p className="mt-1 font-headline text-sm font-semibold leading-snug text-textPrimary">
+          {course.title}
+        </p>
+        <p className="mt-2 text-xs leading-6 text-textSecondary">{course.blurb}</p>
         <Link
           href={ROUTES.STUDENT.course(course.id)}
-          className="mt-4 block text-center text-sm font-medium text-brand hover:underline"
+          className="mt-3 inline-flex text-sm font-medium text-brand hover:underline"
         >
-          View course overview
+          View course overview →
         </Link>
       </div>
-
-      <LessonResources lesson={lesson} />
-      {userId ? <LessonNotes userId={userId} lessonId={lesson.id} /> : null}
     </aside>
   );
 }
@@ -126,17 +67,18 @@ type LessonNavProps = {
 
 export function LessonNav({ courseId, previous, next }: LessonNavProps) {
   return (
-    <nav className="mt-10 grid gap-4 border-t border-borderSubtle pt-8 sm:grid-cols-2">
+    <nav className="mt-8 grid gap-4 border-t border-borderSubtle pt-8 sm:grid-cols-2">
       {previous ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, previous.moduleId, previous.lessonId)}
-          className="group relative flex items-center gap-3 rounded-lg border border-borderSubtle bg-surface/60 p-4 transition-all duration-200 hover:border-brand/40"
+          className="group flex items-center gap-3 rounded-xl border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:shadow-card"
         >
-          <div className="glow-border" />
-          <ArrowLeft className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand transition-colors" />
-          <div className="min-w-0 text-left relative z-10">
-            <p className="text-xs font-medium text-brand/70">Previous lesson</p>
-            <p className="truncate text-xs font-bold text-textPrimary group-hover:text-brand mt-1">{previous.title}</p>
+          <ArrowLeft className="h-5 w-5 shrink-0 text-textMuted transition group-hover:text-brand" />
+          <div className="min-w-0 text-left">
+            <p className="text-xs font-medium text-brand/80">Previous lesson</p>
+            <p className="mt-1 truncate text-sm font-semibold text-textPrimary group-hover:text-brand">
+              {previous.title}
+            </p>
           </div>
         </Link>
       ) : (
@@ -146,19 +88,20 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
       {next ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, next.moduleId, next.lessonId)}
-          className="group relative flex items-center justify-end gap-3 rounded-lg border border-borderSubtle bg-surface/60 p-4 transition-all duration-200 hover:border-brand/40 sm:col-start-2"
+          className="group flex items-center justify-end gap-3 rounded-xl border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:shadow-card sm:col-start-2"
         >
-          <div className="glow-border" />
-          <div className="min-w-0 text-right relative z-10">
-            <p className="text-xs font-medium text-brand/70">Next lesson</p>
-            <p className="truncate text-xs font-bold text-textPrimary group-hover:text-brand mt-1">{next.title}</p>
+          <div className="min-w-0 text-right">
+            <p className="text-xs font-medium text-brand/80">Next lesson</p>
+            <p className="mt-1 truncate text-sm font-semibold text-textPrimary group-hover:text-brand">
+              {next.title}
+            </p>
           </div>
-          <ArrowRight className="h-5 w-5 shrink-0 text-textMuted group-hover:text-brand transition-colors" />
+          <ArrowRight className="h-5 w-5 shrink-0 text-textMuted transition group-hover:text-brand" />
         </Link>
       ) : (
         <div
           className={cn(
-            "flex items-center justify-center rounded-lg border border-dashed border-borderSubtle p-4 text-sm text-brand/60 sm:col-start-2",
+            "flex items-center justify-center rounded-xl border border-dashed border-borderSubtle p-4 text-sm text-textMuted sm:col-start-2",
           )}
         >
           You have reached the end of this course
@@ -190,12 +133,7 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
 
   if (isPlayableVideo) {
     return (
-      <div className="rounded-lg border border-borderSubtle bg-black shadow-2xl">
-        <div className="flex items-center justify-between gap-3 border-b border-borderSubtle bg-surface/60 px-3 py-2 text-sm font-medium text-textSecondary sm:px-4 sm:py-2.5">
-          <span>Lesson video</span>
-          <span className="shrink-0 text-textSecondary/60">{lesson.durationMinutes} min</span>
-        </div>
-        <div className="overflow-hidden rounded-b-lg">
+      <div className="overflow-hidden rounded-xl border border-borderSubtle bg-black shadow-card">
         {videoUrl && userId ? (
           <VideoPlayer
             lessonId={lesson.id}
@@ -229,7 +167,6 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
             This lesson video is not available yet.
           </div>
         )}
-        </div>
       </div>
     );
   }
@@ -240,17 +177,20 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
         href={lesson.content.externalUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-black shadow-card transition hover:brightness-110"
+        className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brandForeground shadow-card transition hover:bg-brandHover"
       >
-        Open External Resource →
+        Open external resource →
       </a>
     );
   }
 
   return (
-    <div id="lesson-content" className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 shadow-2xl">
+    <div
+      id="lesson-content"
+      className="rounded-xl border border-borderSubtle bg-surface p-6 shadow-card sm:p-8"
+    >
       <div className="mb-4 flex items-center gap-2 border-b border-borderSubtle pb-3">
-        <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
+        <span className="h-2 w-2 rounded-full bg-brand" />
         <span className="text-sm font-semibold text-brand">Lesson reading</span>
       </div>
       {lesson.content.markdown ? (
@@ -262,28 +202,58 @@ export function LessonContent({ lesson, courseId, userId, onComplete }: LessonCo
   );
 }
 
-export function LessonMetaBar({ lesson, module }: { lesson: Lesson; module: CourseModule }) {
+export function LessonMetaBar({
+  lesson,
+  module,
+  completed,
+}: {
+  lesson: Lesson;
+  module: CourseModule;
+  completed: boolean;
+}) {
   const isVideoLesson =
     lesson.kind === "video" ||
     Boolean(lesson.content.videoUrl) ||
     Boolean(lesson.content.externalUrl && isYoutubeUrl(lesson.content.externalUrl));
 
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-textMuted sm:text-sm">
-      <span className="inline-flex items-center gap-1">
-        <Clock className="h-3.5 w-3.5 shrink-0" />
+    <div className="flex flex-wrap items-center gap-2 text-sm text-textSecondary">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-borderSubtle bg-elevated/60 px-3 py-1">
+        <Clock className="h-3.5 w-3.5 shrink-0 text-brand" />
         {lesson.durationMinutes} min
-      </span>
-      <span aria-hidden="true" className="hidden sm:inline">
-        •
       </span>
       <Badge className="py-0.5 text-xs">
         {isVideoLesson ? "Video" : lesson.kind === "external" ? "Resource" : "Reading"}
       </Badge>
-      <span aria-hidden="true" className="hidden sm:inline">
-        •
-      </span>
-      <span className="hidden min-w-0 truncate sm:inline">{module.title}</span>
+      <span className="hidden h-1 w-1 rounded-full bg-textMuted sm:inline-block" />
+      <span className="hidden truncate sm:inline">{module.title}</span>
+      {completed ? (
+        <span className="inline-flex items-center gap-1 rounded-full bg-brand-subtle px-3 py-1 text-xs font-semibold text-brand">
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          Completed
+        </span>
+      ) : null}
     </div>
+  );
+}
+
+export function LessonHeader({
+  lesson,
+  module,
+  courseTitle,
+}: {
+  lesson: Lesson;
+  module: CourseModule;
+  courseTitle: string;
+}) {
+  return (
+    <header className="space-y-3">
+      <p className="text-xs font-medium uppercase tracking-[0.18em] text-brand">
+        {courseTitle} · {module.title}
+      </p>
+      <h1 className="font-headline text-2xl font-bold leading-tight tracking-tight text-textPrimary sm:text-3xl lg:text-[2rem]">
+        {lesson.title}
+      </h1>
+    </header>
   );
 }

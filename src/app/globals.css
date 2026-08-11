@@ -223,6 +223,10 @@ body {
   @apply mb-5 list-inside list-disc space-y-1.5 text-[15px] leading-7 text-textSecondary;
 }
 
+.lesson-panel {
+  animation: fadeIn 0.35s ease-out;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

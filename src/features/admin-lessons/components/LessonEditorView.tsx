@@ -83,7 +83,7 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
       externalUrl: kind === "external" ? externalUrl || undefined : undefined,
       durationSeconds:
         kind === "video" && durationSeconds !== "" ? Number(durationSeconds) : undefined,
-      markdown: kind === "article" ? markdown || undefined : undefined,
+      markdown: kind === "article" || kind === "video" ? markdown || undefined : undefined,
     });
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
@@ -190,11 +190,16 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
             onChange={(e) => setSummary(e.target.value)}
           />
 
-          {kind === "article" ? (
+          {kind === "article" || kind === "video" ? (
             <AdminTextarea
-              label="Markdown Content Stream"
-              rows={12}
-              className="font-mono text-xs"
+              label={kind === "video" ? "Lesson description (shown below video)" : "Markdown content"}
+              rows={kind === "video" ? 8 : 12}
+              className={kind === "article" ? "font-mono text-xs" : undefined}
+              placeholder={
+                kind === "video"
+                  ? "Write a short overview and bullet points for students.\n\nExample:\nThis lecture introduces the forex market and how currencies are traded globally.\n\n- What forex trading means\n- Why liquidity matters\n- How sessions affect volatility"
+                  : undefined
+              }
               value={markdown}
               onChange={(e) => setMarkdown(e.target.value)}
             />
