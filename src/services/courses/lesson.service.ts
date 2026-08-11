@@ -1,6 +1,8 @@
 import { COURSE_CATALOG } from "@/lib/catalog/courses";
+import { DatabaseError } from "@/lib/db/database-error";
 import { prisma } from "@/lib/db/prisma";
 import { getDatabaseUrl } from "@/lib/env";
+import { isYoutubeUrl } from "@/lib/video/video-url";
 import type { ApiLesson, LessonKind } from "@/types/course.types";
 
 export type LessonContext = {
@@ -55,28 +57,35 @@ export async function getLessonContext(lessonId: string): Promise<LessonContext 
       include: { module: { select: { id: true, courseId: true } } },
     });
 
-    if (!row) return null;
-    if (!row.published) return null;
+    if (!row || !row.published) return null;
+
+    let kind = row.kind as LessonKind;
+    let videoUrl = row.videoUrl ?? undefined;
+    const externalUrl = row.externalUrl ?? undefined;
+    if (!videoUrl && externalUrl && isYoutubeUrl(externalUrl)) {
+      videoUrl = externalUrl;
+      kind = "video";
+    }
 
     return {
       lesson: {
         id: row.id,
         title: row.title,
         summary: row.summary ?? "",
-        kind: row.kind as LessonKind,
+        kind,
         durationMinutes: row.durationMinutes,
         minWatchPercent: row.minWatchPercent,
         content: {
           markdown: row.markdown ?? undefined,
-          videoUrl: row.videoUrl ?? undefined,
-          externalUrl: row.externalUrl ?? undefined,
+          videoUrl,
+          externalUrl,
         },
       },
       moduleId: row.module.id,
       courseId: row.module.courseId,
     };
-  } catch {
-    return null;
+  } catch (error) {
+    throw new DatabaseError(undefined, { cause: error });
   }
 }
 

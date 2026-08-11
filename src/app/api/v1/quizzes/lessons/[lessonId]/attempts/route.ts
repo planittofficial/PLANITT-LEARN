@@ -1,5 +1,7 @@
 import { fail, ok } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse-body";
+import { handleDatabaseError } from "@/lib/api/handle-db";
+import { decodePathSegment } from "@/lib/api/path";
 import { requireDatabase } from "@/lib/api/require-db";
 import {
   assertEnrolled,
@@ -29,21 +31,22 @@ export async function POST(request: Request, { params }: Params) {
   if (!answers) return fail("Invalid quiz submission", 400);
 
   const { lessonId } = await params;
-  const normalized = lessonId.trim();
-  const courseId = await getCourseIdForLesson(normalized);
-  if (!courseId) return fail("Lesson not found", 404);
+  const normalized = decodePathSegment(lessonId);
 
   try {
+    const courseId = await getCourseIdForLesson(normalized);
+    if (!courseId) return fail("Quiz not available", 404);
+
     await assertEnrolled(auth.user.id, courseId, { accessToken: auth.token });
+
+    const result = await submitLessonQuizAttempt(auth.user.id, normalized, answers);
+    if (!result) return fail("Quiz not available", 404);
+
+    void computeLeaderboardForCourse(courseId).catch(() => undefined);
+
+    return ok({ ok: true, result });
   } catch (error) {
     if (error instanceof EnrollmentError) return fail(error.message, error.status);
-    return fail("Enrollment check failed", 500);
+    return handleDatabaseError(error);
   }
-
-  const result = await submitLessonQuizAttempt(auth.user.id, normalized, answers);
-  if (!result) return fail("Quiz not available", 404);
-
-  void computeLeaderboardForCourse(courseId).catch(() => undefined);
-
-  return ok({ ok: true, result });
 }

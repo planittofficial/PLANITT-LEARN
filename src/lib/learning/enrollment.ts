@@ -1,3 +1,4 @@
+import { normalizeCourseId } from "@/lib/api/path";
 import { ALL_COURSE_IDS, COMBO_PLAN_ID } from "@/lib/catalog/courses";
 
 /**
@@ -35,5 +36,9 @@ export function enrolledCourseIdsFromTransactions(transactions: PaymentTransacti
 }
 
 export function isEnrolledInCourse(enrolled: Set<string>, courseId: string): boolean {
-  return enrolled.has(courseId);
+  const normalized = normalizeCourseId(courseId);
+  for (const id of enrolled) {
+    if (normalizeCourseId(id) === normalized) return true;
+  }
+  return false;
 }

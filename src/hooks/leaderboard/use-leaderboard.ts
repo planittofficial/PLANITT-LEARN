@@ -21,13 +21,9 @@ type LeaderboardResponse = {
 };
 
 async function fetchLeaderboard(
-  courseId?: string,
+  courseId: string,
 ): Promise<{ entries: LeaderboardEntry[]; fromApi: boolean }> {
-  const url = courseId
-    ? `/api/v1/leaderboard/${courseId}`
-    : "/api/v1/leaderboard/learn-forex-master-track";
-
-  const res = await authedFetch(url);
+  const res = await authedFetch(`/api/v1/leaderboard/${encodeURIComponent(courseId)}`);
   if (!res.ok) {
     return { entries: [], fromApi: false };
   }
@@ -42,8 +38,9 @@ async function fetchLeaderboard(
 
 export function useLeaderboard(courseId?: string) {
   const query = useQuery({
-    queryKey: ["leaderboard", courseId ?? "default"],
-    queryFn: () => fetchLeaderboard(courseId),
+    queryKey: ["leaderboard", courseId ?? "none"],
+    queryFn: () => fetchLeaderboard(courseId!),
+    enabled: Boolean(courseId),
     staleTime: 60_000,
   });
 

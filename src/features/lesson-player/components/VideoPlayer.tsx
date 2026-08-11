@@ -5,6 +5,7 @@ import { useCallback, useRef } from "react";
 import { useLessonProgress } from "@/hooks/progress/use-lesson-progress";
 import { saveLessonComplete } from "@/lib/learning/progress";
 import { toYoutubeEmbedUrl } from "@/lib/video/video-url";
+import { CheckCircle2 } from "lucide-react";
 
 type VideoPlayerProps = {
   lessonId: string;
@@ -29,7 +30,8 @@ export function VideoPlayer({
   minWatchPercent = 75,
   onComplete,
 }: VideoPlayerProps) {
-  const { sendHeartbeat, completed: serverCompleted } = useLessonProgress(lessonId);
+  const { sendHeartbeat, completed: serverCompleted, markComplete, isMarking } =
+    useLessonProgress(lessonId);
   const completedRef = useRef(false);
   const lastSentRef = useRef(0);
 
@@ -67,6 +69,17 @@ export function VideoPlayer({
   const embedUrl = toYoutubeEmbedUrl(videoUrl);
 
   if (embedUrl) {
+    const handleYoutubeComplete = async () => {
+      if (completedRef.current || serverCompleted) return;
+      completedRef.current = true;
+      try {
+        await markComplete();
+      } catch {
+        markLocalComplete();
+      }
+      onComplete?.();
+    };
+
     return (
       <div className="bg-black">
         <iframe
@@ -77,9 +90,27 @@ export function VideoPlayer({
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
-        <p className="border-t border-white/10 bg-black px-3 py-2.5 text-center text-[11px] leading-relaxed text-textMuted sm:px-4 sm:text-xs">
-          Protected course content — do not share or redistribute this lesson.
-        </p>
+        <div className="flex flex-col items-center gap-2 border-t border-white/10 bg-black px-3 py-3 sm:flex-row sm:justify-between sm:px-4">
+          <p className="text-center text-[11px] leading-relaxed text-textMuted sm:text-left sm:text-xs">
+            Protected course content — do not share or redistribute this lesson.
+          </p>
+          {!serverCompleted && !completedRef.current ? (
+            <button
+              type="button"
+              onClick={() => void handleYoutubeComplete()}
+              disabled={isMarking}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-black transition hover:brightness-110 disabled:opacity-60"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              {isMarking ? "Saving…" : "Mark as complete"}
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Completed
+            </span>
+          )}
+        </div>
       </div>
     );
   }

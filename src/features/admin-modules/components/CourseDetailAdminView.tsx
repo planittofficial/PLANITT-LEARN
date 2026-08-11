@@ -15,6 +15,7 @@ import {
 import {
   defaultLessonId,
   inferLessonVideoFields,
+  slugifyLessonId,
 } from "@/lib/admin/lesson-video";
 import {
   useAdminModules,
@@ -79,7 +80,7 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
     setError("");
     setSubmitting(true);
 
-    const moduleId = id.trim();
+    const moduleId = slugifyLessonId(id.trim() || title.trim());
     const moduleTitle = title.trim();
     const lessonTitle = (lectureTitle.trim() || moduleTitle).trim();
 

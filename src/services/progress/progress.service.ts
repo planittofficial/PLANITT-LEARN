@@ -1,3 +1,5 @@
+import { normalizeCourseId } from "@/lib/api/path";
+import { DatabaseError } from "@/lib/db/database-error";
 import { DEFAULT_MIN_WATCH_PERCENT } from "@/constants/progress";
 import { prisma } from "@/lib/db/prisma";
 import { getDatabaseUrl } from "@/lib/env";
@@ -152,9 +154,11 @@ export async function getCourseProgressForUser(
 ): Promise<CourseProgressMap> {
   if (!getDatabaseUrl()) return {};
 
+  const normalized = normalizeCourseId(courseId);
+
   try {
     const lessons = await prisma.lesson.findMany({
-      where: { module: { courseId, published: true }, published: true },
+      where: { module: { courseId: normalized, published: true }, published: true },
       select: { id: true },
     });
 
@@ -173,9 +177,7 @@ export async function getCourseProgressForUser(
       };
     }
     return progress;
-  } catch {
-    // The static catalog is supported in standalone/local mode; an unavailable
-    // database should leave progress empty rather than break the dashboard.
-    return {};
+  } catch (error) {
+    throw new DatabaseError(undefined, { cause: error });
   }
 }

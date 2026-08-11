@@ -1,4 +1,6 @@
 import { fail, ok } from "@/lib/api/response";
+import { handleDatabaseError } from "@/lib/api/handle-db";
+import { decodePathSegment } from "@/lib/api/path";
 import { enforceApiRateLimit } from "@/lib/security/rate-limit";
 import { requireUser } from "@/lib/security/require-user";
 import { getLessonContext } from "@/services/courses/lesson.service";
@@ -17,20 +19,22 @@ export async function GET(request: Request, context: RouteContext) {
   if (!("user" in auth)) return auth;
 
   const { lessonId } = await context.params;
-  const ctx = await getLessonContext(lessonId);
-  if (!ctx) return fail("Lesson not found", 404);
+  const normalized = decodePathSegment(lessonId);
 
   try {
+    const ctx = await getLessonContext(normalized);
+    if (!ctx) return fail("Lesson not found", 404);
+
     await assertEnrolled(auth.user.id, ctx.courseId, { accessToken: auth.token });
+
+    return ok({
+      ok: true,
+      lesson: ctx.lesson,
+      moduleId: ctx.moduleId,
+      courseId: ctx.courseId,
+    });
   } catch (error) {
     if (error instanceof EnrollmentError) return fail(error.message, error.status);
-    return fail("Enrollment check failed", 500);
+    return handleDatabaseError(error);
   }
-
-  return ok({
-    ok: true,
-    lesson: ctx.lesson,
-    moduleId: ctx.moduleId,
-    courseId: ctx.courseId,
-  });
 }

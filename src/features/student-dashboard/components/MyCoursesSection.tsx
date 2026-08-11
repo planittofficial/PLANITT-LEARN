@@ -23,7 +23,6 @@ import { useCourses } from "@/hooks/courses/use-courses";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { fetchCourseProgress } from "@/hooks/progress/use-course-progress";
 import { apiCourseListItemToDefinition } from "@/lib/catalog/map-api-course";
-import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { getRecentlyWatched, getWeeklyActivity } from "@/lib/learning/activity";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { getCourseProgressStats } from "@/lib/learning/course-progress";
@@ -34,18 +33,16 @@ import type { CourseProgress } from "@/lib/learning/progress";
 export function MyCoursesSection() {
   const { user, devStandalone } = useAuth();
   const { loading, enrolledIds, isAuthenticated, devPreview, paymentHistoryError } = useEnrollment();
-  const { data: apiCourses, isLoading: coursesLoading } = useCourses();
+  const { data: apiCourses, isLoading: coursesLoading, isError: coursesError } = useCourses();
   const gamification = useGamification(user?.id);
   const achievements = useAchievements(user?.id);
 
   const [activeFilter, setActiveFilter] = useState<"all" | "purchased" | "new">("all");
 
-  const catalog = useMemo(() => {
-    if (apiCourses.length > 0) {
-      return apiCourses.map(apiCourseListItemToDefinition);
-    }
-    return COURSE_CATALOG;
-  }, [apiCourses]);
+  const catalog = useMemo(
+    () => apiCourses.map(apiCourseListItemToDefinition),
+    [apiCourses],
+  );
 
   const enrolledCourses = catalog.filter((c) => isEnrolledInCourse(enrolledIds, c.id));
   const lockedCourses = catalog.filter((c) => !isEnrolledInCourse(enrolledIds, c.id));
@@ -77,6 +74,17 @@ export function MyCoursesSection() {
   );
 
   if (loading || coursesLoading) return <DashboardSkeleton />;
+
+  if (coursesError) {
+    return (
+      <div
+        role="alert"
+        className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200"
+      >
+        Could not load courses right now. Please refresh the page or try again shortly.
+      </div>
+    );
+  }
 
   const courseStats = enrolledCourses.map((course) => ({
     course,

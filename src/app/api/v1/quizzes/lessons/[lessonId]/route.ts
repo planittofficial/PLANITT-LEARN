@@ -1,4 +1,6 @@
 import { fail, ok } from "@/lib/api/response";
+import { handleDatabaseError } from "@/lib/api/handle-db";
+import { decodePathSegment } from "@/lib/api/path";
 import { requireDatabase } from "@/lib/api/require-db";
 import {
   assertEnrolled,
@@ -22,16 +24,19 @@ export async function GET(request: Request, { params }: Params) {
   if (dbError) return dbError;
 
   const { lessonId } = await params;
-  const courseId = await getCourseIdForLesson(lessonId.trim());
-  if (!courseId) return fail("Lesson not found", 404);
+  const normalizedLessonId = decodePathSegment(lessonId);
 
   try {
-    await assertEnrolled(auth.user.id, courseId, { accessToken: auth.token });
+    const courseId = await getCourseIdForLesson(normalizedLessonId);
+
+    if (courseId) {
+      await assertEnrolled(auth.user.id, courseId, { accessToken: auth.token });
+    }
+
+    const quiz = courseId ? await getLessonQuizForStudent(normalizedLessonId) : null;
+    return ok({ ok: true, quiz: quiz ?? null });
   } catch (error) {
     if (error instanceof EnrollmentError) return fail(error.message, error.status);
-    return fail("Enrollment check failed", 500);
+    return handleDatabaseError(error);
   }
-
-  const quiz = await getLessonQuizForStudent(lessonId.trim());
-  return ok({ ok: true, quiz: quiz ?? null });
 }

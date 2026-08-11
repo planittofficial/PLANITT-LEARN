@@ -1,8 +1,11 @@
 import type { LessonKind as PrismaLessonKind } from "@prisma/client";
 
+import { normalizeCourseId } from "@/lib/api/path";
 import { COURSE_CATALOG, countCourseLessons } from "@/lib/catalog/courses";
+import { DatabaseError } from "@/lib/db/database-error";
 import { prisma } from "@/lib/db/prisma";
 import { getDatabaseUrl } from "@/lib/env";
+import { isYoutubeUrl } from "@/lib/video/video-url";
 import type {
   ApiAdminCourse,
   ApiCourseDetail,
@@ -83,17 +86,26 @@ function lessonFromDb(row: {
   videoUrl: string | null;
   externalUrl: string | null;
 }): ApiLesson {
+  let kind = toLessonKind(row.kind);
+  let videoUrl = row.videoUrl ?? undefined;
+  const externalUrl = row.externalUrl ?? undefined;
+
+  if (!videoUrl && externalUrl && isYoutubeUrl(externalUrl)) {
+    videoUrl = externalUrl;
+    kind = "video";
+  }
+
   return {
     id: row.id,
     title: row.title,
     summary: row.summary ?? "",
-    kind: toLessonKind(row.kind),
+    kind,
     durationMinutes: row.durationMinutes,
     minWatchPercent: row.minWatchPercent,
     content: {
       markdown: row.markdown ?? undefined,
-      videoUrl: row.videoUrl ?? undefined,
-      externalUrl: row.externalUrl ?? undefined,
+      videoUrl,
+      externalUrl,
     },
   };
 }
@@ -129,13 +141,13 @@ export async function listPublishedCourses(): Promise<ApiCourseListItem[]> {
         lessonCount,
       };
     });
-  } catch {
-    return [];
+  } catch (error) {
+    throw new DatabaseError(undefined, { cause: error });
   }
 }
 
 export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail | null> {
-  const normalized = courseId.trim().toLowerCase();
+  const normalized = normalizeCourseId(courseId);
   if (!getDatabaseUrl()) return courseDetailFromStatic(normalized);
 
   try {
@@ -175,8 +187,9 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
       lessonCount,
       modules,
     };
-  } catch {
-    return null;
+  } catch (error) {
+    console.error("[getCourseDetail] database error:", error);
+    throw error;
   }
 }
 

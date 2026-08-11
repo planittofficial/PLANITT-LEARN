@@ -1,3 +1,5 @@
+import { slugifyLessonId } from "@/lib/admin/lesson-video";
+
 export type CreateModuleInput = {
   id: string;
   courseId: string;
@@ -13,8 +15,8 @@ export function parseCreateModule(body: unknown): CreateModuleInput | null {
   if (!body || typeof body !== "object") return null;
   const r = body as Record<string, unknown>;
 
-  const id = typeof r.id === "string" ? r.id.trim() : "";
-  const courseId = typeof r.courseId === "string" ? r.courseId.trim() : "";
+  const id = typeof r.id === "string" ? slugifyLessonId(r.id) : "";
+  const courseId = typeof r.courseId === "string" ? r.courseId.trim().toLowerCase() : "";
   const title = typeof r.title === "string" ? r.title.trim() : "";
 
   if (!id || !courseId || !title) return null;

@@ -1,3 +1,4 @@
+import { normalizeCourseId } from "@/lib/api/path";
 import { ALL_COURSE_IDS, COMBO_PLAN_ID } from "@/lib/catalog/courses";
 import { prisma } from "@/lib/db/prisma";
 import { isDevAccessToken } from "@/lib/dev/standalone";
@@ -72,10 +73,10 @@ async function enrolledCourseIdsFromDatabase(userId: string): Promise<Set<string
     });
 
     for (const row of rows) {
-      ids.add(row.courseId);
+      ids.add(normalizeCourseId(row.courseId));
       if (row.planId) {
         for (const courseId of courseIdsForPlan(row.planId)) {
-          ids.add(courseId);
+          ids.add(normalizeCourseId(courseId));
         }
       }
     }
@@ -99,12 +100,12 @@ export async function getEnrolledCourseIds(
   const token = options?.accessToken;
   if (token && isDevAccessToken(token)) {
     for (const planId of devMockEnrollments()) {
-      ids.add(planId);
+      ids.add(normalizeCourseId(planId));
     }
   } else if (token) {
     const { transactions } = await fetchPaymentHistory(token);
     for (const courseId of enrolledCourseIdsFromTransactions(transactions)) {
-      ids.add(courseId);
+      ids.add(normalizeCourseId(courseId));
     }
   }
 
@@ -121,7 +122,7 @@ export async function isEnrolled(
   options?: { accessToken?: string },
 ): Promise<boolean> {
   const ids = await getEnrolledCourseIds(userId, options);
-  return isEnrolledInCourse(ids, courseId);
+  return isEnrolledInCourse(ids, normalizeCourseId(courseId));
 }
 
 export async function assertEnrolled(

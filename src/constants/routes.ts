@@ -1,13 +1,15 @@
+import { encodePathSegment } from "@/lib/api/path";
+
 export const ROUTES = {
   STUDENT: {
     HOME: "/",
     LOGIN: "/login",
     COURSES: "/courses",
-    course: (courseId: string) => `/courses/${courseId}`,
+    course: (courseId: string) => `/courses/${encodePathSegment(courseId)}`,
     lesson: (courseId: string, moduleId: string, lessonId: string) =>
-      `/courses/${encodeURIComponent(courseId)}/${encodeURIComponent(moduleId)}/${encodeURIComponent(lessonId)}`,
+      `/courses/${encodePathSegment(courseId)}/${encodePathSegment(moduleId)}/${encodePathSegment(lessonId)}`,
     moduleTest: (courseId: string, moduleId: string) =>
-      `/courses/${encodeURIComponent(courseId)}/${encodeURIComponent(moduleId)}/test`,
+      `/courses/${encodePathSegment(courseId)}/${encodePathSegment(moduleId)}/test`,
     LEADERBOARD: "/leaderboard",
     ANALYTICS: "/analytics",
     ACHIEVEMENTS: "/achievements",
@@ -37,23 +39,25 @@ export const ROUTES = {
     ENROLLMENT: {
       ME: "/api/v1/enrollment/me",
       PREVIEW: "/api/v1/enrollment/preview",
-      verify: (courseId: string) => `/api/v1/enrollment/verify/${courseId}`,
+      verify: (courseId: string) => `/api/v1/enrollment/verify/${encodePathSegment(courseId)}`,
     },
     COURSES: {
       LIST: "/api/v1/courses",
-      detail: (courseId: string) => `/api/v1/courses/${courseId}`,
-      modules: (courseId: string) => `/api/v1/courses/${courseId}/modules`,
-      progress: (courseId: string) => `/api/v1/courses/${courseId}/progress`,
+      detail: (courseId: string) => `/api/v1/courses/${encodePathSegment(courseId)}`,
+      modules: (courseId: string) => `/api/v1/courses/${encodePathSegment(courseId)}/modules`,
+      progress: (courseId: string) => `/api/v1/courses/${encodePathSegment(courseId)}/progress`,
     },
     LESSONS: {
-      detail: (lessonId: string) => `/api/v1/lessons/${lessonId}`,
-      progress: (lessonId: string) => `/api/v1/lessons/${lessonId}/progress`,
+      detail: (lessonId: string) => `/api/v1/lessons/${encodePathSegment(lessonId)}`,
+      progress: (lessonId: string) => `/api/v1/lessons/${encodePathSegment(lessonId)}/progress`,
     },
     QUIZZES: {
-      lesson: (lessonId: string) => `/api/v1/quizzes/lessons/${lessonId}`,
-      lessonAttempts: (lessonId: string) => `/api/v1/quizzes/lessons/${lessonId}/attempts`,
-      module: (moduleId: string) => `/api/v1/quizzes/modules/${moduleId}`,
-      moduleAttempts: (moduleId: string) => `/api/v1/quizzes/modules/${moduleId}/attempts`,
+      lesson: (lessonId: string) => `/api/v1/quizzes/lessons/${encodePathSegment(lessonId)}`,
+      lessonAttempts: (lessonId: string) =>
+        `/api/v1/quizzes/lessons/${encodePathSegment(lessonId)}/attempts`,
+      module: (moduleId: string) => `/api/v1/quizzes/modules/${encodePathSegment(moduleId)}`,
+      moduleAttempts: (moduleId: string) =>
+        `/api/v1/quizzes/modules/${encodePathSegment(moduleId)}/attempts`,
     },
     PROFILE: {
       ME: "/api/v1/profile/me",
