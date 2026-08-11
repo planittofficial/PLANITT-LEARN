@@ -2,7 +2,9 @@ export type LessonKind = "video" | "article" | "external";
 
 export type LessonContent = {
   markdown?: string;
+  /** Present on admin APIs only — student APIs use videoAvailable instead. */
   videoUrl?: string;
+  videoAvailable?: boolean;
   externalUrl?: string;
 };
 

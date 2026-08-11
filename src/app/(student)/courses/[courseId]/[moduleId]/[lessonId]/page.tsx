@@ -49,7 +49,7 @@ function mapApiLesson(lesson: ApiLesson): Lesson {
     summary: lesson.summary,
     content: {
       markdown: lesson.content.markdown,
-      videoUrl: lesson.content.videoUrl,
+      videoAvailable: lesson.content.videoAvailable ?? lesson.kind === "video",
       externalUrl: lesson.content.externalUrl,
     },
   };

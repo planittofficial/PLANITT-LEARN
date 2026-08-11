@@ -10,6 +10,7 @@ export type Lesson = {
   summary: string;
   content: {
     videoUrl?: string;
+    videoAvailable?: boolean;
     markdown?: string;
     externalUrl?: string;
   };

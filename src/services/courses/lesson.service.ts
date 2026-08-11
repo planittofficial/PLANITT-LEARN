@@ -77,8 +77,8 @@ export async function getLessonContext(lessonId: string): Promise<LessonContext 
         minWatchPercent: row.minWatchPercent,
         content: {
           markdown: row.markdown ?? undefined,
-          videoUrl,
-          externalUrl,
+          videoAvailable: Boolean(videoUrl),
+          externalUrl: externalUrl && !isYoutubeUrl(externalUrl) ? externalUrl : undefined,
         },
       },
       moduleId: row.module.id,

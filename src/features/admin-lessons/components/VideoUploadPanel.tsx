@@ -1,9 +1,9 @@
 "use client";
 
-import { ExternalLink, Film, Link2, Loader2, Upload, Video } from "lucide-react";
+import { Film, Link2, Loader2, Upload, Video } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
-import { isYoutubeUrl, toYoutubeEmbedUrl } from "@/lib/video/video-url";
+import { buildSecureYoutubeEmbedUrl, getYoutubeVideoId } from "@/lib/video/youtube-embed";
 import { cn } from "@/lib/utils";
 
 type VideoUploadPanelProps = {
@@ -31,8 +31,9 @@ export function VideoUploadPanel({
 }: VideoUploadPanelProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const youtubeEmbedUrl = toYoutubeEmbedUrl(videoUrl);
-  const isYoutube = isYoutubeUrl(videoUrl);
+  const youtubeVideoId = getYoutubeVideoId(videoUrl);
+  const youtubeEmbedUrl = youtubeVideoId ? buildSecureYoutubeEmbedUrl(youtubeVideoId) : null;
+  const isYoutube = Boolean(youtubeVideoId);
 
   const readDurationFromFile = useCallback(
     (file: File) => {
@@ -176,20 +177,14 @@ export function VideoUploadPanel({
           </label>
 
           {isYoutube && videoUrl.trim() ? (
-            <div className="flex items-center justify-between gap-3 rounded border border-red-500/20 bg-red-500/5 px-3 py-2.5 font-mono text-xs">
-              <div className="min-w-0">
-                <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider">YouTube Link Mapped</p>
-                <p className="truncate text-[9px] text-textMuted lowercase">{videoUrl.trim()}</p>
-              </div>
-              <a
-                href={videoUrl.trim()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center gap-1 text-[10px] font-bold text-red-500 hover:underline uppercase tracking-wider"
-              >
-                Launch
-                <ExternalLink className="h-3 w-3" />
-              </a>
+            <div className="rounded border border-amber-500/25 bg-amber-500/10 px-3 py-2.5 font-mono text-xs">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-amber-500">
+                YouTube detected — not recommended for paid courses
+              </p>
+              <p className="mt-1 text-[10px] leading-5 text-textMuted normal-case">
+                Students can still find the source video on YouTube. Upload an MP4 to Cloudflare R2 for
+                secure, Udemy-style playback without sharing links.
+              </p>
             </div>
           ) : null}
 

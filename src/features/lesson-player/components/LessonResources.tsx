@@ -1,13 +1,11 @@
 "use client";
 
-import { ExternalLink, FileText, Link2, Video } from "lucide-react";
+import { ExternalLink, FileText, Link2 } from "lucide-react";
 
 import type { Lesson } from "@/lib/catalog/courses";
-import { isYoutubeUrl } from "@/lib/video/video-url";
 
 export function lessonHasResources(lesson: Lesson): boolean {
-  if (lesson.content.videoUrl && !isYoutubeUrl(lesson.content.videoUrl)) return true;
-  if (lesson.content.externalUrl && !isYoutubeUrl(lesson.content.externalUrl)) return true;
+  if (lesson.content.externalUrl) return true;
   return false;
 }
 
@@ -17,13 +15,9 @@ type LessonResourcesProps = {
 };
 
 export function LessonResources({ lesson, embedded = false }: LessonResourcesProps) {
-  const resources: Array<{ label: string; href: string; icon: typeof Video }> = [];
+  const resources: Array<{ label: string; href: string; icon: typeof ExternalLink }> = [];
 
-  // YouTube lessons are intentionally embed-only. Showing the source URL here
-  // would create an unnecessary copy/share path for unlisted videos.
-  if (lesson.content.videoUrl && !isYoutubeUrl(lesson.content.videoUrl)) {
-    resources.push({ label: "Video source", href: lesson.content.videoUrl, icon: Video });
-  }
+  // YouTube lessons are embed-only — never expose source links in the resources panel.
   if (lesson.content.externalUrl) {
     resources.push({ label: "External resource", href: lesson.content.externalUrl, icon: ExternalLink });
   }
