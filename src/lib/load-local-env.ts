@@ -1,6 +1,3 @@
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
-
 let loaded = false;
 
 function parseEnvFile(text: string): Record<string, string> {
@@ -29,7 +26,12 @@ function parseEnvFile(text: string): Record<string, string> {
  */
 export function loadLocalEnv(): void {
   if (loaded || process.env.NODE_ENV === "production") return;
+  if (process.env.NEXT_RUNTIME === "edge") return;
   loaded = true;
+
+  // Dynamic require keeps node:fs/path out of Edge bundles.
+  const { existsSync, readFileSync } = require("node:fs") as typeof import("node:fs");
+  const { resolve } = require("node:path") as typeof import("node:path");
 
   const envPath = resolve(process.cwd(), ".env.local");
   if (!existsSync(envPath)) return;
