@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Layers, Plus, Trash2, ChevronRight, Upload } from "lucide-react";
 
+import { encodePathSegment } from "@/lib/api/path";
 import {
   AdminButton,
   AdminCard,
@@ -45,6 +46,11 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const slugPreview = useMemo(
+    () => slugifyLessonId(id.trim() || title.trim()),
+    [id, title],
+  );
+
   function resetForm() {
     setId("");
     setTitle("");
@@ -80,19 +86,30 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
     setError("");
     setSubmitting(true);
 
-    const moduleId = slugifyLessonId(id.trim() || title.trim());
     const moduleTitle = title.trim();
+    if (!moduleTitle) {
+      setError("Module title is required.");
+      setSubmitting(false);
+      return;
+    }
+
+    const preferredModuleId = slugifyLessonId(id.trim() || moduleTitle);
     const lessonTitle = (lectureTitle.trim() || moduleTitle).trim();
 
     try {
-      await createModule.mutateAsync({ id: moduleId, title: moduleTitle, published: true });
+      const { module: moduleRow } = await createModule.mutateAsync({
+        id: preferredModuleId,
+        title: moduleTitle,
+        published: true,
+      });
+      const moduleId = moduleRow.id;
 
       if (!course?.published) {
         await updateCourse.mutateAsync({ published: true });
       }
 
       if (!skipAutoLesson) {
-        const lessonId = defaultLessonId(moduleId);
+        const lessonId = defaultLessonId(moduleId, 0, courseId);
         const videoFields = inferLessonVideoFields(videoUrl);
         const kind = videoFile ? "video" : videoFields.kind;
 
@@ -114,13 +131,16 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
           const detail = await createRes.json().catch(() => null);
           throw new Error(
             (detail as { detail?: string })?.detail ??
-              "Module created, but the lecture could not be saved.",
+              "Module saved, but the lecture could not be created. Open the module and add the video manually.",
           );
         }
 
+        const created = (await createRes.json()) as { lesson: { id: string } };
+        const savedLessonId = created.lesson.id;
+
         if (videoFile) {
-          const uploaded = await uploadVideoForLesson(lessonId, videoFile);
-          await fetch(`/api/v1/admin/lessons/${lessonId}`, {
+          const uploaded = await uploadVideoForLesson(savedLessonId, videoFile);
+          await fetch(`/api/v1/admin/lessons/${encodePathSegment(savedLessonId)}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -132,9 +152,9 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
           });
         }
 
-        router.push(`/admin/modules/${moduleId}`);
+        router.push(`/admin/modules/${encodePathSegment(moduleId)}`);
       } else {
-        router.push(`/admin/modules/${moduleId}`);
+        router.push(`/admin/modules/${encodePathSegment(moduleId)}`);
       }
 
       setShowForm(false);
@@ -178,11 +198,10 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
             <form onSubmit={handleCreate} className="grid gap-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <AdminInput
-                  label="Module ID"
-                  placeholder="e.g. crypto-intro"
+                  label="Module ID (optional)"
+                  placeholder="Auto-generated from title"
                   value={id}
                   onChange={(e) => setId(e.target.value)}
-                  required
                 />
                 <AdminInput
                   label="Module Title"
@@ -192,6 +211,11 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
                   required
                 />
               </div>
+              {slugPreview ? (
+                <p className="font-mono text-[10px] text-textMuted">
+                  Saved as: <span className="text-brand">{slugPreview}</span>
+                </p>
+              ) : null}
 
               {!skipAutoLesson ? (
                 <>
@@ -285,7 +309,7 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
             >
               <div className="min-w-0">
                 <Link
-                  href={`/admin/modules/${mod.id}`}
+                  href={`/admin/modules/${encodePathSegment(mod.id)}`}
                   className="font-mono font-bold text-brand hover:underline uppercase tracking-wide flex items-center gap-1"
                 >
                   {mod.title}
@@ -293,15 +317,16 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
                 </Link>
                 <p className="mt-1 font-mono text-[9px] text-textMuted uppercase tracking-widest">
                   {mod.id} · {mod.lessonCount} lesson{mod.lessonCount !== 1 ? "s" : ""}
+                  {mod.lessonCount === 0 ? " · needs lecture" : ""}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Link href={`/admin/modules/${mod.id}`}>
+                <Link href={`/admin/modules/${encodePathSegment(mod.id)}`}>
                   <AdminButton variant="secondary" size="sm">
                     Open Module
                   </AdminButton>
                 </Link>
-                <Link href={`/admin/quizzes/modules/${mod.id}`}>
+                <Link href={`/admin/quizzes/modules/${encodePathSegment(mod.id)}`}>
                   <AdminButton variant="secondary" size="sm">
                     Module Test
                   </AdminButton>

@@ -13,10 +13,18 @@ export function slugifyLessonId(value: string): string {
     .slice(0, 80);
 }
 
-export function defaultLessonId(moduleId: string, existingCount = 0): string {
-  const base = slugifyLessonId(moduleId) || "module";
+export function defaultLessonId(
+  moduleId: string,
+  existingCount = 0,
+  courseId?: string,
+): string {
+  const moduleSlug = slugifyLessonId(moduleId) || "module";
+  const courseSlug = courseId
+    ? slugifyLessonId(courseId.replace(/^learn-/, ""))
+    : "";
   const suffix = existingCount > 0 ? `-${existingCount + 1}` : "";
-  return `${base}-lecture${suffix}`;
+  const prefix = courseSlug ? `${courseSlug}-` : "";
+  return `${prefix}${moduleSlug}-lecture${suffix}`.slice(0, 80);
 }
 
 export function inferLessonVideoFields(url: string): {
