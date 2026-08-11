@@ -189,7 +189,7 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
     };
   } catch (error) {
     console.error("[getCourseDetail] database error:", error);
-    throw error;
+    throw new DatabaseError(undefined, { cause: error });
   }
 }
 

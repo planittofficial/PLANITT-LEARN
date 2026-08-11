@@ -2,6 +2,7 @@ import { fail, ok } from "@/lib/api/response";
 import { handleDatabaseError } from "@/lib/api/handle-db";
 import { normalizeCourseId } from "@/lib/api/path";
 import { enforceApiRateLimit } from "@/lib/security/rate-limit";
+import { logServerError } from "@/lib/security/server-log";
 import { requireUser } from "@/lib/security/require-user";
 import { getCourseDetail } from "@/services/courses/course.service";
 import {
@@ -25,6 +26,7 @@ export async function GET(request: Request, context: RouteContext) {
     await assertEnrolled(auth.user.id, normalized, { accessToken: auth.token });
   } catch (error) {
     if (error instanceof EnrollmentError) return fail(error.message, error.status);
+    logServerError("courses:detail enrollment", error);
     return fail("Enrollment check failed", 500);
   }
 

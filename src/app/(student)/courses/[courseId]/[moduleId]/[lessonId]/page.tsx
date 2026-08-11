@@ -13,10 +13,13 @@ import { alvestCheckoutUrl } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
 import {
   LessonContent,
+  LessonHeader,
   LessonMetaBar,
   LessonNav,
   LessonSidebar,
 } from "@/features/lesson-player/components/LessonView";
+import { LessonOverviewPanel } from "@/features/lesson-player/components/LessonOverviewPanel";
+import { lessonHasResources } from "@/features/lesson-player/components/LessonResources";
 import { LessonBookmarkButton } from "@/features/lesson-player/components/LessonBookmark";
 import { LessonQuizPanel } from "@/features/quizzes";
 import { useGamification } from "@/features/gamification";
@@ -195,27 +198,16 @@ export default function LessonPage() {
         items={[
           { label: "Dashboard", href: ROUTES.STUDENT.HOME },
           { label: course.title, href: ROUTES.STUDENT.course(courseId) },
+          { label: module.title, href: ROUTES.STUDENT.course(courseId) },
           { label: lesson.title },
         ]}
       />
 
-      <section className="mb-6 mt-2 border-b border-borderSubtle pb-4 sm:mb-8 sm:mt-4 sm:pb-6">
-        <div className="mb-2 flex items-center gap-2">
-          <span className="h-[1px] w-2 shrink-0 bg-brand" />
-          <span className="line-clamp-2 font-mono text-[10px] font-bold uppercase tracking-widest text-brand">
-            {module.title}
-          </span>
-        </div>
-        <h1 className="break-words font-headline text-xl font-bold leading-snug tracking-tight text-textPrimary sm:text-2xl md:text-3xl">
-          {lesson.title}
-        </h1>
-        <div className="mt-3 sm:mt-4">
-          <LessonMetaBar lesson={lesson} module={module} />
-        </div>
-      </section>
+      <div className="mt-4 grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
+        <div className="min-w-0 space-y-6">
+          <LessonHeader lesson={lesson} module={module} courseTitle={course.title} />
+          <LessonMetaBar lesson={lesson} module={module} completed={!!completed} />
 
-      <div className="mt-4 grid gap-6 sm:mt-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="space-y-5">
           <LessonContent
             lesson={lesson}
             courseId={courseId}
@@ -228,12 +220,12 @@ export default function LessonPage() {
               type="button"
               onClick={() => void markComplete()}
               disabled={completed || isMarking}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover disabled:opacity-50 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground shadow-card transition hover:bg-brandHover disabled:opacity-50 sm:w-auto"
             >
               {completed ? (
                 <>
                   <CheckCircle2 className="h-4 w-4" />
-                  Completed
+                  Marked complete
                 </>
               ) : (
                 "Mark as complete"
@@ -251,6 +243,15 @@ export default function LessonPage() {
             ) : null}
           </div>
 
+          <LessonOverviewPanel
+            lesson={lesson}
+            module={module}
+            course={navCourse}
+            completed={!!completed}
+            userId={user?.id}
+            hasResources={lessonHasResources(lesson)}
+          />
+
           {lessonQuiz.hasQuiz && lessonQuiz.quiz ? (
             <LessonQuizPanel
               quiz={lessonQuiz.quiz}
@@ -259,40 +260,37 @@ export default function LessonPage() {
               result={lessonQuiz.result}
             />
           ) : null}
+
+          <LessonNav
+            courseId={courseId}
+            previous={
+              previousLesson
+                ? {
+                    moduleId: previousLesson.moduleId,
+                    lessonId: previousLesson.lesson.id,
+                    title: previousLesson.lesson.title,
+                  }
+                : null
+            }
+            next={
+              nextLesson
+                ? {
+                    moduleId: nextLesson.moduleId,
+                    lessonId: nextLesson.lesson.id,
+                    title: nextLesson.lesson.title,
+                  }
+                : null
+            }
+          />
         </div>
 
         <LessonSidebar
-          lesson={lesson}
-          module={module}
           course={navCourse}
           courseId={courseId}
+          currentLessonId={lesson.id}
           progress={progress}
-          completed={!!completed}
-          userId={user?.id}
         />
       </div>
-
-      <LessonNav
-        courseId={courseId}
-        previous={
-          previousLesson
-            ? {
-                moduleId: previousLesson.moduleId,
-                lessonId: previousLesson.lesson.id,
-                title: previousLesson.lesson.title,
-              }
-            : null
-        }
-        next={
-          nextLesson
-            ? {
-                moduleId: nextLesson.moduleId,
-                lessonId: nextLesson.lesson.id,
-                title: nextLesson.lesson.title,
-              }
-            : null
-        }
-      />
 
       <p className="mt-8 text-center text-xs text-textMuted">
         Educational content only — not investment advice.

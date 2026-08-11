@@ -5,11 +5,18 @@ import { ExternalLink, FileText, Link2, Video } from "lucide-react";
 import type { Lesson } from "@/lib/catalog/courses";
 import { isYoutubeUrl } from "@/lib/video/video-url";
 
+export function lessonHasResources(lesson: Lesson): boolean {
+  if (lesson.content.videoUrl && !isYoutubeUrl(lesson.content.videoUrl)) return true;
+  if (lesson.content.externalUrl && !isYoutubeUrl(lesson.content.externalUrl)) return true;
+  return false;
+}
+
 type LessonResourcesProps = {
   lesson: Lesson;
+  embedded?: boolean;
 };
 
-export function LessonResources({ lesson }: LessonResourcesProps) {
+export function LessonResources({ lesson, embedded = false }: LessonResourcesProps) {
   const resources: Array<{ label: string; href: string; icon: typeof Video }> = [];
 
   // YouTube lessons are intentionally embed-only. Showing the source URL here
@@ -24,14 +31,18 @@ export function LessonResources({ lesson }: LessonResourcesProps) {
     resources.push({ label: "Article content", href: "#lesson-content", icon: FileText });
   }
 
-  if (resources.length === 0) return null;
+  if (resources.length === 0) return embedded ? (
+    <p className="text-sm text-textMuted">No additional resources for this lesson.</p>
+  ) : null;
 
   return (
-    <div className="rounded-lg border border-borderSubtle bg-surface p-4 shadow-card">
-      <p className="mb-3 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-textMuted">
-        <Link2 className="h-3.5 w-3.5" />
-        Resources
-      </p>
+    <div className={embedded ? "" : "rounded-lg border border-borderSubtle bg-surface p-4 shadow-card"}>
+      {!embedded ? (
+        <p className="mb-3 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-textMuted">
+          <Link2 className="h-3.5 w-3.5" />
+          Resources
+        </p>
+      ) : null}
       <ul className="space-y-2">
         {resources.map((r) => (
           <li key={r.label}>

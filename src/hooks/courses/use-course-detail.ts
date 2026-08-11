@@ -14,6 +14,12 @@ async function fetchCourseDetail(courseId: string): Promise<ApiCourseDetail | nu
   if (res.status === 503) {
     throw new Error("DATABASE_UNAVAILABLE");
   }
+  if (res.status === 403) {
+    throw new Error("NOT_ENROLLED");
+  }
+  if (res.status >= 500) {
+    throw new Error("SERVER_ERROR");
+  }
   if (!res.ok) return null;
   const data = (await res.json()) as CourseDetailResponse;
   return data.course ?? null;

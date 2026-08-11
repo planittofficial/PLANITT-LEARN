@@ -121,6 +121,7 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
             id: lessonId,
             moduleId,
             title: lessonTitle,
+            summary: `Learn the fundamentals covered in ${lessonTitle}.`,
             kind,
             videoUrl: kind === "video" ? videoFields.videoUrl : undefined,
             externalUrl: kind === "external" ? videoFields.externalUrl : undefined,
