@@ -40,15 +40,16 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!showForm) return;
-    setId(defaultLessonId(moduleId, lessons?.length ?? 0));
-  }, [showForm, moduleId, lessons?.length]);
+    if (!showForm || !courseId) return;
+    setId(defaultLessonId(moduleId, lessons?.length ?? 0, courseId));
+  }, [showForm, moduleId, lessons?.length, courseId]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
-    const lessonId = id.trim() || defaultLessonId(moduleId, lessons?.length ?? 0);
+    const lessonId =
+      id.trim() || defaultLessonId(moduleId, lessons?.length ?? 0, courseId);
     const lessonTitle = title.trim();
     if (!lessonTitle) {
       setError("Lesson title is required.");

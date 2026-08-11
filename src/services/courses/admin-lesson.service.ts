@@ -1,5 +1,6 @@
 import type { LessonKind as PrismaLessonKind } from "@prisma/client";
 
+import { slugifyLessonId } from "@/lib/admin/lesson-video";
 import { prisma } from "@/lib/db/prisma";
 import type { LessonKind } from "@/types/course.types";
 import type { CreateLessonInput, UpdateLessonInput } from "@/validations/lesson.schema";
@@ -75,7 +76,18 @@ export async function getAdminLesson(lessonId: string): Promise<AdminLesson | nu
   return row ? toAdminLesson(row) : null;
 }
 
+async function resolveUniqueLessonId(preferredId: string): Promise<string> {
+  const base = slugifyLessonId(preferredId) || "lesson";
+  let candidate = base;
+  let n = 2;
+  while (await prisma.lesson.findUnique({ where: { id: candidate } })) {
+    candidate = `${base}-${n++}`.slice(0, 80);
+  }
+  return candidate;
+}
+
 export async function createLesson(input: CreateLessonInput): Promise<AdminLesson> {
+  const lessonId = await resolveUniqueLessonId(input.id);
   const maxOrder = await prisma.lesson.aggregate({
     where: { moduleId: input.moduleId },
     _max: { sortOrder: true },
@@ -86,7 +98,7 @@ export async function createLesson(input: CreateLessonInput): Promise<AdminLesso
   const row = await prisma.$transaction(async (tx) => {
     const lesson = await tx.lesson.create({
       data: {
-        id: input.id,
+        id: lessonId,
         moduleId: input.moduleId,
         title: input.title,
         summary: input.summary,

@@ -1,8 +1,8 @@
+import { slugifyLessonId } from "@/lib/admin/lesson-video";
 import type { LessonKind } from "@/types/course.types";
 
 export type CreateLessonInput = {
-  id: string;
-  moduleId: string;
+  id: string;  moduleId: string;
   title: string;
   summary?: string;
   kind: LessonKind;
@@ -29,7 +29,7 @@ export function parseCreateLesson(body: unknown): CreateLessonInput | null {
   if (!body || typeof body !== "object") return null;
   const r = body as Record<string, unknown>;
 
-  const id = typeof r.id === "string" ? r.id.trim() : "";
+  const id = slugifyLessonId(typeof r.id === "string" ? r.id.trim() : "");
   const moduleId = typeof r.moduleId === "string" ? r.moduleId.trim() : "";
   const title = typeof r.title === "string" ? r.title.trim() : "";
   const kind = parseKind(r.kind);
