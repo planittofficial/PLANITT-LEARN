@@ -11,6 +11,9 @@ type CourseDetailResponse = { ok: true; course: ApiCourseDetail };
 
 async function fetchCourseDetail(courseId: string): Promise<ApiCourseDetail | null> {
   const res = await authedFetch(ROUTES.API.COURSES.detail(courseId));
+  if (res.status === 503) {
+    throw new Error("DATABASE_UNAVAILABLE");
+  }
   if (!res.ok) return null;
   const data = (await res.json()) as CourseDetailResponse;
   return data.course ?? null;
@@ -25,6 +28,10 @@ export function useCourseDetail(courseId: string) {
     queryFn: () => fetchCourseDetail(courseId),
     enabled: authReady && isAuthenticated && Boolean(courseId),
     staleTime: 60_000,
+    retry: (failureCount, error) =>
+      error instanceof Error && error.message === "DATABASE_UNAVAILABLE"
+        ? failureCount < 2
+        : false,
   });
 
   return {
@@ -32,6 +39,7 @@ export function useCourseDetail(courseId: string) {
     isLoading: query.isLoading,
     isPending: query.isPending,
     isFetched: query.isFetched,
+    isError: query.isError,
     error: query.error,
     refetch: query.refetch,
   };

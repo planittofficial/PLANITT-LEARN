@@ -13,24 +13,20 @@ import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { useModuleTest } from "@/hooks/quizzes/use-module-test";
 import { apiCourseDetailToDefinition } from "@/lib/catalog/map-api-course";
-import { getCourseById } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { LessonQuizPanel } from "@/features/quizzes";
 
 export default function ModuleTestPage() {
   const params = useParams<{ courseId: string; moduleId: string }>();
-  const { courseId, moduleId } = params;
+  const courseId = decodeURIComponent(params.courseId ?? "");
+  const moduleId = decodeURIComponent(params.moduleId ?? "");
 
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
   const courseQuery = useCourseDetail(courseId);
   const moduleTest = useModuleTest(moduleId, Boolean(user?.id));
 
-  const staticCourse = getCourseById(courseId);
-  const course =
-    courseQuery.data && courseQuery.data.modules.length > 0
-      ? apiCourseDetailToDefinition(courseQuery.data)
-      : staticCourse;
+  const course = courseQuery.data ? apiCourseDetailToDefinition(courseQuery.data) : null;
 
   if (loading || courseQuery.isLoading) {
     return (

@@ -29,6 +29,15 @@ async function postHeartbeat(
   return (await res.json()) as ProgressPostResponse;
 }
 
+async function postMarkComplete(lessonId: string): Promise<boolean> {
+  const res = await authedFetch(ROUTES.API.LESSONS.progress(lessonId), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ markComplete: true }),
+  });
+  return res.ok;
+}
+
 /** Server progress for a lesson — GET + POST heartbeat (G7 / S9). */
 export function useLessonProgress(lessonId: string, enabled = true) {
   const queryClient = useQueryClient();
@@ -60,6 +69,22 @@ export function useLessonProgress(lessonId: string, enabled = true) {
     },
   });
 
+  const markCompleteMutation = useMutation({
+    mutationFn: () => postMarkComplete(lessonId),
+    onSuccess: (ok) => {
+      if (!ok) return;
+      const next: LessonProgressState = {
+        lessonId,
+        watchedSeconds: 0,
+        watchPercent: 100,
+        completed: true,
+        completedAt: new Date().toISOString(),
+      };
+      queryClient.setQueryData(["progress", lessonId], next);
+      queryClient.invalidateQueries({ queryKey: ["progress", "course"] });
+    },
+  });
+
   return {
     progress: query.data,
     isLoading: query.isLoading,
@@ -68,5 +93,7 @@ export function useLessonProgress(lessonId: string, enabled = true) {
     sendHeartbeat: mutation.mutate,
     sendHeartbeatAsync: mutation.mutateAsync,
     isSaving: mutation.isPending,
+    markComplete: markCompleteMutation.mutateAsync,
+    isMarking: markCompleteMutation.isPending,
   };
 }

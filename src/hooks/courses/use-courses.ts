@@ -11,12 +11,13 @@ type CoursesResponse = { ok: true; courses: ApiCourseListItem[] };
 
 async function fetchCourses(): Promise<ApiCourseListItem[]> {
   const res = await authedFetch(ROUTES.API.COURSES.LIST);
-  if (!res.ok) return [];
+  if (res.status === 503) throw new Error("DATABASE_UNAVAILABLE");
+  if (!res.ok) throw new Error("COURSES_FETCH_FAILED");
   const data = (await res.json()) as CoursesResponse;
   return Array.isArray(data.courses) ? data.courses : [];
 }
 
-/** Published course catalog from GET /api/v1/courses (DB or static fallback). */
+/** Published course catalog from GET /api/v1/courses. */
 export function useCourses() {
   const { isAuthenticated, authReady } = useAuth();
 
@@ -25,11 +26,16 @@ export function useCourses() {
     queryFn: fetchCourses,
     enabled: authReady,
     staleTime: 60_000,
+    retry: (failureCount, error) =>
+      error instanceof Error && error.message === "DATABASE_UNAVAILABLE"
+        ? failureCount < 2
+        : false,
   });
 
   return {
     data: query.data ?? [],
     isLoading: authReady && query.isLoading,
+    isError: query.isError,
     error: query.error,
     refetch: query.refetch,
     isAuthenticated,

@@ -21,8 +21,14 @@ export async function fetchCourseProgress(
   userId: string,
 ): Promise<CourseProgress> {
   const res = await authedFetch(ROUTES.API.COURSES.progress(courseId));
-  if (res.status === 503 || !res.ok) {
-    return loadCourseProgress(userId, courseId);
+  if (res.status === 503) {
+    throw new Error("DATABASE_UNAVAILABLE");
+  }
+  if (!res.ok) {
+    if (process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE === "true") {
+      return loadCourseProgress(userId, courseId);
+    }
+    return {};
   }
   const data = (await res.json()) as CourseProgressResponse;
   return data.progress ?? {};
@@ -48,12 +54,16 @@ export function useCourseProgress(courseId: string) {
     queryFn: () => fetchCourseProgress(courseId, userId!),
     enabled: authReady && isAuthenticated && Boolean(courseId) && Boolean(userId),
     staleTime: 30_000,
+    retry: (failureCount, error) =>
+      error instanceof Error && error.message === "DATABASE_UNAVAILABLE"
+        ? failureCount < 2
+        : false,
   });
 
   const markCompleteMutation = useMutation({
     mutationFn: async (lessonId: string) => {
       const apiOk = await postMarkLessonComplete(lessonId);
-      if (!apiOk && userId) {
+      if (!apiOk && userId && process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE === "true") {
         saveLessonComplete(userId, courseId, lessonId);
       }
       return lessonId;
@@ -72,7 +82,10 @@ export function useCourseProgress(courseId: string) {
   });
 
   const progress =
-    query.data ?? (userId ? loadCourseProgress(userId, courseId) : {});
+    query.data ??
+    (userId && process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE === "true"
+      ? loadCourseProgress(userId, courseId)
+      : {});
 
   return {
     progress,

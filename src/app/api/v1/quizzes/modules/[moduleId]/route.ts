@@ -1,4 +1,6 @@
 import { fail, ok } from "@/lib/api/response";
+import { handleDatabaseError } from "@/lib/api/handle-db";
+import { decodePathSegment } from "@/lib/api/path";
 import { requireDatabase } from "@/lib/api/require-db";
 import { prisma } from "@/lib/db/prisma";
 import {
@@ -22,21 +24,21 @@ export async function GET(request: Request, { params }: Params) {
   if (dbError) return dbError;
 
   const { moduleId } = await params;
-  const normalized = moduleId.trim();
-
-  const mod = await prisma.module.findUnique({
-    where: { id: normalized },
-    select: { courseId: true },
-  });
-  if (!mod) return fail("Module not found", 404);
+  const normalized = decodePathSegment(moduleId);
 
   try {
+    const mod = await prisma.module.findUnique({
+      where: { id: normalized },
+      select: { courseId: true },
+    });
+    if (!mod) return ok({ ok: true, test: null });
+
     await assertEnrolled(auth.user.id, mod.courseId, { accessToken: auth.token });
+
+    const test = await getModuleTestForStudent(normalized);
+    return ok({ ok: true, test: test ?? null });
   } catch (error) {
     if (error instanceof EnrollmentError) return fail(error.message, error.status);
-    return fail("Enrollment check failed", 500);
+    return handleDatabaseError(error);
   }
-
-  const test = await getModuleTestForStudent(normalized);
-  return ok({ ok: true, test: test ?? null });
 }

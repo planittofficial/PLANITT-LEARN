@@ -1,5 +1,6 @@
 import { fail, ok } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse-body";
+import { DB_UNAVAILABLE_MESSAGE } from "@/lib/db/database-error";
 import { getDatabaseUrl } from "@/lib/env";
 import { requireAdmin } from "@/lib/security/require-admin";
 import { enforceApiRateLimit } from "@/lib/security/rate-limit";
@@ -25,7 +26,7 @@ export async function GET(request: Request) {
     const message =
       process.env.NODE_ENV === "development" && err instanceof Error
         ? `Database connection failed: ${err.message}`
-        : "Database connection failed — check DATABASE_URL in .env.local";
+        : DB_UNAVAILABLE_MESSAGE;
     return fail(message, 503);
   }
 }

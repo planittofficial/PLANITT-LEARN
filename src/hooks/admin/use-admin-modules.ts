@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { encodePathSegment } from "@/lib/api/path";
 import { authedFetch } from "@/lib/security/client-auth";
 import { parseApiError } from "@/lib/admin/lesson-video";
 
@@ -32,7 +33,7 @@ export function useAdminModule(moduleId: string) {
   return useQuery({
     queryKey: ["admin", "module", moduleId],
     queryFn: async () => {
-      const res = await authedFetch(`/api/v1/admin/modules/${moduleId}`);
+      const res = await authedFetch(`/api/v1/admin/modules/${encodePathSegment(moduleId)}`);
       if (!res.ok) throw new Error(await parseApiError(res, "Failed to load module"));
       const data = (await res.json()) as { ok: true; module: AdminModuleRow };
       return data.module;
@@ -61,7 +62,7 @@ export function useUpdateModule(moduleId: string, courseId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (body: Record<string, unknown>) => {
-      const res = await authedFetch(`/api/v1/admin/modules/${moduleId}`, {
+      const res = await authedFetch(`/api/v1/admin/modules/${encodePathSegment(moduleId)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -80,7 +81,7 @@ export function useDeleteModule(courseId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (moduleId: string) => {
-      const res = await authedFetch(`/api/v1/admin/modules/${moduleId}`, { method: "DELETE" });
+      const res = await authedFetch(`/api/v1/admin/modules/${encodePathSegment(moduleId)}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete module");
       return res.json();
     },

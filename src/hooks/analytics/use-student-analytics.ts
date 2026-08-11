@@ -5,8 +5,6 @@ import { useMemo } from "react";
 import { useAuth } from "@/context/auth-context";
 import { useLeaderboard } from "@/hooks/leaderboard/use-leaderboard";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
-import { COURSE_CATALOG } from "@/lib/catalog/courses";
-import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import {
   getStudentAnalytics,
   type StudentAnalyticsSnapshot,
@@ -21,11 +19,11 @@ export function useStudentAnalytics() {
   const { user, isAuthenticated, authReady } = useAuth();
   const { enrolledIds } = useEnrollment();
 
-  const primaryCourseId =
-    COURSE_CATALOG.find((c) => isEnrolledInCourse(enrolledIds, c.id))?.id ??
-    "learn-forex-master-track";
+  const primaryCourseId = useMemo(() => [...enrolledIds][0] ?? "", [enrolledIds]);
 
-  const { entries, isLoading: leaderboardLoading } = useLeaderboard(primaryCourseId);
+  const { entries, isLoading: leaderboardLoading } = useLeaderboard(
+    primaryCourseId || undefined,
+  );
 
   const analytics = useMemo(() => {
     if (!user?.id) return null;

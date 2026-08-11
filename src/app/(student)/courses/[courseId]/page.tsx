@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -12,26 +13,51 @@ import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { usePurchasedEnrollmentRefresh } from "@/hooks/enrollment/use-purchased-enrollment-refresh";
 import { apiCourseDetailToDefinition } from "@/lib/catalog/map-api-course";
-import { getCourseById } from "@/lib/catalog/courses";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 
 function CourseHubContent() {
   const params = useParams<{ courseId: string }>();
-  const courseId = params.courseId;
-  const staticCourse = getCourseById(courseId);
+  const courseId = decodeURIComponent(params.courseId ?? "");
   const courseQuery = useCourseDetail(courseId);
   const { user } = useAuth();
   const { enrolledIds, loading } = useEnrollment();
   usePurchasedEnrollmentRefresh();
 
-  const course =
-    courseQuery.data != null
-      ? apiCourseDetailToDefinition(courseQuery.data)
-      : staticCourse;
-
-  if (!course && !courseQuery.isLoading) notFound();
-
+  const course = courseQuery.data ? apiCourseDetailToDefinition(courseQuery.data) : null;
   const enrolled = isEnrolledInCourse(enrolledIds, courseId);
+  const isLoading = loading || courseQuery.isPending || !courseQuery.isFetched;
+
+  if (!isLoading && courseQuery.isError) {
+    return (
+      <>
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", href: ROUTES.STUDENT.HOME },
+            { label: courseId },
+          ]}
+        />
+        <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-200">
+          Could not load course content. Please try again shortly.{" "}
+          <button
+            type="button"
+            className="text-brand underline"
+            onClick={() => void courseQuery.refetch()}
+          >
+            Try again
+          </button>{" "}
+          or{" "}
+          <Link href={ROUTES.STUDENT.HOME} className="text-brand underline">
+            return home
+          </Link>
+          .
+        </div>
+      </>
+    );
+  }
+
+  if (!isLoading && !course) {
+    notFound();
+  }
 
   return (
     <>
@@ -41,7 +67,7 @@ function CourseHubContent() {
           { label: course?.title ?? courseId },
         ]}
       />
-      {!course || loading || courseQuery.isPending || !courseQuery.isFetched ? (
+      {isLoading || !course ? (
         <CoursePageSkeleton />
       ) : (
         <CourseHubView
