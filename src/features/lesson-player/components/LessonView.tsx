@@ -14,11 +14,10 @@ import { Badge } from "@/components/ui/Badge";
 import { ROUTES } from "@/constants/routes";
 import { MarkdownLesson } from "@/features/lesson-player/components/MarkdownLesson";
 import { LessonCourseNav } from "@/features/lesson-player/components/LessonCourseNav";
-import { VideoPlayer } from "@/features/lesson-player/components/VideoPlayer";
+import { VideoPlayer, VideoUnavailablePlaceholder } from "@/features/lesson-player/components/VideoPlayer";
 import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
 import type { CourseProgress } from "@/lib/learning/progress";
 import { cn } from "@/lib/utils";
-import { toYoutubeEmbedUrl, isYoutubeUrl } from "@/lib/video/video-url";
 
 type LessonSidebarProps = {
   course: CourseDefinition;
@@ -118,54 +117,28 @@ type LessonContentProps = {
   onComplete: () => void;
 };
 
-function resolvePlayableVideoUrl(lesson: Lesson): string | undefined {
-  if (lesson.content.videoUrl?.trim()) return lesson.content.videoUrl.trim();
-  if (lesson.content.externalUrl && isYoutubeUrl(lesson.content.externalUrl)) {
-    return lesson.content.externalUrl.trim();
-  }
-  return undefined;
+function lessonHasVideo(lesson: Lesson): boolean {
+  return (
+    lesson.kind === "video" ||
+    Boolean(lesson.content.videoAvailable) ||
+    Boolean(lesson.content.videoUrl)
+  );
 }
 
 export function LessonContent({ lesson, courseId, userId, onComplete }: LessonContentProps) {
-  const videoUrl = resolvePlayableVideoUrl(lesson);
-  const isPlayableVideo =
-    lesson.kind === "video" || Boolean(videoUrl && isYoutubeUrl(videoUrl));
-
-  if (isPlayableVideo) {
+  if (lessonHasVideo(lesson)) {
     return (
       <div className="overflow-hidden rounded-xl border border-borderSubtle bg-black shadow-card">
-        {videoUrl && userId ? (
+        {userId ? (
           <VideoPlayer
             lessonId={lesson.id}
             courseId={courseId}
             userId={userId}
-            videoUrl={videoUrl}
             title={lesson.title}
             onComplete={onComplete}
           />
-        ) : videoUrl ? (
-          toYoutubeEmbedUrl(videoUrl) ? (
-            <iframe
-              src={toYoutubeEmbedUrl(videoUrl)!}
-              title={lesson.title}
-              className="aspect-video w-full bg-black"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
-          ) : (
-            <video
-              src={videoUrl}
-              controls
-              className="aspect-video w-full bg-black"
-              title={lesson.title}
-            />
-          )
         ) : (
-          <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black text-sm text-textMuted">
-            <Video className="h-8 w-8 opacity-30 text-brand" />
-            This lesson video is not available yet.
-          </div>
+          <VideoUnavailablePlaceholder />
         )}
       </div>
     );
@@ -211,10 +184,7 @@ export function LessonMetaBar({
   module: CourseModule;
   completed: boolean;
 }) {
-  const isVideoLesson =
-    lesson.kind === "video" ||
-    Boolean(lesson.content.videoUrl) ||
-    Boolean(lesson.content.externalUrl && isYoutubeUrl(lesson.content.externalUrl));
+  const isVideoLesson = lessonHasVideo(lesson);
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm text-textSecondary">

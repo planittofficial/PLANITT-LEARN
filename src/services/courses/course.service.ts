@@ -21,6 +21,7 @@ function toLessonKind(kind: PrismaLessonKind | string): LessonKind {
 }
 
 function lessonFromStatic(lesson: (typeof COURSE_CATALOG)[0]["modules"][0]["lessons"][0]): ApiLesson {
+  const videoUrl = lesson.content.videoUrl;
   return {
     id: lesson.id,
     title: lesson.title,
@@ -30,7 +31,7 @@ function lessonFromStatic(lesson: (typeof COURSE_CATALOG)[0]["modules"][0]["less
     minWatchPercent: 75,
     content: {
       markdown: lesson.content.markdown,
-      videoUrl: lesson.content.videoUrl,
+      videoAvailable: Boolean(videoUrl),
       externalUrl: lesson.content.externalUrl,
     },
   };
@@ -85,7 +86,7 @@ function lessonFromDb(row: {
   markdown: string | null;
   videoUrl: string | null;
   externalUrl: string | null;
-}): ApiLesson {
+}, options?: { includeVideoUrl?: boolean }): ApiLesson {
   let kind = toLessonKind(row.kind);
   let videoUrl = row.videoUrl ?? undefined;
   const externalUrl = row.externalUrl ?? undefined;
@@ -94,6 +95,8 @@ function lessonFromDb(row: {
     videoUrl = externalUrl;
     kind = "video";
   }
+
+  const videoAvailable = Boolean(videoUrl);
 
   return {
     id: row.id,
@@ -104,8 +107,9 @@ function lessonFromDb(row: {
     minWatchPercent: row.minWatchPercent,
     content: {
       markdown: row.markdown ?? undefined,
-      videoUrl,
-      externalUrl,
+      videoAvailable,
+      ...(options?.includeVideoUrl && videoUrl ? { videoUrl } : {}),
+      externalUrl: externalUrl && !isYoutubeUrl(externalUrl) ? externalUrl : undefined,
     },
   };
 }
@@ -170,7 +174,7 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
       id: mod.id,
       title: mod.title,
       summary: mod.summary ?? "",
-      lessons: mod.lessons.map(lessonFromDb),
+      lessons: mod.lessons.map((row) => lessonFromDb(row)),
     }));
 
     const lessonCount = modules.reduce((sum, mod) => sum + mod.lessons.length, 0);

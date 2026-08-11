@@ -23,7 +23,7 @@ export function apiCourseDetailToDefinition(api: ApiCourseDetail): CourseDefinit
         summary: lesson.summary,
         content: {
           markdown: lesson.content.markdown,
-          videoUrl: lesson.content.videoUrl,
+          videoAvailable: lesson.content.videoAvailable,
           externalUrl: lesson.content.externalUrl,
         },
       })),

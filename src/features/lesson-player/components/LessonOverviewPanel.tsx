@@ -1,16 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  BookOpen,
-  CheckCircle2,
-  Clock,
-  FileText,
-  Layers,
-  ListChecks,
-  StickyNote,
-  Video,
-} from "lucide-react";
+import { BookOpen, CheckCircle2, Clock, FileText, Layers, ListChecks, StickyNote, Video } from "lucide-react";
 
 import { Badge } from "@/components/ui/Badge";
 import { MarkdownLesson } from "@/features/lesson-player/components/MarkdownLesson";
@@ -43,10 +34,7 @@ export function LessonOverviewPanel({
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const overview = buildLessonOverviewContent(lesson, module, course);
 
-  const isVideoLesson =
-    lesson.kind === "video" ||
-    Boolean(lesson.content.videoUrl) ||
-    Boolean(lesson.content.externalUrl && isYoutubeUrl(lesson.content.externalUrl));
+  const isVideoLesson = lesson.kind === "video" || Boolean(lesson.content.videoAvailable);
 
   const tabs: Array<{ id: TabId; label: string; icon: typeof BookOpen }> = [
     { id: "overview", label: "Overview", icon: BookOpen },

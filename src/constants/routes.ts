@@ -49,6 +49,7 @@ export const ROUTES = {
     },
     LESSONS: {
       detail: (lessonId: string) => `/api/v1/lessons/${encodePathSegment(lessonId)}`,
+      playback: (lessonId: string) => `/api/v1/lessons/${encodePathSegment(lessonId)}/playback`,
       progress: (lessonId: string) => `/api/v1/lessons/${encodePathSegment(lessonId)}/progress`,
     },
     QUIZZES: {
