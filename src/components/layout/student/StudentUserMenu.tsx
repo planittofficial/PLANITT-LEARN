@@ -7,6 +7,7 @@ import { ChevronDown, LogOut, ShoppingBag, User, ShieldAlert } from "lucide-reac
 
 import { Avatar } from "@/components/ui/Avatar";
 import { ROUTES } from "@/constants/routes";
+import { setLmsViewMode } from "@/lib/auth/view-mode";
 import { alvestCheckoutUrl } from "@/constants/urls";
 import { cn } from "@/lib/utils";
 
@@ -78,9 +79,7 @@ export function StudentUserMenu({ name, email, isAdmin, onLogout }: StudentUserM
                 href={ROUTES.ADMIN.HOME}
                 role="menuitem"
                 onClick={() => {
-                  if (typeof window !== "undefined") {
-                    localStorage.setItem("lms-view-mode", "admin");
-                  }
+                  setLmsViewMode("admin");
                   setOpen(false);
                 }}
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-brand font-semibold transition hover:bg-overlay-hover"

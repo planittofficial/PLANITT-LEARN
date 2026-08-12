@@ -1,11 +1,12 @@
 import { loadLocalEnv } from "@/lib/load-local-env";
+import { normalizeDatabaseUrl } from "@/lib/db/database-url";
 import { PrismaClient } from "@prisma/client";
 
 loadLocalEnv();
 
 const databaseUrl = process.env.DATABASE_URL?.trim();
 if (databaseUrl) {
-  process.env.DATABASE_URL = databaseUrl;
+  process.env.DATABASE_URL = normalizeDatabaseUrl(databaseUrl);
 }
 
 type PrismaGlobal = {
@@ -29,10 +30,10 @@ function getPrismaClient(): PrismaClient {
     return globalForPrisma.prisma;
   }
 
-  if (!globalForPrisma.prisma || globalForPrisma.prismaUrl !== databaseUrl) {
+  if (!globalForPrisma.prisma || globalForPrisma.prismaUrl !== process.env.DATABASE_URL) {
     void globalForPrisma.prisma?.$disconnect();
     globalForPrisma.prisma = createPrismaClient();
-    globalForPrisma.prismaUrl = databaseUrl;
+    globalForPrisma.prismaUrl = process.env.DATABASE_URL;
   }
 
   return globalForPrisma.prisma;

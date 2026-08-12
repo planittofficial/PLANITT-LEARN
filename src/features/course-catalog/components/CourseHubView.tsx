@@ -54,10 +54,29 @@ export function CourseHubView({
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
 
   useEffect(() => {
-    if (course.modules.length) {
-      setExpandedModules([course.modules[0].id]);
-    }
-  }, [course.modules]);
+    setExpandedModules([]);
+  }, [courseId]);
+
+  useEffect(() => {
+    if (!course.modules.length) return;
+    if (progressLoading && enrolled) return;
+
+    setExpandedModules((prev) => {
+      if (prev.length > 0) return prev;
+
+      const unlocked = course.modules
+        .filter((_, moduleIndex) => {
+          if (moduleIndex === 0) return true;
+          const prevModule = course.modules[moduleIndex - 1];
+          const prevIds = prevModule.lessons.map((lesson) => lesson.id);
+          const prevStats = getModuleProgressStats(progress, prevIds);
+          return prevStats.total > 0 && prevStats.completed === prevStats.total;
+        })
+        .map((module) => module.id);
+
+      return unlocked.length > 0 ? unlocked : [course.modules[0].id];
+    });
+  }, [course.modules, courseId, enrolled, progress, progressLoading]);
 
   const stats = useMemo(
     () => getCourseProgressStats(userId, course, progress),

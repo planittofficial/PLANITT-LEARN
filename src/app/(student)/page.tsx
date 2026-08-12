@@ -9,6 +9,7 @@ import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ROUTES } from "@/constants/routes";
+import { isStudentViewMode } from "@/lib/auth/view-mode";
 
 export default function HomePage() {
   const { isAuthenticated, devPreview, loading } = useEnrollment();
@@ -17,8 +18,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (authReady && isAuthenticated && isAdmin) {
-      const mode = typeof window !== "undefined" ? localStorage.getItem("lms-view-mode") : null;
-      if (mode !== "student") {
+      if (!isStudentViewMode()) {
         router.replace(ROUTES.ADMIN.HOME);
       }
     }

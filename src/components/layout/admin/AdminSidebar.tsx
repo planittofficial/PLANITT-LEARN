@@ -17,6 +17,7 @@ import {
 import { AlvestLogo } from "@/components/brand";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ROUTES } from "@/constants/routes";
+import { setLmsViewMode } from "@/lib/auth/view-mode";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 
@@ -116,9 +117,8 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
           <Link
             href={ROUTES.STUDENT.HOME}
             onClick={() => {
-              if (typeof window !== "undefined") {
-                localStorage.setItem("lms-view-mode", "student");
-              }
+              setLmsViewMode("student");
+              onMobileClose?.();
             }}
             className="flex items-center justify-center gap-1.5 rounded-lg border border-borderSubtle py-2.5 text-textSecondary hover:border-brand/40 hover:text-brand transition"
           >

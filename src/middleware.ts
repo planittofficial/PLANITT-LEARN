@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { SESSION_HINT_COOKIE } from "@/lib/security/auth-cookies";
+import { REFRESH_TOKEN_COOKIE, SESSION_HINT_COOKIE } from "@/lib/security/auth-cookies";
 
 const PUBLIC_PATHS = new Set([
   "/login",
@@ -34,7 +34,8 @@ export function middleware(request: NextRequest) {
   }
 
   const hint = request.cookies.get(SESSION_HINT_COOKIE)?.value;
-  if (!hint) {
+  const refresh = request.cookies.get(REFRESH_TOKEN_COOKIE)?.value;
+  if (!hint && !refresh) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname || "/");
