@@ -8,7 +8,7 @@ import { authedFetch } from "@/lib/security/client-auth";
 export type LessonPlayback =
   | {
       provider: "youtube";
-      embedUrl: string;
+      videoId: string;
       thumbnailUrl: string;
     }
   | {
