@@ -203,8 +203,8 @@ export default function LessonPage() {
         ]}
       />
 
-      <div className="mt-4 grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
-        <div className="min-w-0 space-y-6">
+      <div className="mt-4 flex flex-col gap-8 xl:grid xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
+        <div className="order-2 min-w-0 space-y-6 xl:order-1">
           <LessonHeader lesson={lesson} module={module} courseTitle={course.title} />
           <LessonMetaBar lesson={lesson} module={module} completed={!!completed} />
 
@@ -284,12 +284,14 @@ export default function LessonPage() {
           />
         </div>
 
-        <LessonSidebar
-          course={navCourse}
-          courseId={courseId}
-          currentLessonId={lesson.id}
-          progress={progress}
-        />
+        <div className="order-1 xl:order-2">
+          <LessonSidebar
+            course={navCourse}
+            courseId={courseId}
+            currentLessonId={lesson.id}
+            progress={progress}
+          />
+        </div>
       </div>
 
       <p className="mt-8 text-center text-xs text-textMuted">

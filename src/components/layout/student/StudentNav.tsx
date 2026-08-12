@@ -15,6 +15,7 @@ import {
 
 import { AlvestLogo } from "@/components/brand";
 import { ROUTES } from "@/constants/routes";
+import { setLmsViewMode } from "@/lib/auth/view-mode";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 import { Avatar } from "@/components/ui/Avatar";
@@ -166,8 +167,8 @@ export function StudentSidebar() {
               key={item.label}
               href={item.href}
               onClick={() => {
-                if (item.href === ROUTES.ADMIN.HOME && typeof window !== "undefined") {
-                  localStorage.setItem("lms-view-mode", "admin");
+                if (item.href === ROUTES.ADMIN.HOME) {
+                  setLmsViewMode("admin");
                 }
               }}
               className={cn(

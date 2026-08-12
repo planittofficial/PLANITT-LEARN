@@ -9,6 +9,7 @@ import { ArrowRight, BookOpen, LineChart, Loader2, Sparkles } from "lucide-react
 import { AlvestLogo } from "@/components/brand/AlvestLogo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ROUTES } from "@/constants/routes";
+import { getLmsViewMode, setLmsViewMode } from "@/lib/auth/view-mode";
 import { MAIN_WEBSITE_URL } from "@/constants/urls";
 import { useAuth } from "@/context/auth-context";
 import { useTheme } from "@/context/theme-context";
@@ -35,10 +36,17 @@ function resolvePostLoginPath(searchParams: URLSearchParams): string {
 }
 
 function postLoginPath(isAdmin: boolean, safeNext: string): string {
-  if (isAdmin && safeNext === ROUTES.STUDENT.HOME) {
-    if (typeof window !== "undefined") localStorage.setItem("lms-view-mode", "admin");
+  if (!isAdmin) return safeNext;
+
+  if (getLmsViewMode() === "student") {
+    return safeNext;
+  }
+
+  if (safeNext === ROUTES.STUDENT.HOME) {
+    setLmsViewMode("admin");
     return ROUTES.ADMIN.HOME;
   }
+
   return safeNext;
 }
 
