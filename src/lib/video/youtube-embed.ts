@@ -44,6 +44,7 @@ export function buildSecureYoutubeEmbedUrl(videoId: string, origin?: string): st
     playsinline: "1",
     controls: "1",
     enablejsapi: "1",
+    showinfo: "0",
   });
 
   if (origin) params.set("origin", origin);

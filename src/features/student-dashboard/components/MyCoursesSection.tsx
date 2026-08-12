@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
-import { Lock, Trophy, Zap } from "lucide-react";
+import { Lock } from "lucide-react";
 
 import { DashboardSkeleton } from "@/components/ui/skeletons";
 import { NoCoursesEmpty } from "@/components/shared/EmptyState";
 import { ROUTES } from "@/constants/routes";
 import { alvestCheckoutUrl } from "@/constants/urls";
 import { CourseCard } from "@/features/course-catalog/components/CourseCard";
-import { ContinueLearningCard } from "@/features/student-dashboard/components/DashboardHero";
 import { LeaderboardRankCard } from "@/features/student-dashboard/components/LeaderboardRankCard";
+import { LearnerStatsSidebar } from "@/features/student-dashboard/components/LearnerStatsSidebar";
+import { LearningCommandCenter } from "@/features/student-dashboard/components/LearningCommandCenter";
 import { RecentlyWatched } from "@/features/student-dashboard/components/RecentlyWatched";
 import { WeeklyProgressChart } from "@/features/student-dashboard/components/WeeklyProgressChart";
 import { WelcomeHero } from "@/features/student-dashboard/components/WelcomeHero";
@@ -25,8 +26,7 @@ import { fetchCourseProgress } from "@/hooks/progress/use-course-progress";
 import { apiCourseListItemToDefinition } from "@/lib/catalog/map-api-course";
 import { getRecentlyWatched, getWeeklyActivity } from "@/lib/learning/activity";
 import { isEnrolledInCourse } from "@/lib/learning/enrollment";
-import { getCourseProgressStats } from "@/lib/learning/course-progress";
-import { getLevelInfo } from "@/lib/learning/gamification";
+import { getContinueLessonUrl, getCourseProgressStats } from "@/lib/learning/course-progress";
 import { cn } from "@/lib/utils";
 import type { CourseProgress } from "@/lib/learning/progress";
 
@@ -91,11 +91,50 @@ export function MyCoursesSection() {
     ...getCourseProgressStats(user?.id, course, progressByCourseId.get(course.id)),
   }));
 
-  const continueCourse =
+  const lastVisited = recent.find((item) =>
+    courseStats.some((c) => c.course.id === item.courseId),
+  );
+  const lastVisitedStats = lastVisited
+    ? courseStats.find((c) => c.course.id === lastVisited.courseId)
+    : undefined;
+  const fallbackCourse =
     courseStats.find((c) => c.percent > 0 && c.percent < 100) ??
     courseStats.find((c) => c.percent === 0);
 
-  const level = getLevelInfo(gamification.xp);
+  const lastVisitedCourse =
+    lastVisited && lastVisitedStats
+      ? {
+          course: lastVisitedStats.course,
+          percent: lastVisitedStats.percent,
+          completed: lastVisitedStats.completed,
+          total: lastVisitedStats.total,
+          continueUrl: ROUTES.STUDENT.lesson(
+            lastVisited.courseId,
+            lastVisited.moduleId,
+            lastVisited.lessonId,
+          ),
+          lastLessonTitle: lastVisited.lessonTitle,
+          watchedAt: lastVisited.watchedAt,
+        }
+      : fallbackCourse && user?.id
+        ? {
+            course: fallbackCourse.course,
+            percent: fallbackCourse.percent,
+            completed: fallbackCourse.completed,
+            total: fallbackCourse.total,
+            continueUrl:
+              getContinueLessonUrl(
+                user.id,
+                fallbackCourse.course,
+                progressByCourseId.get(fallbackCourse.course.id),
+              ) ?? ROUTES.STUDENT.course(fallbackCourse.course.id),
+            lastLessonTitle: undefined as string | undefined,
+            watchedAt: undefined as string | undefined,
+          }
+        : undefined;
+
+  const coursesInProgress = courseStats.filter((c) => c.percent > 0 && c.percent < 100).length;
+
   const firstName = user?.name?.split(" ")[0] ?? "Learner";
 
   const filteredEnrolled = courseStats.filter(({ percent }) => {
@@ -163,45 +202,36 @@ export function MyCoursesSection() {
           ) : null}
 
           {(isAuthenticated || devPreview) && (
-            <div className="grid grid-cols-12 gap-6 mb-8">
-              <div className={cn(continueCourse ? "col-span-12 lg:col-span-8" : "col-span-12")}>
-                {continueCourse && user?.id ? (
-                  <ContinueLearningCard
-                    course={continueCourse.course}
-                    userId={user.id}
-                    progressPercent={continueCourse.percent}
-                    completedLessons={continueCourse.completed}
-                    totalLessons={continueCourse.total}
+            <div className="mb-8 grid grid-cols-12 gap-6">
+              <div className="col-span-12 lg:col-span-8">
+                {isAuthenticated ? (
+                  <LearningCommandCenter
+                    streak={gamification.streak}
+                    xp={gamification.xp}
+                    weeklyDays={weeklyDays}
+                    lastVisitedCourse={lastVisitedCourse}
+                    coursesInProgress={coursesInProgress}
                   />
                 ) : (
-                  <div className="p-8 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md flex flex-col justify-center min-h-[320px] text-center">
-                    <p className="font-headline text-2xl font-extrabold text-textPrimary mb-2 tracking-tight">All caught up</p>
-                    <p className="text-xs text-textSecondary font-mono uppercase tracking-wider">You have completed all enrolled courses. Choose another course to keep going.</p>
+                  <div className="flex min-h-[320px] flex-col justify-center rounded-lg border border-borderSubtle bg-surface/60 p-8 text-center backdrop-blur-md">
+                    <p className="mb-2 font-headline text-2xl font-extrabold tracking-tight text-textPrimary">
+                      Preview mode
+                    </p>
+                    <p className="font-mono text-xs uppercase tracking-wider text-textSecondary">
+                      Sign in to unlock your learning dashboard.
+                    </p>
                   </div>
                 )}
               </div>
 
               {isAuthenticated ? (
-                <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
-                  <div className="p-6 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] terminal-glow relative group hover:border-brand/40 transition">
-                    <p className="font-mono text-[9px] text-textSecondary uppercase tracking-widest mb-4">Learning points</p>
-                    <div className="flex items-end justify-between">
-                      <p className="font-mono text-4xl font-extrabold text-brand tracking-tighter leading-none">{gamification.xp.toLocaleString()}</p>
-                      <Zap className="text-brand/35 h-7 w-7 group-hover:text-brand transition-colors animate-pulse-live" />
-                    </div>
-                  </div>
-                  <div className="p-6 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md flex flex-col justify-between flex-1 min-h-[148px] relative group hover:border-brand/40 transition">
-                    <p className="font-mono text-[9px] text-textSecondary uppercase tracking-widest mb-4">Learner level</p>
-                    <div className="flex items-end justify-between">
-                      <div className="font-mono leading-none">
-                        <p className="text-2xl font-black text-textPrimary">LEVEL {level.level}</p>
-                        <span className="block text-[9px] text-brand/60 font-bold tracking-widest uppercase mt-1">
-                          {level.title}
-                        </span>
-                      </div>
-                      <Trophy className="text-textPrimary/25 h-7 w-7 group-hover:text-brand transition-colors" />
-                    </div>
-                  </div>
+                <div className="col-span-12 lg:col-span-4">
+                  <LearnerStatsSidebar
+                    xp={gamification.xp}
+                    streak={gamification.streak}
+                    lessonsCompletedTotal={gamification.lessonsCompletedTotal}
+                    weeklyDays={weeklyDays}
+                  />
                 </div>
               ) : null}
             </div>

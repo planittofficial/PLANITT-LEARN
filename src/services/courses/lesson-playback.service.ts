@@ -2,16 +2,12 @@ import { COURSE_CATALOG } from "@/lib/catalog/courses";
 import { prisma } from "@/lib/db/prisma";
 import { getDatabaseUrl } from "@/lib/env";
 import { isYoutubeUrl } from "@/lib/video/video-url";
-import {
-  buildSecureYoutubeEmbedUrl,
-  getYoutubeVideoId,
-  youtubeThumbnailUrl,
-} from "@/lib/video/youtube-embed";
+import { getYoutubeVideoId, youtubeThumbnailUrl } from "@/lib/video/youtube-embed";
 
 export type LessonPlayback =
   | {
       provider: "youtube";
-      embedUrl: string;
+      videoId: string;
       thumbnailUrl: string;
     }
   | {
@@ -33,7 +29,7 @@ function playbackFromCatalog(lessonId: string): LessonPlayback | null {
         if (!videoId) return null;
         return {
           provider: "youtube",
-          embedUrl: buildSecureYoutubeEmbedUrl(videoId),
+          videoId,
           thumbnailUrl: youtubeThumbnailUrl(videoId),
         };
       }
@@ -69,7 +65,7 @@ export async function getLessonPlayback(lessonId: string): Promise<LessonPlaybac
     if (!videoId) return null;
     return {
       provider: "youtube",
-      embedUrl: buildSecureYoutubeEmbedUrl(videoId),
+      videoId,
       thumbnailUrl: youtubeThumbnailUrl(videoId),
     };
   }

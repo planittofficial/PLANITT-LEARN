@@ -62,7 +62,15 @@ export function getLevelInfo(xp: number) {
   const progressToNext = next
     ? Math.round(((xp - current.minXp) / (next.minXp - current.minXp)) * 100)
     : 100;
-  return { ...current, nextLevel: next?.level ?? null, nextMinXp: next?.minXp ?? null, progressToNext };
+  return {
+    ...current,
+    nextLevel: next?.level ?? null,
+    nextMinXp: next?.minXp ?? null,
+    nextTitle: next?.title ?? null,
+    progressToNext,
+    xpIntoLevel: xp - current.minXp,
+    xpForLevel: next ? next.minXp - current.minXp : 0,
+  };
 }
 
 /** Call when a lesson is completed or significant learning activity occurs. */

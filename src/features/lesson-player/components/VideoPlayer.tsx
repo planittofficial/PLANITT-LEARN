@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import { CheckCircle2, Loader2, ShieldAlert, Video } from "lucide-react";
+import { Loader2, ShieldAlert, Video } from "lucide-react";
 
+import { CourseVideoFooter } from "@/features/lesson-player/components/CourseVideoFooter";
 import { ProtectedHtml5Player } from "@/features/lesson-player/components/ProtectedHtml5Player";
 import { SecureYoutubePlayer } from "@/features/lesson-player/components/SecureYoutubePlayer";
 import { useLessonPlayback } from "@/hooks/progress/use-lesson-playback";
@@ -67,7 +68,7 @@ export function VideoPlayer({
   if (playback.provider === "youtube") {
     return (
       <SecureYoutubePlayer
-        embedUrl={playback.embedUrl}
+        videoId={playback.videoId}
         thumbnailUrl={playback.thumbnailUrl}
         title={title}
         completed={completed}
@@ -88,22 +89,11 @@ export function VideoPlayer({
         minWatchPercent={minWatchPercent}
         onComplete={onComplete}
       />
-      <div className="flex items-center justify-between border-t border-white/10 bg-black px-4 py-3 text-xs text-textMuted">
-        <span>Protected hosted video — do not redistribute.</span>
-        {!completed ? (
-          <button
-            type="button"
-            onClick={() => void markDone()}
-            disabled={isMarking}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 font-semibold text-brandForeground"
-          >
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            {isMarking ? "Saving…" : "Mark complete"}
-          </button>
-        ) : (
-          <span className="font-semibold text-brand">Completed</span>
-        )}
-      </div>
+      <CourseVideoFooter
+        completed={completed}
+        isMarking={isMarking}
+        onMarkComplete={() => void markDone()}
+      />
     </div>
   );
 }

@@ -232,24 +232,83 @@ body {
   -webkit-user-select: none;
 }
 
-.video-shield-top-right {
+.course-video-stage {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+
+.course-video-youtube-host,
+.course-video-youtube-host iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none;
+}
+
+/* Slight overscale to crop residual YouTube watermark/chrome at the edges */
+.course-video-youtube-host iframe {
+  transform: scale(1.06);
+  transform-origin: center;
+}
+
+.course-video-brand-mask-top {
   position: absolute;
   top: 0;
+  left: 0;
   right: 0;
-  z-index: 2;
-  width: 7.5rem;
-  height: 3.25rem;
+  z-index: 10;
+  height: 3.5rem;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent);
+}
+
+.course-video-brand-mask-bottom-right {
+  position: absolute;
+  right: 0;
+  bottom: 4.75rem;
+  z-index: 10;
+  width: 7rem;
+  height: 2.75rem;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.course-video-controls {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.course-video-seek {
+  appearance: none;
+  background: transparent;
+  accent-color: var(--brand);
+}
+
+.course-video-seek::-webkit-slider-runnable-track,
+.course-video-volume::-webkit-slider-runnable-track {
+  height: 4px;
   background: transparent;
 }
 
-.video-shield-bottom-left {
-  position: absolute;
-  bottom: 2.75rem;
-  left: 0;
-  z-index: 2;
-  width: 6.5rem;
-  height: 2.5rem;
-  background: transparent;
+.course-video-seek::-webkit-slider-thumb,
+.course-video-volume::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -4px;
+  border-radius: 9999px;
+  background: var(--brand);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+.course-video-volume {
+  height: 4px;
+  appearance: none;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.18);
+  accent-color: var(--brand);
 }
 
 ::-webkit-scrollbar {
@@ -371,9 +430,28 @@ body {
   background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
 }
 
+.learning-radar-sweep {
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(20, 184, 166, 0.55) 28deg, transparent 56deg);
+  animation: learningRadarSweep 5s linear infinite;
+}
+
+@keyframes learningRadarSweep {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.learning-command-center:hover .learning-radar-sweep {
+  opacity: 0.12;
+}
+
 .terminal-glow {
   box-shadow: inset 0 0 20px color-mix(in srgb, var(--brand) 6%, transparent);
 }
+
 
 .grain-overlay {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
