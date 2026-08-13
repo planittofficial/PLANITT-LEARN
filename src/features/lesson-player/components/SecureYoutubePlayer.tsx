@@ -6,6 +6,12 @@ import { Play, Shield } from "lucide-react";
 import { CourseVideoControls } from "@/features/lesson-player/components/CourseVideoControls";
 import { CourseVideoFooter } from "@/features/lesson-player/components/CourseVideoFooter";
 import { useCourseVideoShortcuts } from "@/hooks/progress/use-course-video-shortcuts";
+import { cn } from "@/lib/utils";
+import {
+  isElementFullscreen,
+  subscribeFullscreenChange,
+  toggleElementFullscreen,
+} from "@/lib/video/fullscreen";
 import {
   buildChromelessPlayerVars,
   DEFAULT_PLAYBACK_RATES,
@@ -153,11 +159,9 @@ export function SecureYoutubePlayer({
   }, [started, startTick, stopTick, videoId]);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(document.fullscreenElement === containerRef.current);
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    return subscribeFullscreenChange(() => {
+      setIsFullscreen(isElementFullscreen(stageRef.current));
+    });
   }, []);
 
   const handlePlayPause = useCallback(() => {
@@ -175,15 +179,12 @@ export function SecureYoutubePlayer({
     startTick();
   }, [startTick, stopTick]);
 
-  const handleSeek = useCallback(
-    (time: number) => {
-      const player = playerRef.current;
-      if (!player) return;
-      player.seekTo(time, true);
-      setCurrentTime(time);
-    },
-    [],
-  );
+  const handleSeek = useCallback((time: number) => {
+    const player = playerRef.current;
+    if (!player) return;
+    player.seekTo(time, true);
+    setCurrentTime(time);
+  }, []);
 
   const handleVolumeChange = useCallback((nextVolume: number) => {
     const player = playerRef.current;
@@ -221,13 +222,8 @@ export function SecureYoutubePlayer({
   }, []);
 
   const handleFullscreenToggle = useCallback(async () => {
-    const node = containerRef.current;
-    if (!node) return;
-    if (document.fullscreenElement === node) {
-      await document.exitFullscreen();
-      return;
-    }
-    await node.requestFullscreen();
+    await toggleElementFullscreen(stageRef.current);
+    containerRef.current?.focus({ preventScroll: true });
   }, []);
 
   useCourseVideoShortcuts({
@@ -289,8 +285,16 @@ export function SecureYoutubePlayer({
           </div>
         </button>
       ) : (
-        <div ref={stageRef} className="course-video-stage relative aspect-video w-full bg-black">
-          <div ref={playerHostRef} className="course-video-youtube-host absolute inset-0" />
+        <div
+          ref={stageRef}
+          className={cn(
+            "course-video-stage relative aspect-video w-full bg-black",
+            isFullscreen && "is-fullscreen",
+          )}
+        >
+          <div className="course-video-frame absolute inset-0">
+            <div ref={playerHostRef} className="course-video-youtube-host absolute inset-0" />
+          </div>
 
           {!ready && !error ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/70 text-sm text-white/70">
@@ -304,7 +308,6 @@ export function SecureYoutubePlayer({
             </div>
           ) : null}
 
-          {/* Block any residual YouTube chrome that may appear in embed mode */}
           <div className="course-video-brand-mask-top pointer-events-none" aria-hidden="true" />
           <div className="course-video-brand-mask-bottom-right pointer-events-none" aria-hidden="true" />
 
@@ -347,11 +350,13 @@ export function SecureYoutubePlayer({
         </div>
       )}
 
-      <CourseVideoFooter
-        completed={completed}
-        isMarking={isMarking}
-        onMarkComplete={onMarkComplete}
-      />
+      {!isFullscreen ? (
+        <CourseVideoFooter
+          completed={completed}
+          isMarking={isMarking}
+          onMarkComplete={onMarkComplete}
+        />
+      ) : null}
     </div>
   );
 }

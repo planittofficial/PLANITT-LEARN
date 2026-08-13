@@ -6,6 +6,12 @@ import { CourseVideoControls } from "@/features/lesson-player/components/CourseV
 import { useCourseVideoShortcuts } from "@/hooks/progress/use-course-video-shortcuts";
 import { useLessonProgress } from "@/hooks/progress/use-lesson-progress";
 import { saveLessonComplete } from "@/lib/learning/progress";
+import { cn } from "@/lib/utils";
+import {
+  isElementFullscreen,
+  subscribeFullscreenChange,
+  toggleElementFullscreen,
+} from "@/lib/video/fullscreen";
 import {
   DEFAULT_PLAYBACK_RATES,
   html5QualityFromHeight,
@@ -133,21 +139,14 @@ export function ProtectedHtml5Player({
   }, []);
 
   const handleFullscreenToggle = useCallback(async () => {
-    const node = containerRef.current;
-    if (!node) return;
-    if (document.fullscreenElement === node) {
-      await document.exitFullscreen();
-      return;
-    }
-    await node.requestFullscreen();
+    await toggleElementFullscreen(containerRef.current);
+    containerRef.current?.focus({ preventScroll: true });
   }, []);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(document.fullscreenElement === containerRef.current);
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    return subscribeFullscreenChange(() => {
+      setIsFullscreen(isElementFullscreen(containerRef.current));
+    });
   }, []);
 
   useCourseVideoShortcuts({
@@ -171,41 +170,46 @@ export function ProtectedHtml5Player({
     <div
       ref={containerRef}
       tabIndex={0}
-      className="secure-video-shell course-video-stage relative bg-black outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
+      className={cn(
+        "secure-video-shell course-video-stage relative aspect-video w-full bg-black outline-none focus-visible:ring-2 focus-visible:ring-brand/50",
+        isFullscreen && "is-fullscreen",
+      )}
       onContextMenu={(event) => event.preventDefault()}
     >
-      <video
-        ref={videoRef}
-        src={streamUrl}
-        playsInline
-        preload="metadata"
-        className="aspect-video w-full cursor-pointer bg-black"
-        title={title}
-        onClick={() => {
-          handlePlayPause();
-          containerRef.current?.focus({ preventScroll: true });
-        }}
-        onLoadedMetadata={(event) => {
-          const el = event.currentTarget;
-          if (Number.isFinite(el.duration) && el.duration > 0) {
-            setDuration(el.duration);
-          }
-          const detected = html5QualityFromHeight(el.videoHeight);
-          setQualities([{ id: "auto", label: "Auto" }, detected]);
-          setQuality("auto");
-        }}
-        onTimeUpdate={handleTimeUpdate}
-        onPlay={() => {
-          setPlaying(true);
-          setBuffering(false);
-        }}
-        onPause={() => setPlaying(false)}
-        onWaiting={() => setBuffering(true)}
-        onPlaying={() => setBuffering(false)}
-        onEnded={markLocalComplete}
-      >
-        <track kind="captions" />
-      </video>
+      <div className="course-video-frame absolute inset-0">
+        <video
+          ref={videoRef}
+          src={streamUrl}
+          playsInline
+          preload="metadata"
+          className="h-full w-full cursor-pointer bg-black object-contain"
+          title={title}
+          onClick={() => {
+            handlePlayPause();
+            containerRef.current?.focus({ preventScroll: true });
+          }}
+          onLoadedMetadata={(event) => {
+            const el = event.currentTarget;
+            if (Number.isFinite(el.duration) && el.duration > 0) {
+              setDuration(el.duration);
+            }
+            const detected = html5QualityFromHeight(el.videoHeight);
+            setQualities([{ id: "auto", label: "Auto" }, detected]);
+            setQuality("auto");
+          }}
+          onTimeUpdate={handleTimeUpdate}
+          onPlay={() => {
+            setPlaying(true);
+            setBuffering(false);
+          }}
+          onPause={() => setPlaying(false)}
+          onWaiting={() => setBuffering(true)}
+          onPlaying={() => setBuffering(false)}
+          onEnded={markLocalComplete}
+        >
+          <track kind="captions" />
+        </video>
+      </div>
 
       <CourseVideoControls
         playing={playing}

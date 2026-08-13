@@ -26,8 +26,18 @@ function isEditableTarget(target: EventTarget | null): boolean {
   );
 }
 
+function getActiveFullscreenElement(): Element | null {
+  const doc = document as Document & {
+    webkitFullscreenElement?: Element | null;
+    msFullscreenElement?: Element | null;
+  };
+  return document.fullscreenElement ?? doc.webkitFullscreenElement ?? doc.msFullscreenElement ?? null;
+}
+
 function isPlayerActive(container: HTMLElement): boolean {
-  if (document.fullscreenElement === container) return true;
+  const fs = getActiveFullscreenElement();
+  // Stage-only fullscreen: fullscreen element may be a child of the player shell
+  if (fs === container || (fs instanceof Node && container.contains(fs))) return true;
   if (container === document.activeElement) return true;
   if (container.contains(document.activeElement)) return true;
   return false;
