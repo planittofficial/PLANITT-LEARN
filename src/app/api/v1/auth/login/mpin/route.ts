@@ -26,11 +26,10 @@ async function handleDevMpinLogin(email: string, mpin: string): Promise<NextResp
     return NextResponse.json({ ok: false, detail: "Invalid email or MPIN." }, { status: 401 });
   }
 
-  try {
-    await ensureUserProfile(user);
-  } catch (error) {
+  // Never block sign-in on DB sync (pooler hangs would leave the UI on "Signing in…")
+  void ensureUserProfile(user).catch((error) => {
     logServerError("mpin dev-login user sync", error);
-  }
+  });
 
   return devLoginResponse();
 }
@@ -74,11 +73,9 @@ export async function POST(request: Request) {
       typeof (user as Record<string, unknown>).email === "string"
     ) {
       const profile = user as { id: string; email: string; name?: string | null };
-      try {
-        await ensureUserProfile(profile);
-      } catch (error) {
+      void ensureUserProfile(profile).catch((error) => {
         logServerError("mpin auth user sync", error);
-      }
+      });
     }
 
     const { accessToken, refreshToken } = extractAuthTokens(parsed);

@@ -12,12 +12,9 @@ export async function POST(request: Request) {
   const limited = enforceApiRateLimit(request, "auth:dev-login", 30, 60_000);
   if (limited) return limited;
 
-  try {
-    const user = devMockUser();
-    await ensureUserProfile(user);
-  } catch (error) {
+  void ensureUserProfile(devMockUser()).catch((error) => {
     logServerError("dev-login user sync", error);
-  }
+  });
 
   return devLoginResponse();
 }

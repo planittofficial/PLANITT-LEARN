@@ -34,11 +34,9 @@ export async function POST(request: Request) {
       typeof (user as Record<string, unknown>).email === "string"
     ) {
       const profile = user as { id: string; email: string; name?: string | null };
-      try {
-        await ensureUserProfile(profile);
-      } catch (error) {
+      void ensureUserProfile(profile).catch((error) => {
         logServerError("google auth user sync", error);
-      }
+      });
     }
 
     const { accessToken, refreshToken } = extractAuthTokens(parsed);

@@ -91,6 +91,9 @@ export function LoginPageView() {
     setSubmitting(true);
     setError("");
     void exchangeHandoffCode(code)
+      .then((session) => {
+        router.replace(postLoginPath(session.isAdmin, safeNext));
+      })
       .catch((err) => {
         setError(err instanceof Error ? err.message : "SSO sign-in failed.");
         handoffStarted.current = false;
@@ -108,6 +111,9 @@ export function LoginPageView() {
       const token = response.credential; if (!token) return;
       setSubmitting(true); setError("");
       void loginWithGoogleIdToken(token)
+        .then((session) => {
+          router.replace(postLoginPath(session.isAdmin, safeNext));
+        })
         .catch((err) => setError(err instanceof Error ? err.message : "Google sign-in failed. Try again."))
         .finally(() => setSubmitting(false));
     } });
@@ -119,9 +125,11 @@ export function LoginPageView() {
     setSubmitting(true);
     setError("");
     try {
-      await loginWithMpin(email.trim(), mpin.trim());
+      const session = await loginWithMpin(email.trim(), mpin.trim());
+      router.replace(postLoginPath(session.isAdmin, safeNext));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign-in failed.");
+    } finally {
       setSubmitting(false);
     }
   };
@@ -130,6 +138,9 @@ export function LoginPageView() {
     setSubmitting(true);
     setError("");
     void loginAsDevUser()
+      .then((session) => {
+        router.replace(postLoginPath(session.isAdmin, safeNext));
+      })
       .catch(() => setError("Dev sign-in failed."))
       .finally(() => setSubmitting(false));
   };
