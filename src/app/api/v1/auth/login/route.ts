@@ -29,11 +29,9 @@ async function handleDevCredentialsLogin(email: string, password: string): Promi
     );
   }
 
-  try {
-    await ensureUserProfile(user);
-  } catch (error) {
+  void ensureUserProfile(user).catch((error) => {
     logServerError("credentials dev-login user sync", error);
-  }
+  });
 
   return devLoginResponse();
 }
@@ -74,11 +72,9 @@ export async function POST(request: Request) {
       typeof (user as Record<string, unknown>).email === "string"
     ) {
       const profile = user as { id: string; email: string; name?: string | null };
-      try {
-        await ensureUserProfile(profile);
-      } catch (error) {
+      void ensureUserProfile(profile).catch((error) => {
         logServerError("credentials auth user sync", error);
-      }
+      });
     }
 
     const { accessToken, refreshToken } = extractAuthTokens(parsed);

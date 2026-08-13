@@ -46,5 +46,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|static|favicon.ico).*)"],
+  // Skip Next internals, favicon, and public static assets (covers, icons, etc.)
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
+  ],
 };

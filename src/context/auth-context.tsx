@@ -35,11 +35,11 @@ type AuthState = {
 type AuthContextValue = AuthState & {
   authReady: boolean;
   devStandalone: boolean;
-  loginWithCredentials: (email: string, password: string) => Promise<void>;
-  loginWithMpin: (email: string, mpin: string) => Promise<void>;
-  loginWithGoogleIdToken: (googleIdToken: string) => Promise<void>;
-  exchangeHandoffCode: (code: string) => Promise<void>;
-  loginAsDevUser: () => Promise<void>;
+  loginWithCredentials: (email: string, password: string) => Promise<AuthState>;
+  loginWithMpin: (email: string, mpin: string) => Promise<AuthState>;
+  loginWithGoogleIdToken: (googleIdToken: string) => Promise<AuthState>;
+  exchangeHandoffCode: (code: string) => Promise<AuthState>;
+  loginAsDevUser: () => Promise<AuthState>;
   logout: () => void;
   updateLocalUser: (patch: Partial<Pick<AuthUser, "name">>) => void;
 };
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(emptyState);
   const [authReady, setAuthReady] = useState(false);
 
-  const bootstrap = useCallback(async () => {
+  const bootstrap = useCallback(async (): Promise<AuthState> => {
     try {
       const loadSession = async () => {
         const res = await authedFetch(ROUTES.API.AUTH.ME);
@@ -100,20 +100,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch {
           // Default to false on failure
         }
-        setState({ isAuthenticated: true, user, isAdmin });
-      } else {
-        await fetch(
-          ROUTES.API.AUTH.LOGOUT,
-          withApiCredentials({
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: "{}",
-          }),
-        );
-        setState(emptyState);
+        const next: AuthState = { isAuthenticated: true, user, isAdmin };
+        setState(next);
+        return next;
       }
+
+      // Do not clear cookies here — a failed /me must not wipe a just-issued session.
+      setState(emptyState);
+      return emptyState;
     } catch {
       setState(emptyState);
+      return emptyState;
     } finally {
       setAuthReady(true);
     }
@@ -134,7 +131,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }),
       );
       await throwIfAuthFailed(res, "Sign-in failed.");
-      await bootstrap();
+      const next = await bootstrap();
+      if (!next.isAuthenticated) {
+        throw new Error("Signed in, but session could not be established. Try again.");
+      }
+      return next;
     },
     [bootstrap],
   );
@@ -150,7 +151,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }),
       );
       await throwIfAuthFailed(res, "Sign-in failed.");
-      await bootstrap();
+      const next = await bootstrap();
+      if (!next.isAuthenticated) {
+        throw new Error("Signed in, but session could not be established. Try again.");
+      }
+      return next;
     },
     [bootstrap],
   );
@@ -166,7 +171,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }),
       );
       await throwIfAuthFailed(res, `Google sign-in failed (${res.status}).`);
-      await bootstrap();
+      const next = await bootstrap();
+      if (!next.isAuthenticated) {
+        throw new Error("Signed in, but session could not be established. Try again.");
+      }
+      return next;
     },
     [bootstrap],
   );
@@ -182,7 +191,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }),
       );
       await throwIfAuthFailed(res, "SSO sign-in failed.");
-      await bootstrap();
+      const next = await bootstrap();
+      if (!next.isAuthenticated) {
+        throw new Error("Signed in, but session could not be established. Try again.");
+      }
+      return next;
     },
     [bootstrap],
   );
@@ -199,7 +212,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!res.ok) {
       throw new Error("Dev sign-in failed.");
     }
-    await bootstrap();
+    const next = await bootstrap();
+    if (!next.isAuthenticated) {
+      throw new Error("Signed in, but session could not be established. Try again.");
+    }
+    return next;
   }, [bootstrap]);
 
   const logout = useCallback(() => {
