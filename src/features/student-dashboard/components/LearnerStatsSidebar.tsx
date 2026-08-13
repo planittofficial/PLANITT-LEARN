@@ -29,26 +29,26 @@ export function LearnerStatsSidebar({
 
   return (
     <div className="flex h-full min-h-[320px] flex-col gap-4">
-      <article className="relative flex flex-1 flex-col overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 p-5 backdrop-blur-md transition hover:border-brand/40">
+      <article className="relative flex flex-1 flex-col overflow-hidden rounded-xl border border-borderSubtle bg-surface p-5 shadow-card transition hover:border-brand/35">
         <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-brand/10 blur-2xl" />
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand/25 bg-brand/10 text-brand">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand/25 bg-brand-subtle text-brand">
               <Zap className="h-4 w-4" />
             </span>
             <div>
               <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-textMuted">
                 Learning points
               </p>
-              <p className="font-mono text-[9px] text-brand/70">+50 XP / lesson</p>
+              <p className="font-mono text-[9px] text-brand">+50 XP / lesson</p>
             </div>
           </div>
           {weeklyXp > 0 ? (
-            <span className="rounded-full border border-brand/20 bg-brand/10 px-2 py-0.5 font-mono text-[9px] font-bold text-brand">
+            <span className="rounded-full border border-brand/20 bg-brand-subtle px-2 py-0.5 font-mono text-[9px] font-bold text-brand">
               +{weeklyXp} this week
             </span>
           ) : (
-            <span className="rounded-full border border-borderSubtle px-2 py-0.5 font-mono text-[9px] text-textMuted">
+            <span className="rounded-full border border-borderSubtle bg-elevated px-2 py-0.5 font-mono text-[9px] text-textMuted">
               No XP yet this week
             </span>
           )}
@@ -65,7 +65,7 @@ export function LearnerStatsSidebar({
                 title={`${day.label}: ${day.lessonsCompleted} lesson${day.lessonsCompleted === 1 ? "" : "s"}`}
                 className={cn(
                   "w-1.5 rounded-full transition-all",
-                  day.lessonsCompleted > 0 ? "bg-brand" : "bg-white/10",
+                  day.lessonsCompleted > 0 ? "bg-brand" : "bg-overlay-strong",
                 )}
                 style={{ height: `${Math.max(6, (day.lessonsCompleted / maxWeekly) * 40)}px` }}
               />
@@ -79,11 +79,11 @@ export function LearnerStatsSidebar({
         </div>
       </article>
 
-      <article className="relative flex flex-1 flex-col overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 p-5 backdrop-blur-md transition hover:border-brand/40">
-        <div className="pointer-events-none absolute -bottom-10 -left-8 h-28 w-28 rounded-full bg-brand/8 blur-2xl" />
+      <article className="relative flex flex-1 flex-col overflow-hidden rounded-xl border border-borderSubtle bg-surface p-5 shadow-card transition hover:border-brand/35">
+        <div className="pointer-events-none absolute -bottom-10 -left-8 h-28 w-28 rounded-full bg-brand/[0.08] blur-2xl" />
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand/25 bg-brand/10 text-brand">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand/25 bg-brand-subtle text-brand">
               <Trophy className="h-4 w-4" />
             </span>
             <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-textMuted">
@@ -112,8 +112,8 @@ export function LearnerStatsSidebar({
                 key={step}
                 className={cn(
                   "h-1.5 flex-1 rounded-full transition-all",
-                  filled ? "bg-brand" : "bg-white/10",
-                  current && "shadow-[0_0_10px_rgba(20,184,166,0.55)]",
+                  filled ? "bg-brand" : "bg-overlay-strong",
+                  current && "shadow-[0_0_10px_color-mix(in_srgb,var(--brand)_55%,transparent)]",
                 )}
               />
             );
@@ -129,7 +129,7 @@ export function LearnerStatsSidebar({
             </span>
             <span>{level.progressToNext}%</span>
           </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div className="h-1.5 overflow-hidden rounded-full bg-overlay-medium">
             <div
               className="h-full rounded-full bg-gradient-to-r from-brand to-brandBright transition-all duration-500"
               style={{ width: `${level.progressToNext}%` }}
@@ -151,7 +151,7 @@ function MiniStat({
   value: string;
 }) {
   return (
-    <div className="rounded-md border border-borderSubtle bg-black/20 px-3 py-2">
+    <div className="rounded-lg border border-borderSubtle bg-elevated/80 px-3 py-2">
       <div className="mb-1 flex items-center gap-1.5 text-brand">{icon}</div>
       <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-textMuted">{label}</p>
       <p className="font-mono text-base font-black leading-none text-textPrimary">{value}</p>
