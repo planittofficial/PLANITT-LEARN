@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { Medal, Trophy } from "lucide-react";
 
 import { Avatar } from "@/components/ui/Avatar";
 import { ROUTES } from "@/constants/routes";
-import { useLeaderboard } from "@/hooks/leaderboard/use-leaderboard";
 import { useAuth } from "@/context/auth-context";
+import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
+import { useLeaderboard } from "@/hooks/leaderboard/use-leaderboard";
+import { useUserPreferences } from "@/hooks/profile/use-user-preferences";
 import { cn } from "@/lib/utils";
 
 type LeaderboardRankCardProps = {
@@ -15,8 +18,18 @@ type LeaderboardRankCardProps = {
 
 export function LeaderboardRankCard({ className }: LeaderboardRankCardProps) {
   const { user } = useAuth();
-  const { entries, isLoading } = useLeaderboard();
+  const { enrolledIds } = useEnrollment();
+  const { prefs } = useUserPreferences(user?.id);
 
+  const courseId = useMemo(() => {
+    const preferred =
+      prefs.preferredCourseId && enrolledIds.has(prefs.preferredCourseId)
+        ? prefs.preferredCourseId
+        : "";
+    return preferred || [...enrolledIds][0] || "";
+  }, [enrolledIds, prefs.preferredCourseId]);
+
+  const { entries, isLoading } = useLeaderboard(courseId || undefined);
   const me = entries.find((e) => e.userId === user?.id) ?? entries.find((e) => e.isCurrentUser);
   const rank = me?.rank ?? null;
 

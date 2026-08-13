@@ -431,7 +431,12 @@ body {
 }
 
 .learning-radar-sweep {
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(20, 184, 166, 0.55) 28deg, transparent 56deg);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in srgb, var(--brand) 45%, transparent) 28deg,
+    transparent 56deg
+  );
   animation: learningRadarSweep 5s linear infinite;
 }
 
@@ -446,6 +451,69 @@ body {
 
 .learning-command-center:hover .learning-radar-sweep {
   opacity: 0.12;
+}
+
+.streak-ring {
+  border-style: solid;
+  border-width: 1.5px;
+}
+
+.streak-ring-outer {
+  border-color: color-mix(in srgb, var(--brand) 42%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--brand) 10%, transparent);
+}
+
+.streak-ring-mid {
+  border-color: color-mix(in srgb, var(--brand) 58%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--brand) 16%, transparent);
+}
+
+.streak-ring-inner {
+  border-color: color-mix(in srgb, var(--brand-bright) 72%, transparent);
+  border-width: 1.5px;
+}
+
+.streak-radar-glow {
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--brand) 22%, transparent) 0%, transparent 62%),
+    conic-gradient(
+      from 210deg,
+      color-mix(in srgb, var(--brand) 18%, transparent),
+      color-mix(in srgb, var(--accent) 12%, transparent),
+      color-mix(in srgb, var(--brand-bright) 16%, transparent),
+      color-mix(in srgb, var(--brand) 18%, transparent)
+    );
+  opacity: 0.9;
+}
+
+.dark .streak-ring-outer {
+  border-color: color-mix(in srgb, var(--brand) 55%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent),
+    inset 0 0 22px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+
+.dark .streak-ring-mid {
+  border-color: color-mix(in srgb, var(--brand) 72%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--brand) 28%, transparent);
+}
+
+.dark .streak-ring-inner {
+  border-color: color-mix(in srgb, var(--brand-bright) 85%, transparent);
+}
+
+.dark .streak-radar-glow {
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--brand) 28%, transparent) 0%, transparent 62%),
+    conic-gradient(
+      from 210deg,
+      color-mix(in srgb, var(--brand) 26%, transparent),
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      color-mix(in srgb, var(--brand-bright) 24%, transparent),
+      color-mix(in srgb, var(--brand) 26%, transparent)
+    );
 }
 
 .terminal-glow {
@@ -479,8 +547,12 @@ body {
 }
 
 .radar-grid {
-  background-image: radial-gradient(circle, rgba(20, 184, 166, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--brand) 18%, transparent) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+.dark .radar-grid {
+  background-image: radial-gradient(circle, rgba(20, 184, 166, 0.12) 1px, transparent 1px);
 }
 
 /* Login page: quiet editorial texture and a responsive market-line motif. */

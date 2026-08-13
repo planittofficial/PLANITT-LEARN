@@ -8,6 +8,7 @@ import { getLeaderboard } from "@/services/leaderboard/leaderboard.service";
 import { requireUser } from "@/lib/security/require-user";
 import { enforceApiRateLimit } from "@/lib/security/rate-limit";
 import { isDevStandalone } from "@/lib/env";
+import { buildStandaloneLeaderboard } from "@/lib/learning/standalone-leaderboard";
 
 type Params = { params: Promise<{ courseId: string }> };
 
@@ -18,13 +19,19 @@ export async function GET(request: Request, { params }: Params) {
   const auth = await requireUser(request);
   if (!("user" in auth)) return auth;
 
-  if (isDevStandalone()) return ok({ ok: true, leaderboard: [] });
+  const { courseId } = await params;
+  const normalized = courseId.trim().toLowerCase();
+
+  if (isDevStandalone()) {
+    const rows = buildStandaloneLeaderboard(normalized, {
+      id: auth.user.id,
+      name: auth.user.name || "You",
+    });
+    return ok({ ok: true, leaderboard: rows });
+  }
 
   const dbError = requireDatabase();
   if (dbError) return dbError;
-
-  const { courseId } = await params;
-  const normalized = courseId.trim().toLowerCase();
 
   try {
     await assertEnrolled(auth.user.id, normalized, { accessToken: auth.token });

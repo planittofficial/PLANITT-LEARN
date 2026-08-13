@@ -1,9 +1,17 @@
 "use client";
 
-import { Medal, ArrowUpRight } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowUpRight, Medal, Trophy } from "lucide-react";
+
 import { Skeleton } from "@/components/ui/Skeleton";
-import { LeaderboardEmpty } from "@/components/shared/EmptyState";
+import { EmptyState, LeaderboardEmpty } from "@/components/shared/EmptyState";
+import { useAuth } from "@/context/auth-context";
+import { useCourses } from "@/hooks/courses/use-courses";
+import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { useLeaderboard, type LeaderboardEntry } from "@/hooks/leaderboard/use-leaderboard";
+import { useUserPreferences } from "@/hooks/profile/use-user-preferences";
+import { apiCourseListItemToDefinition } from "@/lib/catalog/map-api-course";
+import { isEnrolledInCourse } from "@/lib/learning/enrollment";
 import { cn } from "@/lib/utils";
 
 function getMockYield(score: number): string {
@@ -28,41 +36,49 @@ function PodiumCard({ entry, place }: { entry: LeaderboardEntry; place: number }
   return (
     <div
       className={cn(
-        "flex flex-col items-center rounded-lg border p-6 text-center transition-all duration-300 relative overflow-hidden group hover:border-brand/40",
+        "group relative flex flex-col items-center overflow-hidden rounded-lg border p-6 text-center transition-all duration-300 hover:border-brand/40",
         borderColors[place],
         entry.isCurrentUser && "ring-1 ring-brand",
       )}
     >
       <div className="glow-border" />
-      <div className="absolute inset-0 radar-grid opacity-10 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 radar-grid opacity-10" />
 
-      <div className="relative mb-4 z-10">
-        <div className={cn(
-          "h-16 w-16 rounded-full flex items-center justify-center font-bold text-lg border font-mono",
-          place === 0
-            ? "bg-amber-500/10 border-amber-500/40 text-amber-400"
-            : place === 1
-              ? "bg-slate-400/10 border-slate-400/30 text-slate-300"
-              : "bg-orange-500/10 border-orange-500/30 text-orange-400",
-        )}>
+      <div className="relative z-10 mb-4">
+        <div
+          className={cn(
+            "flex h-16 w-16 items-center justify-center rounded-full border font-mono text-lg font-bold",
+            place === 0
+              ? "border-amber-500/40 bg-amber-500/10 text-amber-500"
+              : place === 1
+                ? "border-slate-400/30 bg-slate-400/10 text-slate-400"
+                : "border-orange-500/30 bg-orange-500/10 text-orange-500",
+          )}
+        >
           {initials}
         </div>
-        <span className="absolute -bottom-1 -right-1 text-[9px] bg-elevated border border-borderSubtle px-2 py-0.5 rounded font-mono font-bold leading-none text-textPrimary">
+        <span className="absolute -bottom-1 -right-1 rounded border border-borderSubtle bg-elevated px-2 py-0.5 font-mono text-[9px] font-bold leading-none text-textPrimary">
           #{place + 1}
         </span>
       </div>
 
-      <p className="font-headline text-lg font-bold text-textPrimary truncate w-full z-10">{entry.name}</p>
-      <p className="font-mono text-[9px] text-brand/60 uppercase tracking-widest font-bold mt-1 z-10">{title}</p>
+      <p className="z-10 w-full truncate font-headline text-lg font-bold text-textPrimary">
+        {entry.name}
+      </p>
+      <p className="z-10 mt-1 font-mono text-[9px] font-bold uppercase tracking-widest text-brand/70">
+        {title}
+      </p>
 
-      <div className="mt-4 flex flex-col items-center z-10">
-        <span className="font-mono text-3xl font-extrabold text-brand tracking-tighter leading-none">
+      <div className="z-10 mt-4 flex flex-col items-center">
+        <span className="font-mono text-3xl font-extrabold leading-none tracking-tighter text-brand">
           {entry.totalScore.toLocaleString()}
         </span>
-        <span className="font-mono text-[9px] text-textMuted uppercase tracking-widest font-bold mt-1.5">Score points</span>
+        <span className="mt-1.5 font-mono text-[9px] font-bold uppercase tracking-widest text-textMuted">
+          Score points
+        </span>
       </div>
 
-      <div className="mt-4 flex items-center gap-1.5 font-mono text-[10px] text-emerald-400 font-bold bg-emerald-500/5 border border-emerald-500/10 px-3 py-1 rounded-sm z-10">
+      <div className="z-10 mt-4 flex items-center gap-1.5 rounded-sm border border-emerald-500/10 bg-emerald-500/5 px-3 py-1 font-mono text-[10px] font-bold text-emerald-500">
         <ArrowUpRight className="h-3.5 w-3.5" />
         <span>Progress signal: {yieldPct}</span>
       </div>
@@ -77,52 +93,85 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md px-5 py-4 transition-all duration-200 hover:border-brand/40 relative overflow-hidden group",
+        "group relative flex items-center gap-4 overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 px-5 py-4 backdrop-blur-md transition-all duration-200 hover:border-brand/40",
         entry.isCurrentUser && "border-brand/30 bg-brand/5 shadow-[0_0_12px_rgba(20,184,166,0.05)]",
       )}
     >
       <div className="glow-border" />
       <span
         className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded font-mono text-xs font-bold border relative z-10",
+          "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded border font-mono text-xs font-bold",
           entry.rank <= 3
-            ? "bg-brand/10 border-brand/20 text-brand"
-            : "bg-elevated border-borderSubtle text-textSecondary",
+            ? "border-brand/20 bg-brand/10 text-brand"
+            : "border-borderSubtle bg-elevated text-textSecondary",
         )}
       >
         {String(entry.rank).padStart(2, "0")}
       </span>
 
-      <div className="h-10 w-10 rounded-full bg-elevated border border-borderSubtle flex items-center justify-center font-mono font-bold text-xs text-textSecondary shrink-0 relative z-10">
+      <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-borderSubtle bg-elevated font-mono text-xs font-bold text-textSecondary">
         {initials}
       </div>
 
-      <div className="min-w-0 flex-1 relative z-10">
-        <p className="flex items-center gap-2 font-headline font-bold text-textPrimary text-sm">
+      <div className="relative z-10 min-w-0 flex-1">
+        <p className="flex items-center gap-2 font-headline text-sm font-bold text-textPrimary">
           {entry.name}
           {entry.isCurrentUser ? (
-            <span className="rounded bg-brand/10 border border-brand/25 px-2 py-0.5 text-[9px] font-bold text-brand uppercase font-mono tracking-wider">
+            <span className="rounded border border-brand/25 bg-brand/10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-brand">
               You
             </span>
           ) : null}
         </p>
-        <p className="font-mono text-[9px] text-textSecondary uppercase tracking-wider mt-1">
-          {entry.lessonsCompleted} lessons complete // progress {yieldPct}
+        <p className="mt-1 font-mono text-[9px] uppercase tracking-wider text-textSecondary">
+          {entry.lessonsCompleted} lessons complete · {entry.completionPercent}% · {yieldPct}
         </p>
       </div>
 
-      <div className="text-right relative z-10">
-        <p className="font-mono text-base font-extrabold text-brand tracking-tighter leading-none">{entry.totalScore.toLocaleString()}</p>
-        <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest font-bold mt-1">Points</p>
+      <div className="relative z-10 text-right">
+        <p className="font-mono text-base font-extrabold leading-none tracking-tighter text-brand">
+          {entry.totalScore.toLocaleString()}
+        </p>
+        <p className="mt-1 font-mono text-[9px] font-bold uppercase tracking-widest text-textMuted">
+          Points
+        </p>
       </div>
     </div>
   );
 }
 
 export function LeaderboardView() {
-  const { entries, isLoading } = useLeaderboard();
+  const { user } = useAuth();
+  const { enrolledIds, loading: enrollmentLoading } = useEnrollment();
+  const { data: apiCourses, isLoading: coursesLoading } = useCourses();
+  const { prefs, updatePreferences } = useUserPreferences(user?.id);
 
-  if (isLoading) {
+  const enrolledCourses = useMemo(
+    () =>
+      apiCourses
+        .map(apiCourseListItemToDefinition)
+        .filter((course) => isEnrolledInCourse(enrolledIds, course.id)),
+    [apiCourses, enrolledIds],
+  );
+
+  const defaultCourseId =
+    (prefs.preferredCourseId &&
+    enrolledCourses.some((course) => course.id === prefs.preferredCourseId)
+      ? prefs.preferredCourseId
+      : enrolledCourses[0]?.id) ?? "";
+
+  const [selectedCourseId, setSelectedCourseId] = useState(defaultCourseId);
+
+  useEffect(() => {
+    if (!defaultCourseId) return;
+    if (!selectedCourseId || !enrolledCourses.some((c) => c.id === selectedCourseId)) {
+      setSelectedCourseId(defaultCourseId);
+    }
+  }, [defaultCourseId, enrolledCourses, selectedCourseId]);
+
+  const { entries, isLoading } = useLeaderboard(selectedCourseId || undefined);
+  const selectedCourse = enrolledCourses.find((course) => course.id === selectedCourseId);
+
+  if (enrollmentLoading || coursesLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-40 rounded-lg" />
@@ -133,67 +182,111 @@ export function LeaderboardView() {
     );
   }
 
-  if (entries.length === 0) {
-    return <LeaderboardEmpty />;
+  if (enrolledCourses.length === 0) {
+    return (
+      <EmptyState
+        icon={Trophy}
+        title="Enroll to join the leaderboard"
+        description="Purchase a course on Alvest to unlock rankings for your learning track."
+      />
+    );
   }
 
-  const top3 = entries.slice(0, 3);
-  const rest = entries.slice(3);
-
   return (
-    <div className="space-y-8 animate-in fade-in">
-      <section className="relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 p-4 font-mono text-[9px] text-brand/40 uppercase tracking-widest">
+    <div className="animate-in fade-in space-y-8">
+      <section className="relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 p-6 shadow-2xl backdrop-blur-md sm:p-8">
+        <div className="absolute right-4 top-4 font-mono text-[9px] uppercase tracking-widest text-brand/40">
           Sync: live
         </div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="w-2 h-[1.5px] bg-brand"></span>
-          <span className="font-mono text-[9px] text-brand uppercase tracking-widest font-bold">Learner rankings</span>
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-[1.5px] w-2 bg-brand" />
+          <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-brand">
+            Learner rankings
+          </span>
         </div>
-        <h1 className="font-headline text-3xl font-extrabold text-textPrimary tracking-tight">
+        <h1 className="font-headline text-3xl font-extrabold tracking-tight text-textPrimary">
           Learning leaderboard
         </h1>
-        <p className="mt-2 max-w-xl text-xs text-textSecondary leading-relaxed">
-          Top learners ranked by lesson progress, consistency, and course activity.
+        <p className="mt-2 max-w-xl text-xs leading-relaxed text-textSecondary">
+          Rankings for {selectedCourse?.title ?? "your course"} — based on lesson progress and quiz
+          activity.
         </p>
+
+        {enrolledCourses.length > 1 ? (
+          <label className="mt-5 block max-w-md">
+            <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-textMuted">
+              Course
+            </span>
+            <select
+              value={selectedCourseId}
+              onChange={(event) => {
+                const next = event.target.value;
+                setSelectedCourseId(next);
+                updatePreferences({ preferredCourseId: next });
+              }}
+              className="mt-1.5 w-full rounded-lg border border-borderSubtle bg-elevated px-3 py-2.5 text-sm text-textPrimary outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20"
+            >
+              {enrolledCourses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
       </section>
 
-      <div className="grid gap-6 sm:grid-cols-3 items-end pt-4">
-        {top3[1] ? (
-          <div className="order-2 sm:order-1">
-            <PodiumCard entry={top3[1]} place={1} />
+      {isLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-40 rounded-lg" />
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-16 rounded-lg" />
+          ))}
+        </div>
+      ) : entries.length === 0 ? (
+        <LeaderboardEmpty />
+      ) : (
+        <>
+          <div className="grid items-end gap-6 pt-4 sm:grid-cols-3">
+            {entries[1] ? (
+              <div className="order-2 sm:order-1">
+                <PodiumCard entry={entries[1]} place={1} />
+              </div>
+            ) : null}
+            {entries[0] ? (
+              <div className="z-10 order-1 sm:-mt-6 sm:order-2">
+                <PodiumCard entry={entries[0]} place={0} />
+              </div>
+            ) : null}
+            {entries[2] ? (
+              <div className="order-3 sm:order-3">
+                <PodiumCard entry={entries[2]} place={2} />
+              </div>
+            ) : null}
           </div>
-        ) : null}
-        {top3[0] ? (
-          <div className="order-1 sm:order-2 sm:-mt-6 z-10">
-            <PodiumCard entry={top3[0]} place={0} />
-          </div>
-        ) : null}
-        {top3[2] ? (
-          <div className="order-3 sm:order-3">
-            <PodiumCard entry={top3[2]} place={2} />
-          </div>
-        ) : null}
-      </div>
 
-      {rest.length > 0 ? (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between px-2 border-b border-borderSubtle pb-3">
-            <div className="flex items-center gap-2">
-              <Medal className="h-4 w-4 text-brand" />
-              <span className="font-headline text-base font-bold text-textPrimary uppercase tracking-wider">All rankings</span>
-            </div>
-            <span className="font-mono text-[10px] text-textSecondary uppercase tracking-widest font-bold">
-              {entries.length} participants
-            </span>
-          </div>
-          <div className="space-y-3">
-            {rest.map((entry) => (
-              <RankingRow key={entry.userId} entry={entry} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+          {entries.length > 3 ? (
+            <section className="space-y-4">
+              <div className="flex items-center justify-between border-b border-borderSubtle px-2 pb-3">
+                <div className="flex items-center gap-2">
+                  <Medal className="h-4 w-4 text-brand" />
+                  <span className="font-headline text-base font-bold uppercase tracking-wider text-textPrimary">
+                    All rankings
+                  </span>
+                </div>
+                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-textSecondary">
+                  {entries.length} participants
+                </span>
+              </div>
+              <div className="space-y-3">
+                {entries.slice(3).map((entry) => (
+                  <RankingRow key={entry.userId} entry={entry} />
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </>
+      )}
     </div>
   );
 }

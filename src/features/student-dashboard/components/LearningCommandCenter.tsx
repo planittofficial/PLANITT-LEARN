@@ -62,14 +62,14 @@ export function LearningCommandCenter({
   return (
     <section
       className={cn(
-        "learning-command-center group relative min-h-[320px] overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 shadow-2xl backdrop-blur-md transition-all duration-300 hover:border-brand/40",
+        "learning-command-center group relative min-h-[320px] overflow-hidden rounded-xl border border-borderSubtle bg-surface shadow-card transition-all duration-300 hover:border-brand/35",
         className,
       )}
     >
       <div className="glow-border" />
-      <div className="radar-grid absolute inset-0 opacity-30" />
-      <div className="grain-overlay absolute inset-0" />
-      <div className="learning-radar-sweep absolute left-1/2 top-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-[0.07]" />
+      <div className="radar-grid absolute inset-0 opacity-[0.35] dark:opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand/[0.04] via-transparent to-accent/[0.03]" />
+      <div className="learning-radar-sweep absolute left-1/2 top-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-[0.05] dark:opacity-[0.07]" />
 
       <div className="relative z-10 flex h-full min-h-[320px] flex-col p-6 md:p-8">
         <div className="mb-6 flex items-start justify-between gap-4">
@@ -84,7 +84,7 @@ export function LearningCommandCenter({
               Your mission control
             </h3>
           </div>
-          <div className="flex items-center gap-2 rounded-full border border-brand/25 bg-brand/10 px-3 py-1.5">
+          <div className="flex items-center gap-2 rounded-full border border-brand/25 bg-brand-subtle px-3 py-1.5">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
@@ -96,11 +96,11 @@ export function LearningCommandCenter({
         </div>
 
         <div className="grid flex-1 gap-6 md:grid-cols-[180px_1fr] md:items-center">
-          <div className="relative mx-auto flex aspect-square w-full max-w-[180px] items-center justify-center md:mx-0">
-            <div className="absolute inset-0 rounded-full border border-brand/15" />
-            <div className="absolute inset-3 rounded-full border border-brand/20" />
-            <div className="absolute inset-7 rounded-full border border-dashed border-brand/25" />
-            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(20,184,166,0.14)_0%,transparent_68%)]" />
+          <div className="streak-radar relative mx-auto flex aspect-square w-full max-w-[180px] items-center justify-center md:mx-0">
+            <div className="streak-ring streak-ring-outer absolute inset-0 rounded-full" />
+            <div className="streak-ring streak-ring-mid absolute inset-3 rounded-full" />
+            <div className="streak-ring streak-ring-inner absolute inset-7 rounded-full border-dashed" />
+            <div className="streak-radar-glow absolute inset-0 rounded-full" />
 
             <div className="relative flex flex-col items-center text-center">
               <Flame className="mb-1 h-5 w-5 text-brand" />
@@ -122,14 +122,14 @@ export function LearningCommandCenter({
                   key={day.date}
                   title={`${day.label}: ${day.lessonsCompleted} lesson${day.lessonsCompleted === 1 ? "" : "s"}`}
                   className={cn(
-                    "absolute h-2 w-2 rounded-full transition-all",
+                    "absolute h-2.5 w-2.5 rounded-full border-2 transition-all",
                     active
-                      ? "bg-brand shadow-[0_0_10px_rgba(20,184,166,0.8)]"
-                      : "bg-white/10",
+                      ? "border-brand bg-brand shadow-[0_0_12px_color-mix(in_srgb,var(--brand)_75%,transparent)]"
+                      : "border-brand/35 bg-brand/15 dark:border-brand/45 dark:bg-brand/20",
                   )}
                   style={{
-                    left: `calc(50% + ${x}px - 4px)`,
-                    top: `calc(50% + ${y}px - 4px)`,
+                    left: `calc(50% + ${x}px - 5px)`,
+                    top: `calc(50% + ${y}px - 5px)`,
                   }}
                 />
               );
@@ -138,7 +138,7 @@ export function LearningCommandCenter({
 
           <div className="flex flex-col justify-center gap-5">
             {lastVisitedCourse ? (
-              <div className="rounded-lg border border-borderSubtle bg-black/20 p-4">
+              <div className="rounded-xl border border-borderSubtle bg-elevated/80 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-brand">
                     Last visited
@@ -164,7 +164,7 @@ export function LearningCommandCenter({
                     </span>
                     <span>{lastVisitedCourse.percent}%</span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-1.5 overflow-hidden rounded-full bg-overlay-medium">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-brand to-brandBright transition-all duration-500"
                       style={{ width: `${lastVisitedCourse.percent}%` }}
@@ -173,14 +173,14 @@ export function LearningCommandCenter({
                 </div>
                 <Link
                   href={lastVisitedCourse.continueUrl}
-                  className="mt-4 inline-flex items-center gap-2 rounded bg-brand px-5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-wider text-black transition hover:brightness-110 active:scale-95"
+                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-wider text-brandForeground transition hover:bg-brandHover active:scale-95"
                 >
                   Resume lesson
                   <Play className="h-3.5 w-3.5 fill-current" />
                 </Link>
               </div>
             ) : (
-              <div className="rounded-lg border border-borderSubtle bg-black/20 p-4">
+              <div className="rounded-xl border border-borderSubtle bg-elevated/80 p-4">
                 <p className="font-headline text-lg font-bold text-textPrimary">Start a lesson</p>
                 <p className="mt-1 text-sm text-textSecondary">
                   Open a course below and it will appear here next time you return.
@@ -216,7 +216,7 @@ export function LearningCommandCenter({
                 </span>
                 <span>{level.progressToNext}%</span>
               </div>
-              <div className="h-1 overflow-hidden rounded-full bg-white/10">
+              <div className="h-1 overflow-hidden rounded-full bg-overlay-medium">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-brand/80 via-brand to-accent transition-all duration-500"
                   style={{ width: `${level.progressToNext}%` }}
@@ -233,7 +233,7 @@ export function LearningCommandCenter({
                         "w-full rounded-t-sm transition-all duration-500",
                         day.lessonsCompleted > 0
                           ? "bg-gradient-to-t from-brand to-brandBright"
-                          : "bg-white/8",
+                          : "bg-overlay-medium",
                       )}
                       style={{
                         height: `${Math.max(12, (day.lessonsCompleted / maxDay) * 100)}%`,
@@ -263,7 +263,7 @@ function StatChip({
   hint: string;
 }) {
   return (
-    <div className="rounded-lg border border-borderSubtle bg-black/20 px-3 py-2.5">
+    <div className="rounded-xl border border-borderSubtle bg-elevated/80 px-3 py-2.5">
       <div className="mb-1 flex items-center gap-1.5 text-brand">{icon}</div>
       <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-textMuted">{label}</p>
       <p className="font-mono text-lg font-black leading-none text-textPrimary">

@@ -41,6 +41,7 @@ type AuthContextValue = AuthState & {
   exchangeHandoffCode: (code: string) => Promise<void>;
   loginAsDevUser: () => Promise<void>;
   logout: () => void;
+  updateLocalUser: (patch: Partial<Pick<AuthUser, "name">>) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -213,6 +214,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setState(emptyState);
   }, []);
 
+  const updateLocalUser = useCallback((patch: Partial<Pick<AuthUser, "name">>) => {
+    setState((prev) => {
+      if (!prev.user) return prev;
+      return {
+        ...prev,
+        user: {
+          ...prev.user,
+          ...patch,
+          name: patch.name?.trim() || prev.user.name,
+        },
+      };
+    });
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       ...state,
@@ -224,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       exchangeHandoffCode,
       loginAsDevUser,
       logout,
+      updateLocalUser,
     }),
     [
       authReady,
@@ -234,6 +250,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loginWithMpin,
       logout,
       state,
+      updateLocalUser,
     ],
   );
 

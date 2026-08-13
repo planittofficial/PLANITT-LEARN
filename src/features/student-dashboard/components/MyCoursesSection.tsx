@@ -184,7 +184,7 @@ export function MyCoursesSection() {
               href={alvestCheckoutUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex rounded bg-brand px-5 py-2.5 font-mono text-xs font-bold text-black uppercase tracking-wider transition hover:brightness-110"
+              className="inline-flex rounded-lg bg-brand px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-brandForeground transition hover:bg-brandHover"
             >
               Browse courses on Alvest
             </a>
@@ -254,7 +254,7 @@ export function MyCoursesSection() {
                   className={cn(
                     "px-4 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider transition-all",
                     activeFilter === "all"
-                      ? "bg-brand text-black font-bold shadow-[0_0_10px_rgba(20,184,166,0.15)]"
+                      ? "bg-brand font-bold text-brandForeground shadow-[0_0_10px_color-mix(in_srgb,var(--brand)_18%,transparent)]"
                       : "text-textSecondary hover:text-brand"
                   )}
                 >
@@ -265,7 +265,7 @@ export function MyCoursesSection() {
                   className={cn(
                     "px-4 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider transition-all",
                     activeFilter === "purchased"
-                      ? "bg-brand text-black font-bold shadow-[0_0_10px_rgba(20,184,166,0.15)]"
+                      ? "bg-brand font-bold text-brandForeground shadow-[0_0_10px_color-mix(in_srgb,var(--brand)_18%,transparent)]"
                       : "text-textSecondary hover:text-brand"
                   )}
                 >
@@ -276,7 +276,7 @@ export function MyCoursesSection() {
                   className={cn(
                     "px-4 py-1.5 rounded font-mono text-[10px] uppercase tracking-wider transition-all",
                     activeFilter === "new"
-                      ? "bg-brand text-black font-bold shadow-[0_0_10px_rgba(20,184,166,0.15)]"
+                      ? "bg-brand font-bold text-brandForeground shadow-[0_0_10px_color-mix(in_srgb,var(--brand)_18%,transparent)]"
                       : "text-textSecondary hover:text-brand"
                   )}
                 >
