@@ -9,7 +9,8 @@ import { QuizBuilder } from "@/features/admin-quizzes";
 import { useModuleTest, useSaveModuleTest } from "@/hooks/admin/use-admin-quizzes";
 
 export default function Page({ params }: { params: Promise<{ moduleId: string }> }) {
-  const { moduleId } = use(params);
+  const { moduleId: rawModuleId } = use(params);
+  const moduleId = decodeURIComponent(rawModuleId);
   const { data: test, isLoading } = useModuleTest(moduleId);
   const saveTest = useSaveModuleTest(moduleId);
 
@@ -18,7 +19,7 @@ export default function Page({ params }: { params: Promise<{ moduleId: string }>
   return (
     <div className="space-y-8 animate-in fade-in">
       <Link
-        href={`/admin/modules/${moduleId}`}
+        href={`/admin/modules/${encodeURIComponent(moduleId)}`}
         className="inline-flex items-center gap-1.5 font-mono text-[10px] text-brand hover:underline uppercase tracking-widest"
       >
         ← Back to Module Node
@@ -33,9 +34,9 @@ export default function Page({ params }: { params: Promise<{ moduleId: string }>
         initial={test?.questions ?? []}
         passingScore={test?.passingScore ?? 60}
         title={test?.title ?? undefined}
-        published={test?.published ?? false}
+        published={test?.published ?? true}
         saving={saveTest.isPending}
-        onSave={(payload) => saveTest.mutate(payload)}
+        onSave={(payload) => saveTest.mutateAsync(payload)}
       />
     </div>
   );

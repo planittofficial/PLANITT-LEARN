@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { FileText, Play, Plus, Trash2, Upload, Video, CheckCircle2, AlertTriangle } from "lucide-react";
 
 import { AdminBreadcrumb } from "@/features/admin-lessons/components/AdminBreadcrumb";
+import { encodePathSegment } from "@/lib/api/path";
 import {
   AdminButton,
   AdminCard,
@@ -125,6 +126,9 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
               <Plus className="h-3.5 w-3.5" />
               Add Lesson
             </AdminButton>
+            <Link href={`/admin/quizzes/modules/${encodePathSegment(moduleId)}`}>
+              <AdminButton variant="secondary">Module Test</AdminButton>
+            </Link>
           </div>
         }
       />

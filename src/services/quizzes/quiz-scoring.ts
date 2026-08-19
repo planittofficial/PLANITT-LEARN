@@ -1,5 +1,28 @@
 import type { QuizAnswer, QuizAttemptResult, QuizQuestion } from "@/types/quiz.types";
 
+/** Normalize a Prisma Json question pool into an array (handles stringified JSON). */
+export function coerceQuestionList(raw: unknown): QuizQuestion[] {
+  let value: unknown = raw;
+  if (typeof value === "string") {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is QuizQuestion => {
+    if (!item || typeof item !== "object") return false;
+    const q = item as Partial<QuizQuestion>;
+    return (
+      typeof q.id === "string" &&
+      typeof q.prompt === "string" &&
+      Array.isArray(q.options) &&
+      q.options.length > 0
+    );
+  });
+}
+
 export function scoreQuiz(
   questions: QuizQuestion[],
   answers: QuizAnswer[],

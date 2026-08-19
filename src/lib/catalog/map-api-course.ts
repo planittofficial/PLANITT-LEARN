@@ -15,6 +15,7 @@ export function apiCourseDetailToDefinition(api: ApiCourseDetail): CourseDefinit
       id: mod.id,
       title: mod.title,
       summary: mod.summary,
+      hasModuleTest: Boolean(mod.hasModuleTest),
       lessons: mod.lessons.map((lesson) => ({
         id: lesson.id,
         title: lesson.title,

@@ -281,6 +281,11 @@ export default function LessonPage() {
                   }
                 : null
             }
+            moduleTestHref={
+              module.hasModuleTest && (!nextLesson || nextLesson.moduleId !== moduleId)
+                ? ROUTES.STUDENT.moduleTest(courseId, moduleId)
+                : null
+            }
           />
         </div>
 

@@ -342,7 +342,7 @@ export function CourseHubView({
                           </li>
                         );
                       })}
-                      {moduleStats.total > 0 && moduleStats.completed === moduleStats.total ? (
+                      {module.hasModuleTest ? (
                         <li className="px-3 pb-3 pt-2">
                           <Link
                             href={ROUTES.STUDENT.moduleTest(courseId, module.id)}

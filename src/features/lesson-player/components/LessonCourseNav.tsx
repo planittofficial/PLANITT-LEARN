@@ -133,6 +133,17 @@ export function LessonCourseNav({
                       </li>
                     );
                   })}
+                  {mod.hasModuleTest ? (
+                    <li className="mb-0.5">
+                      <Link
+                        href={ROUTES.STUDENT.moduleTest(courseId, mod.id)}
+                        className="group flex items-center gap-2 rounded px-2 py-2 text-sm text-brand transition hover:bg-overlay-hover"
+                      >
+                        <Circle className="h-3.5 w-3.5 shrink-0 text-brand" />
+                        <span className="min-w-0 flex-1 truncate font-semibold">Module test</span>
+                      </Link>
+                    </li>
+                  ) : null}
                 </ul>
               ) : null}
             </div>

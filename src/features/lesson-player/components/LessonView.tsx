@@ -62,9 +62,10 @@ type LessonNavProps = {
   courseId: string;
   previous: { moduleId: string; lessonId: string; title: string } | null;
   next: { moduleId: string; lessonId: string; title: string } | null;
+  moduleTestHref?: string | null;
 };
 
-export function LessonNav({ courseId, previous, next }: LessonNavProps) {
+export function LessonNav({ courseId, previous, next, moduleTestHref }: LessonNavProps) {
   return (
     <nav className="mt-8 grid gap-4 border-t border-borderSubtle pt-8 sm:grid-cols-2">
       {previous ? (
@@ -84,7 +85,20 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
         <div className="hidden sm:block" />
       )}
 
-      {next ? (
+      {moduleTestHref ? (
+        <Link
+          href={moduleTestHref}
+          className="group flex items-center justify-end gap-3 rounded-xl border border-brand/35 bg-brand/10 p-4 transition hover:border-brand/50 hover:bg-brand/15 sm:col-start-2"
+        >
+          <div className="min-w-0 text-right">
+            <p className="text-xs font-medium text-brand/80">Module test</p>
+            <p className="mt-1 truncate text-sm font-semibold text-textPrimary group-hover:text-brand">
+              Take the module test
+            </p>
+          </div>
+          <ArrowRight className="h-5 w-5 shrink-0 text-brand" />
+        </Link>
+      ) : next ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, next.moduleId, next.lessonId)}
           className="group flex items-center justify-end gap-3 rounded-xl border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:shadow-card sm:col-start-2"

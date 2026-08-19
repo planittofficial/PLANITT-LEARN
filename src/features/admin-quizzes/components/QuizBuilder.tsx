@@ -18,11 +18,35 @@ function newQuestion(): QuizQuestion {
   return { id, prompt: "", options: ["", ""], correctIndex: 0 };
 }
 
+function isEmptyQuestion(q: QuizQuestion) {
+  return !q.prompt.trim() && q.options.every((opt) => !opt.trim());
+}
+
+function readyQuestions(list: QuizQuestion[]): QuizQuestion[] {
+  return list.flatMap((q) => {
+    const prompt = q.prompt.trim();
+    const kept = q.options
+      .map((opt, originalIndex) => ({ text: opt.trim(), originalIndex }))
+      .filter((opt) => opt.text.length > 0);
+    if (!prompt || kept.length < 2) return [];
+
+    const mappedCorrect = kept.findIndex((opt) => opt.originalIndex === q.correctIndex);
+    return [
+      {
+        id: q.id.trim() || `q-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        prompt,
+        options: kept.map((opt) => opt.text),
+        correctIndex: mappedCorrect >= 0 ? mappedCorrect : 0,
+      },
+    ];
+  });
+}
+
 export function QuizBuilder({
   initial,
   passingScore: initialPassing,
   title: initialTitle,
-  published: initialPublished = false,
+  published: initialPublished = true,
   onSave,
   saving,
 }: {
@@ -35,7 +59,7 @@ export function QuizBuilder({
     passingScore: number;
     questions: QuizQuestion[];
     published: boolean;
-  }) => void;
+  }) => void | Promise<unknown>;
   saving?: boolean;
 }) {
   const [title, setTitle] = useState(initialTitle ?? "");
@@ -44,6 +68,8 @@ export function QuizBuilder({
     initial.length ? initial : [newQuestion()],
   );
   const [published, setPublished] = useState(initialPublished);
+  const [saveError, setSaveError] = useState("");
+  const [saveOk, setSaveOk] = useState(false);
 
   function updateQuestion(index: number, patch: Partial<QuizQuestion>) {
     setQuestions((prev) => prev.map((q, i) => (i === index ? { ...q, ...patch } : q)));
@@ -59,11 +85,9 @@ export function QuizBuilder({
     );
   }
 
-  function isEmptyQuestion(q: QuizQuestion) {
-    return !q.prompt.trim() && q.options.every((opt) => !opt.trim());
-  }
-
   function handleSmartPaste(imported: QuizQuestion[], mode: "replace" | "append") {
+    setSaveError("");
+    setSaveOk(false);
     if (mode === "replace") {
       setQuestions(imported);
       return;
@@ -72,6 +96,30 @@ export function QuizBuilder({
       const kept = prev.filter((q) => !isEmptyQuestion(q));
       return [...kept, ...imported];
     });
+  }
+
+  async function handleSave() {
+    const questionsToSave = readyQuestions(questions);
+    if (questionsToSave.length === 0) {
+      setSaveOk(false);
+      setSaveError("Add at least one question with a prompt and two options before saving.");
+      return;
+    }
+
+    setSaveError("");
+    setSaveOk(false);
+    try {
+      await onSave({
+        title,
+        passingScore,
+        questions: questionsToSave,
+        published,
+      });
+      setQuestions(questionsToSave);
+      setSaveOk(true);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Failed to save assessment.");
+    }
   }
 
   return (
@@ -144,6 +192,19 @@ export function QuizBuilder({
         </AdminCard>
       ))}
 
+      {saveError ? (
+        <p role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 font-mono text-xs text-red-400">
+          {saveError}
+        </p>
+      ) : null}
+      {saveOk ? (
+        <p className="rounded-lg border border-brand/20 bg-brand/10 px-3 py-2 font-mono text-xs text-brand">
+          {published
+            ? "Saved. Students can now take this assessment."
+            : "Saved as a draft. Check “Publish to Students” and save again to make it visible."}
+        </p>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-4 font-mono text-xs">
         <AdminButton variant="secondary" onClick={() => setQuestions((prev) => [...prev, newQuestion()])}>
           <Plus className="h-3.5 w-3.5" />
@@ -158,10 +219,7 @@ export function QuizBuilder({
           />
           Publish to Students
         </label>
-        <AdminButton
-          disabled={saving}
-          onClick={() => onSave({ title, passingScore, questions, published })}
-        >
+        <AdminButton disabled={saving} onClick={() => void handleSave()}>
           {saving ? "Commiting..." : "Commit Assessment Setup"}
         </AdminButton>
       </div>

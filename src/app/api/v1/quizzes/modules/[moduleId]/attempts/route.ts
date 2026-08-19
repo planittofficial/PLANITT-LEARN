@@ -1,5 +1,6 @@
 import { fail, ok } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse-body";
+import { decodePathSegment } from "@/lib/api/path";
 import { requireDatabase } from "@/lib/api/require-db";
 import { prisma } from "@/lib/db/prisma";
 import {
@@ -29,7 +30,7 @@ export async function POST(request: Request, { params }: Params) {
   if (!answers) return fail("Invalid test submission", 400);
 
   const { moduleId } = await params;
-  const normalized = moduleId.trim();
+  const normalized = decodePathSegment(moduleId);
 
   const mod = await prisma.module.findUnique({
     where: { id: normalized },

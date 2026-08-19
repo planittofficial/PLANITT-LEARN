@@ -6,6 +6,7 @@ import { DatabaseError } from "@/lib/db/database-error";
 import { prisma } from "@/lib/db/prisma";
 import { getDatabaseUrl } from "@/lib/env";
 import { isYoutubeUrl } from "@/lib/video/video-url";
+import { isModuleTestVisibleToStudents } from "@/services/quizzes/module-test.service";
 import type {
   ApiAdminCourse,
   ApiCourseDetail,
@@ -59,6 +60,7 @@ function courseDetailFromStatic(courseId: string): ApiCourseDetail | null {
     id: mod.id,
     title: mod.title,
     summary: mod.summary,
+    hasModuleTest: false,
     lessons: mod.lessons.map(lessonFromStatic),
   }));
 
@@ -163,6 +165,7 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
           orderBy: { sortOrder: "asc" },
           include: {
             lessons: { where: { published: true }, orderBy: { sortOrder: "asc" } },
+            moduleTest: { select: { published: true, questionPool: true } },
           },
         },
       },
@@ -174,6 +177,7 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
       id: mod.id,
       title: mod.title,
       summary: mod.summary ?? "",
+      hasModuleTest: isModuleTestVisibleToStudents(mod.moduleTest),
       lessons: mod.lessons.map((row) => lessonFromDb(row)),
     }));
 

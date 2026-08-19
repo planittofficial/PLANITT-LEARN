@@ -33,9 +33,9 @@ export default function Page({ params }: { params: Promise<{ lessonId: string }>
         initial={quiz?.questions ?? []}
         passingScore={quiz?.passingScore ?? 60}
         title={quiz?.title ?? undefined}
-        published={quiz?.published ?? false}
+        published={quiz?.published ?? true}
         saving={saveQuiz.isPending}
-        onSave={(payload) => saveQuiz.mutate(payload)}
+        onSave={(payload) => saveQuiz.mutateAsync(payload)}
       />
     </div>
   );
