@@ -154,15 +154,7 @@ export function LoginPageView() {
           <Link href={ROUTES.STUDENT.HOME} aria-label="Alvest Learn home" className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50">
             <AlvestLogo variant="wordmark" size={52} priority className="drop-shadow-md" />
           </Link>
-          <div className="flex items-center gap-6">
-            <Link
-              href={ROUTES.STUDENT.HOME}
-              className="text-textSecondary hover:text-brand text-xs uppercase tracking-wider font-semibold transition"
-            >
-              ← Back to website
-            </Link>
-            <ThemeToggle showLabel />
-          </div>
+          <ThemeToggle showLabel />
         </header>
 
         <div className="grid flex-1 items-center gap-12 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(360px,440px)] lg:gap-20 lg:py-16">
