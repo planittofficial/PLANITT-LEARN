@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -8,166 +8,64 @@ import {
   Cpu,
   Activity,
   ArrowRight,
-  Check,
-  Flame,
-  Sparkles,
-  Clock,
-  RotateCcw,
-  Trophy,
-  TrendingUp,
   ChevronDown,
   ChevronUp,
-  GraduationCap,
-  PlayCircle,
-  FileText
 } from "lucide-react";
 import { AlvestLogo } from "@/components/brand";
 import { ROUTES } from "@/constants/routes";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { COURSE_CATALOG_DATA } from "@/lib/catalog/course-content";
+import { cn } from "@/lib/utils";
 
-// Define mock interactive quiz questions representing the course topics
-const QUIZ_QUESTIONS = [
+const SANDBOX_QUESTIONS = [
   {
-    category: "Technical Analysis",
+    category: "TECHNICAL ANALYSIS",
     question: "Which chart pattern typically indicates a bullish trend reversal?",
     options: [
       "Head and Shoulders",
       "Double Bottom",
       "Bearish Engulfing",
-      "Rising Wedge"
+      "Rising Wedge",
     ],
-    correctIndex: 1,
-    explanation: "Spot on! A Double Bottom pattern indicates that sellers tried to push the price down twice, failed, and buyers are now driving a bullish reversal."
+    correctAnswer: 1, // Double Bottom
+    explanation: "Correct! A Double Bottom pattern resembles a 'W' shape and indicates that the selling momentum has exhausted, leading to a bullish reversal.",
   },
   {
-    category: "Risk Management",
-    question: "What is the primary benefit of a Stop-loss order?",
+    category: "RISK MANAGEMENT",
+    question: "What is the recommended maximum capital risk per single trade for beginners?",
     options: [
-      "It guarantees execution at a specific high price",
-      "It limits potential losses by exiting automatically",
-      "It allows you to trade with borrowed funds",
-      "It makes trades execute faster on the exchange"
+      "1% - 2%",
+      "5% - 10%",
+      "15% - 20%",
+      "50%",
     ],
-    correctIndex: 1,
-    explanation: "Exactly! A Stop-loss order automatically triggers a market order once a target price is breached, preventing further downside."
+    correctAnswer: 0, // 1% - 2%
+    explanation: "Correct! Risking only 1% to 2% of capital per trade ensures that a run of bad trades won't wipe out your account, letting you survive long term.",
   },
   {
-    category: "Forex Basics",
-    question: "In the EUR/USD currency pair, which is the base currency?",
+    category: "MARKET ESSENTIALS",
+    question: "Which indicator is best suited for identifying overbought or oversold conditions?",
     options: [
-      "EUR",
-      "USD",
-      "Both (equally weighted)",
-      "Neither (synthetically priced)"
+      "Moving Average",
+      "Volume Profile",
+      "Relative Strength Index (RSI)",
+      "Fibonacci Retracement",
     ],
-    correctIndex: 0,
-    explanation: "Correct! The first currency in a forex ticker is always the base currency. In EUR/USD, you are pricing the Euro in US Dollars."
-  }
-];
-
-// Define structured course details for explorer tabs
-const COURSES = [
-  {
-    id: "indian-stocks",
-    title: "Indian Stocks & Mutual Funds",
-    category: "Indian Stocks",
-    level: "Beginner to Pro",
-    duration: "8 weeks",
-    blurb: "Master NSE/BSE market structure, technical indicators, and portfolio allocation.",
-    modules: [
-      {
-        title: "Financial Markets Foundation",
-        lessons: [
-          { title: "Welcome to Indian equities", type: "article", duration: "10 mins" },
-          { title: "NSE vs BSE & Market Structure", type: "article", duration: "15 mins" },
-          { title: "Index Basics: NIFTY, SENSEX", type: "article", duration: "12 mins" },
-          { title: "Order Types: Market, Limit, Stop-loss", type: "article", duration: "18 mins" }
-        ]
-      },
-      {
-        title: "Technical Analysis Strategist",
-        lessons: [
-          { title: "Candlestick Patterns & Price Action", type: "video", duration: "15 mins" },
-          { title: "Support, Resistance & Trendlines", type: "video", duration: "20 mins" },
-          { title: "Moving Averages & RSI Indicators", type: "video", duration: "25 mins" }
-        ]
-      }
-    ],
-    skills: ["NSE/BSE Execution", "Technical Indicators", "Risk Hedging"]
+    correctAnswer: 2, // RSI
+    explanation: "Correct! The Relative Strength Index (RSI) is a momentum oscillator from 0 to 100 where values above 70 indicate overbought, and below 30 indicate oversold.",
   },
-  {
-    id: "forex",
-    title: "Forex Master Track",
-    category: "Forex",
-    level: "Intermediate",
-    duration: "6 weeks",
-    blurb: "Understand global currency pairs, major sessions, spread dynamics, and leverage.",
-    modules: [
-      {
-        title: "Forex Fundamentals",
-        lessons: [
-          { title: "What is the Forex Market?", type: "video", duration: "8 mins" },
-          { title: "Major Participants & Market Drivers", type: "video", duration: "12 mins" },
-          { title: "Understanding Pips & Spread", type: "video", duration: "14 mins" }
-        ]
-      },
-      {
-        title: "Currency Pair Strategy",
-        lessons: [
-          { title: "Trading Major Currency Pairs", type: "video", duration: "16 mins" },
-          { title: "Session Liquidity & Volatility", type: "video", duration: "18 mins" },
-          { title: "Position Sizing & Leverage", type: "article", duration: "22 mins" }
-        ]
-      }
-    ],
-    skills: ["Pip Calculations", "Spread Arbitrage", "Leverage Management"]
-  },
-  {
-    id: "fno",
-    title: "F&O Strategy Program",
-    category: "F&O",
-    level: "Advanced",
-    duration: "10 weeks",
-    blurb: "Dive deep into options greeks, futures margin, rollover, and hedging strategies.",
-    modules: [
-      {
-        title: "Options Foundations",
-        lessons: [
-          { title: "Call & Put Premium Drivers", type: "article", duration: "15 mins" },
-          { title: "Moneyness & Intrinsic Value", type: "article", duration: "20 mins" },
-          { title: "Introduction to Options Greeks", type: "video", duration: "25 mins" }
-        ]
-      },
-      {
-        title: "Hedging & Advanced Playbook",
-        lessons: [
-          { title: "Futures Rollover & Arbitrage", type: "video", duration: "18 mins" },
-          { title: "Spreads: Bull Call & Bear Put", type: "video", duration: "24 mins" },
-          { title: "Risk Adjustments during Drawdown", type: "article", duration: "30 mins" }
-        ]
-      }
-    ],
-    skills: ["Options Greeks", "Spread Hedging", "Futures Rollovers"]
-  }
 ];
 
 export function LandingView() {
-  // Quiz State
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [isAnswered, setIsAnswered] = useState(false);
-  const [streak, setStreak] = useState(0);
-  const [targetFocusIndex, setTargetFocusIndex] = useState(24.85);
-  const [currentFocusIndex, setCurrentFocusIndex] = useState(24.85);
-  const [shakeQuiz, setShakeQuiz] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [focusIndex, setFocusIndex] = useState(24.85);
 
-  // Course Explorer State
-  const [activeCourseId, setActiveCourseId] = useState("indian-stocks");
-  const [expandedModuleIdx, setExpandedModuleIdx] = useState<number | null>(0);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null);
 
-  // Study Planner State
-  const [studyMins, setStudyMins] = useState(15);
-
-  // Static Feature Cards Content
   const features = [
     {
       icon: BookOpen,
@@ -189,226 +87,230 @@ export function LandingView() {
     },
   ];
 
-  // Smooth Count-Up Effect for Focus Index
-  useEffect(() => {
-    if (Math.abs(currentFocusIndex - targetFocusIndex) > 0.01) {
-      const step = (targetFocusIndex - currentFocusIndex) * 0.15;
-      const timer = setTimeout(() => {
-        setCurrentFocusIndex(prev => {
-          const next = prev + step;
-          return Math.abs(next - targetFocusIndex) < 0.01 ? targetFocusIndex : next;
-        });
-      }, 20);
-      return () => clearTimeout(timer);
-    }
-  }, [targetFocusIndex, currentFocusIndex]);
-
-  // Quiz Handling
-  const handleOptionSelect = (optionIdx: number) => {
-    if (isAnswered) return;
-    
-    setSelectedOption(optionIdx);
-    setIsAnswered(true);
-
-    const question = QUIZ_QUESTIONS[currentQuestion];
-    if (optionIdx === question.correctIndex) {
-      setStreak(prev => prev + 1);
-      // Increment focus index with a bonus for streaks
-      setTargetFocusIndex(prev => prev + 4.5 + (streak * 0.5));
-    } else {
-      setStreak(0);
-      setShakeQuiz(true);
-      setTimeout(() => setShakeQuiz(false), 500);
+  const handleSubmitAnswer = () => {
+    if (selectedOption === null) return;
+    const correct = selectedOption === SANDBOX_QUESTIONS[currentQuestionIdx].correctAnswer;
+    setIsCorrect(correct);
+    setHasSubmitted(true);
+    if (correct) {
+      setFocusIndex((prev) => prev + 1.0);
     }
   };
 
   const handleNextQuestion = () => {
     setSelectedOption(null);
-    setIsAnswered(false);
-    setCurrentQuestion(prev => (prev + 1) % QUIZ_QUESTIONS.length);
+    setHasSubmitted(false);
+    setIsCorrect(null);
+    if (currentQuestionIdx < SANDBOX_QUESTIONS.length - 1) {
+      setCurrentQuestionIdx((prev) => prev + 1);
+    } else {
+      setCurrentQuestionIdx(0);
+      setFocusIndex(24.85); // reset
+    }
   };
 
-  const handleResetQuiz = () => {
-    setSelectedOption(null);
-    setIsAnswered(false);
-    setStreak(0);
-    setTargetFocusIndex(24.85);
-    setCurrentFocusIndex(24.85);
-    setCurrentQuestion(0);
-  };
+  // Get unique categories for curriculum tabs
+  const categories = ["All", ...Array.from(new Set(COURSE_CATALOG_DATA.map((c) => c.category)))];
 
-  // Study Goal Simulator Metrics
-  const simulatedFocusGrowth = Math.round(studyMins * 1.35 + 8);
-  const selectedCourse = COURSES.find(c => c.id === activeCourseId) || COURSES[0];
-  const estCompletionWeeks = Math.max(2, Math.round(12 - (studyMins / 8)));
+  // Filter courses based on tab selection
+  const filteredCourses = selectedCategory === "All"
+    ? COURSE_CATALOG_DATA
+    : COURSE_CATALOG_DATA.filter((c) => c.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-appBase text-textPrimary relative overflow-hidden flex flex-col justify-between selection:bg-brand/20 selection:text-brand">
-      {/* Background Grids & Blobs */}
       <div className="absolute inset-0 radar-grid opacity-20 pointer-events-none" />
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-2/3 right-10 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Header */}
-      <header className="w-full bg-surface/90 backdrop-blur-md border-b border-borderSubtle z-50">
+      <header className="w-full bg-surface/80 backdrop-blur-xl border-b border-borderSubtle z-50 sticky top-0 transition-colors">
         <div className="flex justify-between items-center px-6 md:px-12 py-4 max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            <AlvestLogo variant="markClear" size={40} priority className="drop-shadow-sm" />
-            <span className="font-headline text-[20px] font-black text-brand tracking-tight">
+          <div className="flex items-center gap-3 group">
+            <AlvestLogo variant="markClear" size={40} priority className="drop-shadow-md group-hover:scale-105 transition-transform duration-300" />
+            <span className="font-headline text-[22px] font-black tracking-tight bg-gradient-to-r from-brand via-brandBright to-accent bg-clip-text text-transparent">
               Alvest Learn
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <ThemeToggle showLabel className="px-3 py-1.5 rounded-lg border border-borderSubtle bg-surface/80 hover:border-brand/40 shadow-sm" />
             <Link
               href={ROUTES.STUDENT.LOGIN}
-              className="text-textSecondary hover:text-brand text-xs uppercase tracking-wider transition"
+              className="text-textSecondary hover:text-brand text-xs font-semibold uppercase tracking-wider transition px-2 py-1"
             >
-              Login
+              Sign In
             </Link>
             <Link
               href={ROUTES.STUDENT.LOGIN}
-              className="bg-brand text-brandForeground font-semibold text-sm px-4 py-2 rounded-lg hover:bg-brandHover hover:shadow-lg active:scale-95 transition-all"
+              className="bg-brand text-brandForeground font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-lg hover:bg-brandHover active:scale-95 transition-all shadow-card hover:shadow-[0_0_20px_rgba(20,184,166,0.3)] flex items-center gap-1.5"
             >
               Start learning
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="flex-grow max-w-7xl w-full mx-auto px-6 md:px-12 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 relative">
+      <main className="flex-grow max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 relative">
         <div className="lg:col-span-7 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-[10px] text-brand tracking-widest uppercase">
-            <Activity className="h-3 w-3 animate-pulse" />
-            Interactive Learning Platform
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand/10 border border-brand/25 text-[10px] font-mono font-bold text-brand tracking-widest uppercase shadow-[0_0_12px_rgba(20,184,166,0.15)]">
+            <Activity className="h-3.5 w-3.5 animate-pulse text-brand" />
+            Next-Gen Learning Platform
           </div>
 
-          <h1 className="font-headline text-4xl md:text-6xl font-extrabold tracking-tight leading-tight text-textPrimary">
-            A calmer way to <br />
-            learn, practice, and <span className="text-brand relative inline-block">grow</span>
+          <h1 className="font-headline text-4xl md:text-6xl font-black tracking-tight leading-[1.1] text-textPrimary">
+            Master markets with <br />
+            <span className="bg-gradient-to-r from-brand via-brandBright to-accent bg-clip-text text-transparent drop-shadow-sm">
+              guided focus & clarity
+            </span>
           </h1>
 
           <p className="text-textSecondary text-base md:text-lg max-w-xl leading-relaxed">
-            Build real skills with a clean, risk-free learning experience designed for focus, clarity, and steady trading progress.
+            Build real proficiency through structured playbooks, interactive sandbox quizzes, real-time gamified XP tracking, and streak analytics.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <Link
               href={ROUTES.STUDENT.LOGIN}
-              className="flex items-center justify-center gap-2 bg-brand text-brandForeground font-semibold text-sm px-6 py-3.5 rounded-lg hover:bg-brandHover hover:shadow-lg active:scale-95 transition-all shadow-card"
+              className="flex items-center justify-center gap-2 bg-brand text-brandForeground font-bold text-xs uppercase tracking-wider px-7 py-4 rounded-xl hover:bg-brandHover active:scale-95 transition-all shadow-card hover:shadow-[0_0_25px_rgba(20,184,166,0.35)]"
             >
               Enter the classroom
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <button
-              onClick={() => document.getElementById("course-explorer")?.scrollIntoView({ behavior: "smooth" })}
-              className="flex items-center justify-center border border-borderSubtle hover:border-brand/40 text-textPrimary font-semibold text-sm px-6 py-3.5 rounded-lg hover:bg-overlay-hover transition-all"
+            <Link
+              href={ROUTES.STUDENT.LOGIN}
+              className="flex items-center justify-center border border-borderSubtle hover:border-brand/40 text-textPrimary font-bold text-xs uppercase tracking-wider px-7 py-4 rounded-xl hover:bg-overlay-hover transition shadow-sm"
             >
-              Explore courses
-            </button>
+              Explore curriculum
+            </Link>
+          </div>
+
+          <div className="pt-6 grid grid-cols-3 gap-4 border-t border-borderSubtle/60 max-w-lg">
+            <div>
+              <p className="font-mono text-xl font-extrabold text-brand">6+ Tracks</p>
+              <p className="text-[10px] text-textMuted font-mono uppercase tracking-wider">Curriculum Playbooks</p>
+            </div>
+            <div>
+              <p className="font-mono text-xl font-extrabold text-accent">100% Free</p>
+              <p className="text-[10px] text-textMuted font-mono uppercase tracking-wider">Interactive Practice</p>
+            </div>
+            <div>
+              <p className="font-mono text-xl font-extrabold text-brandBright">Gamified</p>
+              <p className="text-[10px] text-textMuted font-mono uppercase tracking-wider">Streaks & XP Ranks</p>
+            </div>
           </div>
         </div>
 
-        {/* Column 5: Interactive Quiz Sandbox (Replacing old static Snapshot) */}
         <div className="lg:col-span-5 relative">
-          <div className={`glass-panel-stitch p-6 rounded-xl border border-borderSubtle relative z-10 space-y-4 transition-all duration-300 ${shakeQuiz ? "animate-bounce" : ""}`}>
+          <div className="glass-panel-stitch p-6 rounded-xl border border-borderSubtle relative z-10 space-y-4 shadow-card bg-surface/60 backdrop-blur-md">
             <div className="flex justify-between items-center border-b border-borderSubtle pb-3">
-              <span className="text-[10px] text-textSecondary uppercase tracking-widest flex items-center gap-1.5 font-bold">
-                <Shield className="h-3.5 w-3.5 text-brand" />
-                Interactive Sandbox
-              </span>
-              <div className="flex gap-1.5 items-center">
-                {streak > 0 && (
-                  <span className="text-xs font-bold text-amber-500 flex items-center gap-0.5 animate-pulse bg-amber-500/10 px-2 py-0.5 rounded-full">
-                    <Flame className="h-3.5 w-3.5 fill-amber-500" />
-                    {streak} Streak
-                  </span>
-                )}
+              <div className="flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-brand animate-pulse" />
+                <span className="text-[10px] font-bold text-textPrimary uppercase tracking-widest">
+                  Interactive Sandbox
+                </span>
+              </div>
+              <div className="flex gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
                 <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-brand" />
+                <span className="w-2.5 h-2.5 rounded-full bg-brand animate-ping" />
               </div>
             </div>
 
             <div className="space-y-4">
-              <div>
-                <span className="text-[9px] font-bold text-brand uppercase bg-brand-subtle px-2 py-0.5 rounded tracking-wider">
-                  {QUIZ_QUESTIONS[currentQuestion].category}
+              <div className="flex justify-between items-center">
+                <span className="text-[9px] px-2 py-0.5 rounded bg-brand/10 border border-brand/20 font-bold text-brand uppercase tracking-wider">
+                  {SANDBOX_QUESTIONS[currentQuestionIdx].category}
                 </span>
-                <h4 className="text-sm font-bold text-textPrimary mt-1.5">
-                  {QUIZ_QUESTIONS[currentQuestion].question}
-                </h4>
+                <span className="text-[10px] text-textMuted font-mono">
+                  Q: {currentQuestionIdx + 1} / {SANDBOX_QUESTIONS.length}
+                </span>
               </div>
 
-              {/* Options Grid */}
+              <p className="text-xs font-semibold text-textPrimary leading-snug">
+                {SANDBOX_QUESTIONS[currentQuestionIdx].question}
+              </p>
+
               <div className="space-y-2">
-                {QUIZ_QUESTIONS[currentQuestion].options.map((option, idx) => {
+                {SANDBOX_QUESTIONS[currentQuestionIdx].options.map((option, idx) => {
                   const isSelected = selectedOption === idx;
-                  const isCorrect = idx === QUIZ_QUESTIONS[currentQuestion].correctIndex;
-                  
-                  let optionStyle = "border-borderSubtle hover:border-brand/40 text-textSecondary hover:text-textPrimary bg-surface";
-                  if (isAnswered) {
-                    if (isCorrect) {
-                      optionStyle = "border-emerald-500 bg-emerald-500/10 text-emerald-700 font-semibold";
+                  const isCorrectAnswer = idx === SANDBOX_QUESTIONS[currentQuestionIdx].correctAnswer;
+
+                  let optionStyles = "border-borderSubtle hover:border-brand/40 text-textSecondary hover:text-textPrimary bg-transparent";
+                  if (hasSubmitted) {
+                    if (isCorrectAnswer) {
+                      optionStyles = "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold";
                     } else if (isSelected) {
-                      optionStyle = "border-rose-500 bg-rose-500/10 text-rose-700 font-semibold";
+                      optionStyles = "border-red-500 bg-red-500/10 text-red-600 dark:text-red-400";
                     } else {
-                      optionStyle = "border-borderSubtle/50 text-textMuted opacity-60";
+                      optionStyles = "border-borderSubtle/50 text-textMuted opacity-50";
                     }
+                  } else if (isSelected) {
+                    optionStyles = "border-brand text-brand bg-brand/5 font-semibold";
                   }
 
                   return (
                     <button
                       key={idx}
-                      disabled={isAnswered}
-                      onClick={() => handleOptionSelect(idx)}
-                      className={`w-full text-left text-xs p-3 rounded-lg border transition-all active:scale-[0.99] flex items-center justify-between ${optionStyle}`}
+                      type="button"
+                      disabled={hasSubmitted}
+                      onClick={() => setSelectedOption(idx)}
+                      className={cn(
+                        "w-full text-left p-3 rounded-lg border text-xs transition-all duration-200 focus:outline-none flex justify-between items-center",
+                        optionStyles
+                      )}
                     >
                       <span>{option}</span>
-                      {isAnswered && isCorrect && <Check className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />}
+                      {hasSubmitted && isCorrectAnswer && (
+                        <span className="text-emerald-500 font-mono text-[10px] font-bold">✔ Correct</span>
+                      )}
+                      {hasSubmitted && isSelected && !isCorrectAnswer && (
+                        <span className="text-red-500 font-mono text-[10px] font-bold">✘ Incorrect</span>
+                      )}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Explanatory / Progress State */}
-              {isAnswered && (
-                <div className="p-3.5 bg-overlay-subtle border border-borderSubtle rounded-lg text-xs space-y-3 animate-in">
-                  <p className="text-textSecondary leading-relaxed">
-                    {QUIZ_QUESTIONS[currentQuestion].explanation}
-                  </p>
-                  <div className="flex gap-2 justify-end">
-                    {streak === 0 && (
-                      <button
-                        onClick={handleResetQuiz}
-                        className="text-[10px] uppercase font-bold text-textMuted hover:text-textPrimary flex items-center gap-1 transition"
-                      >
-                        <RotateCcw className="h-3 w-3" />
-                        Reset
-                      </button>
-                    )}
-                    <button
-                      onClick={handleNextQuestion}
-                      className="bg-brand text-brandForeground font-semibold text-[10px] px-3.5 py-1.5 rounded hover:bg-brandHover transition flex items-center gap-1 shadow-sm uppercase tracking-wider"
-                    >
-                      Next Topic
-                      <ArrowRight className="h-3 w-3" />
-                    </button>
-                  </div>
+              {hasSubmitted && (
+                <div className="p-3 rounded-lg bg-overlay-subtle border border-borderSubtle/50 text-[11px] text-textSecondary leading-normal animate-in">
+                  {selectedOption === SANDBOX_QUESTIONS[currentQuestionIdx].correctAnswer ? (
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓ </span>
+                  ) : (
+                    <span className="text-red-600 dark:text-red-400 font-bold">✗ </span>
+                  )}
+                  {SANDBOX_QUESTIONS[currentQuestionIdx].explanation}
                 </div>
               )}
 
-              {/* Focus Index Display with Animated Countup */}
-              <div className="p-4 bg-overlay-subtle border border-borderSubtle rounded-xl font-bold text-center text-textPrimary space-y-1 relative overflow-hidden group">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-brand/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                <div className="text-[10px] text-textMuted uppercase tracking-wider flex items-center justify-center gap-1">
-                  <TrendingUp className="h-3 w-3 text-brand" />
-                  Your Focus index
+              <div className="flex gap-2 items-center justify-between pt-3 border-t border-borderSubtle">
+                <div className="flex items-center gap-1.5">
+                  <div className="text-[10px] text-textMuted uppercase tracking-wider font-semibold">Your Focus Index:</div>
+                  <div className={cn(
+                    "text-sm font-black transition-all duration-300",
+                    isCorrect === true ? "text-emerald-500 animate-bounce" : isCorrect === false ? "text-red-400" : "text-brand"
+                  )}>
+                    +{focusIndex.toFixed(2)}%
+                  </div>
                 </div>
-                <div className="text-2xl text-brand font-black transition-all">
-                  +{currentFocusIndex.toFixed(2)}%
-                </div>
+
+                {!hasSubmitted ? (
+                  <button
+                    type="button"
+                    disabled={selectedOption === null}
+                    onClick={handleSubmitAnswer}
+                    className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded bg-brand text-brandForeground hover:bg-brandHover disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    Submit
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleNextQuestion}
+                    className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded border border-brand text-brand hover:bg-brand/5 transition"
+                  >
+                    {currentQuestionIdx < SANDBOX_QUESTIONS.length - 1 ? "Next Question" : "Try Again"}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -416,279 +318,154 @@ export function LandingView() {
         </div>
       </main>
 
-      {/* NEW: Interactive Course Curriculum Explorer */}
-      <section id="course-explorer" className="w-full bg-surface/40 border-t border-borderSubtle py-20 z-10 relative">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="font-headline text-3xl font-extrabold tracking-tight text-textPrimary">
-              Explore Our Curriculum
-            </h2>
-            <p className="text-textSecondary text-sm mt-2">
-              Browse interactive playbooks designed to take you from a complete beginner to market proficiency.
-            </p>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex justify-center border-b border-borderSubtle mb-8 max-w-lg mx-auto">
-            {COURSES.map((course) => (
-              <button
-                key={course.id}
-                onClick={() => {
-                  setActiveCourseId(course.id);
-                  setExpandedModuleIdx(0); // Reset accordion to first module
-                }}
-                className={`px-5 py-3 text-xs uppercase tracking-wider font-bold transition-all relative ${
-                  activeCourseId === course.id
-                    ? "text-brand"
-                    : "text-textMuted hover:text-textPrimary"
-                }`}
-              >
-                {course.category}
-                {activeCourseId === course.id && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-brand rounded-t" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Explorer Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left panel: Course Highlights */}
-            <div className="lg:col-span-5 p-6 bg-surface border border-borderSubtle rounded-xl shadow-card space-y-5">
-              <div>
-                <span className="text-[10px] font-bold text-brand bg-brand-subtle px-2.5 py-1 rounded">
-                  {selectedCourse.level}
-                </span>
-                <h3 className="font-headline text-xl font-bold text-textPrimary mt-3">
-                  {selectedCourse.title}
-                </h3>
-                <p className="text-textSecondary text-xs mt-2 leading-relaxed">
-                  {selectedCourse.blurb}
-                </p>
-              </div>
-
-              <div className="flex gap-4 border-y border-borderSubtle py-3 text-xs text-textSecondary">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-brand" />
-                  <span>{selectedCourse.duration}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <GraduationCap className="h-4 w-4 text-brand" />
-                  <span>{selectedCourse.modules.length} Modules</span>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="text-xs font-bold uppercase text-textPrimary mb-3 flex items-center gap-1">
-                  <Sparkles className="h-3.5 w-3.5 text-brand" />
-                  Key Skills Unlocked
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedCourse.skills.map((skill, i) => (
-                    <span key={i} className="text-[10px] bg-overlay-subtle border border-borderSubtle px-2.5 py-1 rounded text-textSecondary">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <Link
-                href={ROUTES.STUDENT.LOGIN}
-                className="w-full flex items-center justify-center gap-2 bg-brand text-brandForeground font-semibold text-xs py-3 rounded-lg hover:bg-brandHover active:scale-[0.98] transition-all shadow-sm"
-              >
-                Enroll & Begin Lesson
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-
-            {/* Right panel: Module Accordion */}
-            <div className="lg:col-span-7 space-y-3">
-              {selectedCourse.modules.map((mod, modIdx) => {
-                const isExpanded = expandedModuleIdx === modIdx;
-                return (
-                  <div
-                    key={modIdx}
-                    className="border border-borderSubtle rounded-xl bg-surface overflow-hidden transition-all duration-300"
-                  >
-                    {/* Header trigger */}
-                    <button
-                      onClick={() => setExpandedModuleIdx(isExpanded ? null : modIdx)}
-                      className="w-full p-4 flex justify-between items-center text-left hover:bg-overlay-hover transition-colors"
-                    >
-                      <div>
-                        <div className="text-[9px] uppercase tracking-wider text-textMuted font-bold">
-                          Module {modIdx + 1}
-                        </div>
-                        <h4 className="text-sm font-bold text-textPrimary mt-0.5">{mod.title}</h4>
-                      </div>
-                      <div>
-                        {isExpanded ? (
-                          <ChevronUp className="h-4 w-4 text-textMuted" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4 text-textMuted" />
-                        )}
-                      </div>
-                    </button>
-
-                    {/* Expandable Body */}
-                    {isExpanded && (
-                      <div className="border-t border-borderSubtle bg-overlay-faint p-4 space-y-2 animate-in">
-                        {mod.lessons.map((lesson, lessonIdx) => (
-                          <div
-                            key={lessonIdx}
-                            className="flex justify-between items-center p-2.5 hover:bg-surface border border-transparent hover:border-borderSubtle rounded-lg transition text-xs text-textSecondary group"
-                          >
-                            <div className="flex items-center gap-2.5">
-                              {lesson.type === "video" ? (
-                                <PlayCircle className="h-4 w-4 text-brand flex-shrink-0" />
-                              ) : (
-                                <FileText className="h-4 w-4 text-brand flex-shrink-0" />
-                              )}
-                              <span className="group-hover:text-textPrimary transition font-medium">
-                                {lesson.title}
-                              </span>
-                            </div>
-                            <span className="text-[10px] text-textMuted">{lesson.duration}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* NEW: Interactive Focus Study Simulator */}
-      <section className="w-full bg-overlay-subtle border-t border-borderSubtle py-20 z-10 relative">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7 space-y-5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-[10px] text-brand tracking-widest uppercase font-bold">
-              <Trophy className="h-3 w-3" />
-              Focus Goal Simulator
-            </span>
-
-            <h2 className="font-headline text-3xl font-extrabold tracking-tight text-textPrimary leading-tight">
-              Design a routine that fits your lifestyle
-            </h2>
-
-            <p className="text-textSecondary text-sm max-w-xl">
-              Use our interactive planner to see how spending just a few minutes a day studying stock, options, or forex basics accelerates your Focus Index and cuts down total completion time.
-            </p>
-
-            {/* Slider Widget */}
-            <div className="bg-surface border border-borderSubtle rounded-xl p-6 shadow-sm space-y-4 max-w-xl">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-textPrimary uppercase tracking-wider">Daily Study Time</span>
-                <span className="font-bold text-brand bg-brand-subtle px-2.5 py-0.5 rounded">
-                  {studyMins} Minutes / day
-                </span>
-              </div>
-
-              <input
-                type="range"
-                min="5"
-                max="60"
-                step="5"
-                value={studyMins}
-                onChange={(e) => setStudyMins(Number(e.target.value))}
-                className="w-full h-1.5 bg-borderSubtle rounded-lg appearance-none cursor-pointer accent-brand"
-              />
-
-              <div className="flex justify-between text-[10px] text-textMuted uppercase tracking-wider font-bold">
-                <span>5m (Quick Read)</span>
-                <span>30m (Target Session)</span>
-                <span>60m (Deep Dive)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Simulated Outputs Dashboard */}
-          <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-            <div className="p-5 bg-surface border border-borderSubtle rounded-xl text-center space-y-1 shadow-sm hover:border-brand/40 transition">
-              <div className="text-[10px] text-textMuted uppercase tracking-wider font-bold">
-                Weekly Focus Growth
-              </div>
-              <div className="text-3xl text-brand font-black">
-                +{simulatedFocusGrowth}%
-              </div>
-              <div className="text-[10px] text-textSecondary font-medium">
-                predicted improvement
-              </div>
-            </div>
-
-            <div className="p-5 bg-surface border border-borderSubtle rounded-xl text-center space-y-1 shadow-sm hover:border-brand/40 transition">
-              <div className="text-[10px] text-textMuted uppercase tracking-wider font-bold">
-                Est. Completion
-              </div>
-              <div className="text-3xl text-brand font-black">
-                {estCompletionWeeks} Weeks
-              </div>
-              <div className="text-[10px] text-textSecondary font-medium">
-                per chosen track
-              </div>
-            </div>
-
-            <div className="p-5 bg-surface border border-borderSubtle rounded-xl text-center space-y-1 shadow-sm hover:border-brand/40 transition">
-              <div className="text-[10px] text-textMuted uppercase tracking-wider font-bold">
-                Learner Profile
-              </div>
-              <div className="text-lg text-textPrimary font-black pt-1">
-                {studyMins <= 15 ? "Consistency Builder" : studyMins <= 45 ? "Skill Accelerator" : "Hyper-Focus Mode"}
-              </div>
-              <div className="text-[10px] text-textSecondary font-medium pt-1">
-                {studyMins <= 15 ? "🔥 3-day habits" : studyMins <= 45 ? "🔥 5-day habits" : "🔥 7-day habits"}
-              </div>
-            </div>
-
-            <div className="p-5 bg-surface border border-borderSubtle rounded-xl text-center space-y-1 shadow-sm hover:border-brand/40 transition flex flex-col justify-center items-center">
-              <Link
-                href={ROUTES.STUDENT.LOGIN}
-                className="w-full flex items-center justify-center gap-1.5 bg-brand text-brandForeground font-bold text-xs py-3 rounded-lg hover:bg-brandHover transition-all shadow-sm active:scale-95"
-              >
-                Let's Do It
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Showcase Section */}
-      <section className="bg-surface/70 border-t border-borderSubtle py-16 z-10 relative">
+      <section className="bg-surface/70 border-t border-borderSubtle py-12 z-10 relative">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map((item) => (
-              <div
-                key={item.title}
-                className="p-6 bg-surface/80 border border-borderSubtle rounded-xl space-y-3 group hover:border-brand/60 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 shadow-card"
-              >
+              <div key={item.title} className="p-6 bg-surface/80 border border-borderSubtle rounded-xl space-y-3 group hover:border-brand/40 transition shadow-card">
                 <div className="flex justify-between items-start">
-                  <div className="p-2.5 bg-brand/5 border border-brand/20 rounded text-brand group-hover:scale-110 transition-transform">
+                  <div className="p-2.5 bg-brand/5 border border-brand/20 rounded text-brand">
                     <item.icon className="h-5 w-5" />
                   </div>
-                  <span className="text-xs text-textMuted bg-overlay-subtle px-2 py-0.5 rounded font-semibold">
+                  <span className="text-xs text-textMuted bg-overlay-subtle px-2 py-0.5 rounded">
                     {item.badge}
                   </span>
                 </div>
-                <h3 className="font-headline text-lg font-bold text-textPrimary group-hover:text-brand transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-textSecondary text-xs leading-relaxed">
-                  {item.desc}
-                </p>
+                <h3 className="font-headline text-lg font-bold text-textPrimary">{item.title}</h3>
+                <p className="text-textSecondary text-xs leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-borderSubtle py-6 text-center text-xs text-textMuted z-10 relative bg-surface/50">
+      {/* Explore Our Curriculum Section */}
+      <section className="border-t border-borderSubtle py-16 md:py-24 z-10 relative bg-elevated/30">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="text-center space-y-4 mb-12 animate-in">
+            <h2 className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-textPrimary">
+              Explore Our Curriculum
+            </h2>
+            <p className="text-textSecondary text-sm max-w-2xl mx-auto">
+              Browse interactive playbooks designed to take you from a complete beginner to market proficiency.
+            </p>
+
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap justify-center gap-2 pt-4">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={cn(
+                    "px-4 py-2 rounded-full text-xs font-semibold tracking-wide border transition-all duration-200",
+                    selectedCategory === cat
+                      ? "bg-brand text-brandForeground border-brand shadow-card"
+                      : "bg-surface text-textSecondary border-borderSubtle hover:border-brand/40 hover:text-textPrimary"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
+            {filteredCourses.map((course) => {
+              const isExpanded = expandedCourseId === course.id;
+              return (
+                <div
+                  key={course.id}
+                  className="bg-surface/80 border border-borderSubtle rounded-xl overflow-hidden shadow-card transition-all duration-300 hover:border-brand/30"
+                >
+                  {/* Course Header Bar */}
+                  <button
+                    type="button"
+                    onClick={() => setExpandedCourseId(isExpanded ? null : course.id)}
+                    className="w-full text-left p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-overlay-faint transition duration-150"
+                  >
+                    <div className="space-y-2 flex-grow">
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <span className="text-[9px] px-2 py-0.5 rounded bg-brand/10 border border-brand/20 font-bold text-brand uppercase tracking-wider">
+                          {course.category}
+                        </span>
+                        <span className="text-[10px] text-textMuted bg-overlay-subtle px-2 py-0.5 rounded font-medium">
+                          {course.level}
+                        </span>
+                        <span className="text-[10px] text-textMuted bg-overlay-subtle px-2 py-0.5 rounded font-medium">
+                          {course.duration}
+                        </span>
+                      </div>
+                      <h3 className="font-headline text-xl font-bold text-textPrimary">
+                        {course.title}
+                      </h3>
+                      <p className="text-textSecondary text-xs leading-relaxed max-w-2xl">
+                        {course.blurb}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3 self-end md:self-auto">
+                      <span className="text-xs text-brand font-semibold hidden md:inline">
+                        {isExpanded ? "Hide Curriculum" : "View Curriculum"}
+                      </span>
+                      <div className="p-2 rounded-lg bg-overlay-subtle border border-borderSubtle text-textSecondary">
+                        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Modules Accordion Content */}
+                  {isExpanded && (
+                    <div className="border-t border-borderSubtle bg-overlay-faint/30 p-6 space-y-4 animate-in">
+                      <div className="text-[11px] font-bold text-textMuted uppercase tracking-wider mb-2">
+                        Playbook Modules ({course.modules.length})
+                      </div>
+                      <div className="grid grid-cols-1 gap-3">
+                        {course.modules.map((mod, modIdx) => (
+                          <div
+                            key={mod.id}
+                            className="p-4 bg-surface/90 border border-borderSubtle/60 rounded-lg flex flex-col sm:flex-row sm:items-start justify-between gap-3 hover:border-brand/20 transition-all duration-200"
+                          >
+                            <div className="space-y-1">
+                              <div className="text-[10px] text-brand font-mono font-bold">
+                                MODULE {modIdx + 1}
+                              </div>
+                              <h4 className="text-sm font-bold text-textPrimary">
+                                {mod.title}
+                              </h4>
+                              <p className="text-xs text-textSecondary leading-normal">
+                                {mod.summary}
+                              </p>
+                            </div>
+                            <span className="text-[10px] text-textMuted font-medium px-2 py-1 rounded bg-overlay-subtle self-start border border-borderSubtle/40 whitespace-nowrap">
+                              {mod.lessons.length} {mod.lessons.length === 1 ? "lesson" : "lessons"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="pt-4 flex justify-end">
+                        <Link
+                          href={ROUTES.STUDENT.LOGIN}
+                          className="inline-flex items-center gap-2 bg-brand text-brandForeground font-bold text-xs px-4 py-2 rounded-lg hover:bg-brandHover active:scale-95 transition-all shadow-card"
+                        >
+                          Enroll in Course
+                          <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-borderSubtle py-6 text-center text-xs text-textMuted z-10 relative">
         Educational content only - not investment advice. Always do your own due diligence.
       </footer>
     </div>
   );
 }
+

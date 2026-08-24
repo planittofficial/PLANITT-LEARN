@@ -22,9 +22,9 @@ function getMockYield(score: number): string {
 
 function PodiumCard({ entry, place }: { entry: LeaderboardEntry; place: number }) {
   const borderColors = [
-    "border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.12)] bg-surface/80",
-    "border-slate-400/20 shadow-[0_0_15px_rgba(156,163,175,0.08)] bg-surface/60",
-    "border-orange-500/20 shadow-[0_0_15px_rgba(217,119,6,0.08)] bg-surface/60",
+    "border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.2)] bg-surface/90 backdrop-blur-xl",
+    "border-slate-400/30 shadow-[0_0_20px_rgba(148,163,184,0.15)] bg-surface/80 backdrop-blur-xl",
+    "border-amber-600/30 shadow-[0_0_20px_rgba(217,119,6,0.15)] bg-surface/80 backdrop-blur-xl",
   ];
 
   const initials = entry.name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2);
@@ -36,41 +36,41 @@ function PodiumCard({ entry, place }: { entry: LeaderboardEntry; place: number }
   return (
     <div
       className={cn(
-        "group relative flex flex-col items-center overflow-hidden rounded-lg border p-6 text-center transition-all duration-300 hover:border-brand/40",
+        "group relative flex flex-col items-center overflow-hidden rounded-2xl border p-6 text-center transition-all duration-300 hover:border-brand/40 hover:-translate-y-1",
         borderColors[place],
-        entry.isCurrentUser && "ring-1 ring-brand",
+        entry.isCurrentUser && "ring-2 ring-brand ring-offset-2 ring-offset-appBase",
       )}
     >
       <div className="glow-border" />
-      <div className="pointer-events-none absolute inset-0 radar-grid opacity-10" />
+      <div className="pointer-events-none absolute inset-0 radar-grid opacity-15" />
 
       <div className="relative z-10 mb-4">
         <div
           className={cn(
-            "flex h-16 w-16 items-center justify-center rounded-full border font-mono text-lg font-bold",
+            "flex h-16 w-16 items-center justify-center rounded-full border-2 font-mono text-xl font-black shadow-lg",
             place === 0
-              ? "border-amber-500/40 bg-amber-500/10 text-amber-500"
+              ? "border-amber-500/60 bg-amber-500/15 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
               : place === 1
-                ? "border-slate-400/30 bg-slate-400/10 text-slate-400"
-                : "border-orange-500/30 bg-orange-500/10 text-orange-500",
+                ? "border-slate-400/50 bg-slate-400/15 text-slate-300"
+                : "border-amber-600/50 bg-amber-600/15 text-amber-500",
           )}
         >
           {initials}
         </div>
-        <span className="absolute -bottom-1 -right-1 rounded border border-borderSubtle bg-elevated px-2 py-0.5 font-mono text-[9px] font-bold leading-none text-textPrimary">
+        <span className="absolute -bottom-1 -right-1 rounded-full border border-borderSubtle bg-elevated px-2.5 py-0.5 font-mono text-[10px] font-bold leading-none text-textPrimary shadow-sm">
           #{place + 1}
         </span>
       </div>
 
-      <p className="z-10 w-full truncate font-headline text-lg font-bold text-textPrimary">
+      <p className="z-10 w-full truncate font-headline text-lg font-extrabold text-textPrimary">
         {entry.name}
       </p>
-      <p className="z-10 mt-1 font-mono text-[9px] font-bold uppercase tracking-widest text-brand/70">
+      <p className="z-10 mt-1 font-mono text-[9px] font-bold uppercase tracking-widest text-brand">
         {title}
       </p>
 
       <div className="z-10 mt-4 flex flex-col items-center">
-        <span className="font-mono text-3xl font-extrabold leading-none tracking-tighter text-brand">
+        <span className="font-mono text-3xl font-black leading-none tracking-tighter text-brand drop-shadow-sm">
           {entry.totalScore.toLocaleString()}
         </span>
         <span className="mt-1.5 font-mono text-[9px] font-bold uppercase tracking-widest text-textMuted">
@@ -78,7 +78,7 @@ function PodiumCard({ entry, place }: { entry: LeaderboardEntry; place: number }
         </span>
       </div>
 
-      <div className="z-10 mt-4 flex items-center gap-1.5 rounded-sm border border-emerald-500/10 bg-emerald-500/5 px-3 py-1 font-mono text-[10px] font-bold text-emerald-500">
+      <div className="z-10 mt-4 flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-1 font-mono text-[10px] font-bold text-emerald-500">
         <ArrowUpRight className="h-3.5 w-3.5" />
         <span>Progress signal: {yieldPct}</span>
       </div>
@@ -93,23 +93,23 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
   return (
     <div
       className={cn(
-        "group relative flex items-center gap-4 overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 px-5 py-4 backdrop-blur-md transition-all duration-200 hover:border-brand/40",
-        entry.isCurrentUser && "border-brand/30 bg-brand/5 shadow-[0_0_12px_rgba(20,184,166,0.05)]",
+        "group relative flex items-center gap-4 overflow-hidden rounded-xl border border-borderSubtle bg-surface/80 px-5 py-4 backdrop-blur-xl transition-all duration-200 hover:border-brand/40 hover:shadow-card",
+        entry.isCurrentUser && "border-brand/40 bg-brand/10 shadow-[0_0_15px_rgba(20,184,166,0.1)]",
       )}
     >
       <div className="glow-border" />
       <span
         className={cn(
-          "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded border font-mono text-xs font-bold",
+          "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border font-mono text-xs font-black",
           entry.rank <= 3
-            ? "border-brand/20 bg-brand/10 text-brand"
+            ? "border-brand/30 bg-brand/15 text-brand"
             : "border-borderSubtle bg-elevated text-textSecondary",
         )}
       >
         {String(entry.rank).padStart(2, "0")}
       </span>
 
-      <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-borderSubtle bg-elevated font-mono text-xs font-bold text-textSecondary">
+      <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-borderSubtle bg-elevated font-mono text-xs font-extrabold text-textSecondary">
         {initials}
       </div>
 
@@ -117,7 +117,7 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
         <p className="flex items-center gap-2 font-headline text-sm font-bold text-textPrimary">
           {entry.name}
           {entry.isCurrentUser ? (
-            <span className="rounded border border-brand/25 bg-brand/10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-brand">
+            <span className="rounded-full border border-brand/30 bg-brand/15 px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-brand">
               You
             </span>
           ) : null}
@@ -128,7 +128,7 @@ function RankingRow({ entry }: { entry: LeaderboardEntry }) {
       </div>
 
       <div className="relative z-10 text-right">
-        <p className="font-mono text-base font-extrabold leading-none tracking-tighter text-brand">
+        <p className="font-mono text-base font-black leading-none tracking-tighter text-brand">
           {entry.totalScore.toLocaleString()}
         </p>
         <p className="mt-1 font-mono text-[9px] font-bold uppercase tracking-widest text-textMuted">

@@ -32,12 +32,12 @@ export function RankXpPanel({
   className,
 }: RankXpPanelProps) {
   return (
-    <section className={cn("rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-5 shadow-2xl relative", className)}>
+    <section className={cn("rounded-2xl border border-borderSubtle bg-surface/80 backdrop-blur-xl p-6 shadow-card relative transition-all duration-300 hover:border-brand/40", className)}>
       <div className="flex items-center gap-4">
-        <Avatar name={name} size="lg" highlight={rank !== null && rank <= 10} className="ring-1 ring-white/10" />
+        <Avatar name={name} size="lg" highlight={rank !== null && rank <= 10} className="ring-2 ring-brand/30" />
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-textMuted">USER_STANDING</p>
-          <p className="truncate font-headline font-bold text-textPrimary text-sm">{name}</p>
+          <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-brand">USER_STANDING</p>
+          <p className="truncate font-headline font-extrabold text-textPrimary text-base">{name}</p>
           <p className="font-mono text-[10px] text-textSecondary uppercase tracking-wider mt-0.5">
             LVL {level} · {levelTitle}
           </p>

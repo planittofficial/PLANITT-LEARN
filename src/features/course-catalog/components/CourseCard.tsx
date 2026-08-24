@@ -83,8 +83,8 @@ export function CourseCard({
   const inner = (
     <article
       className={cn(
-        "course-card-stitch relative group flex flex-col h-full bg-surface/60 border rounded-lg overflow-hidden transition-all duration-300",
-        enrolled ? "border-borderSubtle hover:border-brand/40" : "border-borderSubtle opacity-80 hover:opacity-100",
+        "course-card-stitch relative group flex flex-col h-full bg-surface/80 backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-soft",
+        enrolled ? "border-borderSubtle hover:border-brand/40 hover:shadow-[0_12px_36px_rgba(20,184,166,0.15)]" : "border-borderSubtle opacity-85 hover:opacity-100 hover:border-brand/30",
         variant === "compact" && "flex-row",
       )}
     >
@@ -103,33 +103,33 @@ export function CourseCard({
             alt=""
             className={cn(
               "absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105",
-              !enrolled && "grayscale opacity-30"
+              !enrolled && "grayscale opacity-40"
             )}
             draggable={false}
           />
         ) : null}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
         
         {/* Status Pill */}
-        <div className="absolute top-4 left-4 flex gap-1.5">
+        <div className="absolute top-3.5 left-3.5 flex gap-1.5">
           {enrolled ? (
-            <span className="bg-brand/20 backdrop-blur-md text-brand border border-brand/30 px-2.5 py-0.5 rounded-sm font-mono text-[9px] uppercase tracking-wider font-bold">
+            <span className="bg-brand/20 backdrop-blur-md text-brand border border-brand/35 px-2.5 py-0.5 rounded-full font-mono text-[9px] uppercase tracking-wider font-bold shadow-[0_0_10px_rgba(20,184,166,0.2)]">
               {isComplete ? "COMPLETED" : inProgress ? "IN_PROGRESS" : "UNLOCKED"}
             </span>
           ) : (
-            <span className="bg-overlay-subtle backdrop-blur-md text-textMuted border border-borderSubtle px-2.5 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1">
+            <span className="bg-surface/80 backdrop-blur-md text-textMuted border border-borderSubtle px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold flex items-center gap-1">
               <Lock className="h-2.5 w-2.5" /> LOCKED
             </span>
           )}
           
-          <span className="bg-overlay-medium backdrop-blur-md text-textSecondary px-2 py-0.5 rounded-md text-xs">
+          <span className="bg-surface/80 backdrop-blur-md text-textSecondary border border-borderSubtle/60 px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase">
             {riskLabel}
           </span>
         </div>
 
         {/* Emoji Icon */}
         <div className="absolute bottom-3 left-3 flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface/80 text-2xl shadow-lg backdrop-blur-md ring-1 ring-borderSubtle">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface/90 text-2xl shadow-md backdrop-blur-md ring-1 ring-borderSubtle">
             {courseIcon(course.category)}
           </span>
         </div>
@@ -139,7 +139,7 @@ export function CourseCard({
       <div className="p-5 flex flex-col flex-grow relative z-10">
         <div className="flex justify-between items-start mb-2">
           <Badge className="font-mono text-[9px] py-0.5 tracking-wider">{course.category}</Badge>
-          <span className={cn("border px-2 py-0.5 rounded-sm font-mono text-[9px] tracking-wider uppercase font-bold", levelStyle)}>
+          <span className={cn("border px-2 py-0.5 rounded-md font-mono text-[9px] tracking-wider uppercase font-bold", levelStyle)}>
             {course.level}
           </span>
         </div>
@@ -152,30 +152,30 @@ export function CourseCard({
           {course.blurb}
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] text-textMuted border-t border-borderSubtle pt-3">
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] text-textMuted border-t border-borderSubtle/60 pt-3">
           <span className="inline-flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+            <Clock className="h-3 w-3 text-brand" />
             {course.duration}
           </span>
           <span className="inline-flex items-center gap-1">
-            <BookOpen className="h-3 w-3" />
+            <BookOpen className="h-3 w-3 text-brand" />
             {lessonCount} lessons
           </span>
           <span className="inline-flex items-center gap-1">
-            <Users className="h-3 w-3" />
+            <Users className="h-3 w-3 text-brand" />
             {estimateLearners(course.id)} learners
           </span>
         </div>
 
         {/* Progress Bar (if enrolled) */}
         {enrolled && lessonCount > 0 ? (
-          <div className="mt-4 space-y-1">
-            <div className="flex justify-between text-[10px] font-mono text-textSecondary">
+          <div className="mt-4 space-y-1.5">
+            <div className="flex justify-between text-[10px] font-mono text-textSecondary font-semibold">
               <span>Progress</span>
               <span className="text-brand font-bold">{progressPercent}%</span>
             </div>
-            <div className="w-full h-1 bg-overlay-subtle rounded overflow-hidden">
-              <div className="h-full bg-brand transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+            <div className="w-full h-1.5 bg-overlay-medium rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-brand via-brandBright to-accent transition-all duration-500 rounded-full" style={{ width: `${progressPercent}%` }} />
             </div>
           </div>
         ) : null}

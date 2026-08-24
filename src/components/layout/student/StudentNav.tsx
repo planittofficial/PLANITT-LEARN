@@ -149,11 +149,11 @@ export function StudentSidebar() {
   ];
 
   return (
-    <aside className="hidden md:flex flex-col p-6 h-screen w-64 fixed left-0 top-0 z-40 bg-surface border-r border-borderSubtle">
+    <aside className="hidden md:flex flex-col p-6 h-screen w-64 fixed left-0 top-0 z-40 bg-surface/80 backdrop-blur-xl border-r border-borderSubtle transition-colors">
       {/* Sidebar Header Logo */}
-      <div className="flex items-center gap-3 mb-8">
-        <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm" />
-        <span className="font-headline text-[20px] font-black text-brand tracking-tight">
+      <div className="flex items-center gap-3 mb-8 group">
+        <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm group-hover:scale-105 transition-transform" />
+        <span className="font-headline text-[20px] font-black tracking-tight bg-gradient-to-r from-brand via-brandBright to-accent bg-clip-text text-transparent">
           Alvest Learn
         </span>
       </div>
@@ -172,45 +172,48 @@ export function StudentSidebar() {
                 }
               }}
               className={cn(
-                "flex items-center gap-3 rounded px-4 py-3 text-sm font-medium tracking-wide transition-all duration-200 border border-transparent",
+                "flex items-center gap-3 rounded-lg px-4 py-3 text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border border-transparent",
                 active
-                  ? "bg-brand/5 text-brand font-bold border-l-2 border-l-brand"
-                  : "text-textSecondary hover:text-textPrimary hover:bg-overlay-hover"
+                  ? "bg-brand/10 text-brand border-l-4 border-l-brand shadow-[0_0_15px_rgba(20,184,166,0.12)]"
+                  : "text-textSecondary hover:text-textPrimary hover:bg-overlay-hover hover:border-borderSubtle/40"
               )}
             >
-              <item.icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.25 : 2} />
-              <span className="uppercase">{item.label}</span>
+              <item.icon className={cn("h-4 w-4 shrink-0", active ? "text-brand" : "text-textMuted")} strokeWidth={active ? 2.5 : 2} />
+              <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
       {/* Sidebar Footer User Info */}
-      <div className="mt-auto border-t border-borderSubtle pt-6 space-y-4">
+      <div className="mt-auto border-t border-borderSubtle pt-5 space-y-4">
         {isAuthenticated && user && (
-          <div className="flex items-center gap-3">
-            <Avatar name={user.name ?? "Learner"} className="h-10 w-10 ring-1 ring-white/10" />
+          <div className="flex items-center gap-3 p-2 rounded-lg bg-surface/60 border border-borderSubtle/60 shadow-sm">
+            <Avatar name={user.name ?? "Learner"} className="h-9 w-9 ring-2 ring-brand/30" />
             <div className="min-w-0 flex-1">
-              <p className="font-bold text-sm text-textPrimary truncate">{user.name}</p>
-              <p className="text-[10px] text-brand/60 font-medium tracking-wide">
-                Learning profile
+              <p className="font-bold text-xs text-textPrimary truncate">{user.name}</p>
+              <p className="text-[9px] font-mono text-brand font-semibold uppercase tracking-wider">
+                Learner Profile
               </p>
             </div>
             <button
               onClick={() => logout()}
               title="Sign Out"
-              className="text-textMuted hover:text-red-400 p-1.5 rounded hover:bg-overlay-hover transition"
+              className="text-textMuted hover:text-red-400 p-1.5 rounded-lg hover:bg-overlay-hover transition"
             >
               <LogOut className="h-4 w-4" />
             </button>
           </div>
         )}
 
-        <div className="p-4 bg-elevated border border-borderSubtle rounded-lg terminal-glow">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-brand mb-1 opacity-70">Learner status</p>
-          <p className="text-[10px] leading-relaxed text-textSecondary">
-            &gt; Status: Active<br/>
-            &gt; Learning path: Synced
+        <div className="p-3.5 bg-elevated/80 border border-borderSubtle/80 rounded-xl relative overflow-hidden">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-brand">Learner Status</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          </div>
+          <p className="font-mono text-[10px] leading-relaxed text-textSecondary">
+            &gt; System: Optimal<br/>
+            &gt; Path: Synced
           </p>
         </div>
       </div>
