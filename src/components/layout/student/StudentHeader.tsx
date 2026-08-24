@@ -14,7 +14,7 @@ export function StudentHeader() {
   const { isAuthenticated, authReady, user, logout, isAdmin } = useAuth();
 
   return (
-    <header className="fixed top-0 right-0 w-full md:left-64 md:w-auto h-16 z-40 border-b border-borderSubtle bg-surface/90 backdrop-blur-md">
+    <header className="fixed top-0 right-0 w-full md:left-64 md:w-[calc(100%-16rem)] h-16 z-40 border-b border-borderSubtle bg-surface/80 backdrop-blur-xl transition-colors">
       <div className="flex h-full items-center justify-between gap-2 px-4 sm:px-6">
         
         {/* Left Section: Branding on Mobile / Navigation Status on Desktop */}
@@ -22,9 +22,12 @@ export function StudentHeader() {
           <div className="md:hidden">
             <StudentLogo />
           </div>
-          <span className="hidden md:inline text-[11px] font-medium tracking-wide text-brand/90">
-            Student learning space
-          </span>
+          <div className="hidden md:flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-brand animate-pulse" />
+            <span className="text-[11px] font-mono font-bold tracking-wider text-brand uppercase">
+              STUDENT_LEARNING_SPACE
+            </span>
+          </div>
         </div>
 
         {/* Center Section: Global Search (Hidden on Mobile) */}
@@ -33,10 +36,10 @@ export function StudentHeader() {
         </div>
 
         {/* Right Section: Core Action Buttons & User Menu */}
-        <div className="flex items-center gap-1.5 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <GlobalSearch className="md:hidden" compact />
 
-          <ThemeToggle />
+          <ThemeToggle className="rounded-lg border border-borderSubtle/60 bg-surface/60 hover:border-brand/40 shadow-sm" />
           {authReady && isAuthenticated && <NotificationBell />}
 
           {authReady && isAuthenticated ? (
@@ -51,7 +54,7 @@ export function StudentHeader() {
           {authReady && !isAuthenticated ? (
             <Link
               href={ROUTES.STUDENT.LOGIN}
-              className="rounded bg-brand px-3 py-1.5 text-xs font-semibold tracking-wide text-black shadow-sm transition hover:bg-brand-bright"
+              className="rounded-lg bg-brand px-4 py-2 text-xs font-bold uppercase tracking-wider text-brandForeground shadow-card transition hover:bg-brandHover active:scale-95"
             >
               Sign In
             </Link>

@@ -62,34 +62,34 @@ export function LearningCommandCenter({
   return (
     <section
       className={cn(
-        "learning-command-center group relative min-h-[320px] overflow-hidden rounded-xl border border-borderSubtle bg-surface shadow-card transition-all duration-300 hover:border-brand/35",
+        "learning-command-center group relative min-h-[320px] overflow-hidden rounded-2xl border border-borderSubtle bg-surface/80 backdrop-blur-xl shadow-card transition-all duration-300 hover:border-brand/40 hover:shadow-[0_0_30px_rgba(20,184,166,0.1)]",
         className,
       )}
     >
       <div className="glow-border" />
-      <div className="radar-grid absolute inset-0 opacity-[0.35] dark:opacity-30" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand/[0.04] via-transparent to-accent/[0.03]" />
-      <div className="learning-radar-sweep absolute left-1/2 top-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-[0.05] dark:opacity-[0.07]" />
+      <div className="radar-grid absolute inset-0 opacity-[0.25] pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand/10 via-transparent to-accent/10" />
+      <div className="learning-radar-sweep absolute left-1/2 top-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 opacity-[0.06]" />
 
       <div className="relative z-10 flex h-full min-h-[320px] flex-col p-6 md:p-8">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <div className="mb-2 flex items-center gap-2">
-              <span className="h-[1.5px] w-2 bg-brand" />
-              <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.2em] text-brand">
+              <span className="h-[2px] w-3 bg-brand rounded-full" />
+              <span className="font-mono text-[9px] font-extrabold uppercase tracking-[0.2em] text-brand">
                 Learning pulse
               </span>
             </div>
-            <h3 className="font-headline text-xl font-extrabold tracking-tight text-textPrimary md:text-2xl">
+            <h3 className="font-headline text-2xl font-black tracking-tight text-textPrimary md:text-3xl">
               Your mission control
             </h3>
           </div>
-          <div className="flex items-center gap-2 rounded-full border border-brand/25 bg-brand-subtle px-3 py-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
+          <div className="flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1.5 shadow-[0_0_12px_rgba(20,184,166,0.15)]">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand" />
             </span>
-            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-brand">
+            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-brand">
               Live
             </span>
           </div>
