@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   BarChart3,
   BookOpen,
@@ -18,6 +19,7 @@ import { AlvestLogo } from "@/components/brand";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ROUTES } from "@/constants/routes";
 import { setLmsViewMode } from "@/lib/auth/view-mode";
+import { authedFetch } from "@/lib/security/client-auth";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 
@@ -36,7 +38,26 @@ type AdminSidebarProps = {
 
 export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAuth();
+  const [switchingToStudent, setSwitchingToStudent] = useState(false);
+
+  async function openStudentPortal(event: React.MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    if (switchingToStudent) return;
+
+    setSwitchingToStudent(true);
+    setLmsViewMode("student");
+
+    // Refresh an aging session before requesting the server-rendered student
+    // route. Otherwise middleware can redirect to /login first.
+    try {
+      await authedFetch(ROUTES.API.AUTH.ME);
+    } finally {
+      onMobileClose?.();
+      router.replace(ROUTES.STUDENT.HOME);
+    }
+  }
 
   function isActive(href: string, exact: boolean) {
     if (exact) return pathname === href;
@@ -116,11 +137,13 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
         <div className="flex flex-col gap-2 text-xs">
           <Link
             href={ROUTES.STUDENT.HOME}
-            onClick={() => {
-              setLmsViewMode("student");
-              onMobileClose?.();
-            }}
-            className="flex items-center justify-center gap-1.5 rounded-lg border border-borderSubtle py-2.5 text-textSecondary hover:border-brand/40 hover:text-brand transition"
+            prefetch={false}
+            onClick={openStudentPortal}
+            aria-disabled={switchingToStudent}
+            className={cn(
+              "flex items-center justify-center gap-1.5 rounded-lg border border-borderSubtle py-2.5 text-textSecondary hover:border-brand/40 hover:text-brand transition",
+              switchingToStudent && "pointer-events-none opacity-60",
+            )}
           >
             ← Student Portal
           </Link>
