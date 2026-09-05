@@ -24,6 +24,7 @@ model User {
   lessonProgress     LessonProgress[]
   quizAttempts       QuizAttempt[]
   leaderboardEntries LeaderboardEntry[]
+  subscription       Subscription?
 
   @@map("users")
 }
@@ -168,6 +169,20 @@ model Enrollment {
   @@index([userId])
   @@index([courseId])
   @@map("enrollments")
+}
+
+// One access subscription per learner. Status is derived from expiresAt.
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@map("subscriptions")
 }
 
 // ---------------------------------------------------------------------------

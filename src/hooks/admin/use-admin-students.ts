@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { authedFetch } from "@/lib/security/client-auth";
 import type { AdminStudentDetail, AdminStudentSummary } from "@/types/admin.types";
@@ -42,5 +43,32 @@ export function useAdminStudent(userId: string) {
       return data.student;
     },
     enabled: Boolean(userId),
+  });
+}
+
+export type SubscriptionGrantInput = {
+  userIds: string[];
+  mode: "days" | "date";
+  days?: number;
+  date?: string;
+};
+
+export function useGrantSubscriptions() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: SubscriptionGrantInput) => {
+      const res = await authedFetch("/api/v1/admin/subscriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = (await res.json()) as { ok?: boolean; updated?: number; detail?: string };
+      if (!res.ok || !data.ok) throw new Error(data.detail ?? "Failed to update subscriptions");
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({ queryKey: ["admin", "students"] });
+      variables.userIds.forEach((id) => qc.invalidateQueries({ queryKey: ["admin", "students", id] }));
+    },
   });
 }
