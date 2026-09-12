@@ -10,7 +10,8 @@ const VARIANTS = {
     "bg-brand text-brandForeground font-semibold shadow-sm hover:bg-brandHover active:scale-[0.98]",
   secondary:
     "border border-borderSubtle bg-surface text-textSecondary font-semibold hover:border-brand/40 hover:text-brand active:scale-[0.98]",
-  danger: "border border-red-200 bg-red-50 text-red-700 font-semibold hover:bg-red-100 active:scale-[0.98]",
+  danger:
+    "border border-red-200 bg-red-50 text-red-700 font-semibold hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20 active:scale-[0.98]",
   ghost: "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
 };
 

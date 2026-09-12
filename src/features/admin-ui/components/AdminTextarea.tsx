@@ -9,14 +9,12 @@ export function AdminTextarea({ label, className, id, ...props }: AdminTextareaP
   return (
     <label className="block" htmlFor={inputId}>
       {label ? (
-        <span className="font-mono text-[9px] text-textMuted uppercase tracking-widest block mb-1.5">
-          {label}
-        </span>
+        <span className="mb-1.5 block text-xs font-medium text-textSecondary">{label}</span>
       ) : null}
       <textarea
         id={inputId}
         className={cn(
-          "w-full rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 tracking-wide",
+          "w-full rounded-lg border border-borderSubtle bg-surface px-3 py-2.5 text-sm text-textPrimary placeholder:text-textMuted outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20",
           className,
         )}
         {...props}

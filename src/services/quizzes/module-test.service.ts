@@ -1,18 +1,21 @@
 import { prisma } from "@/lib/db/prisma";
-import { scoreQuiz, stripCorrectAnswers } from "@/services/quizzes/quiz-scoring";
-import type { QuizAnswer, QuizAttemptResult, QuizPublicView, QuizQuestion } from "@/types/quiz.types";
+import { coerceQuestionList, scoreQuiz, stripCorrectAnswers } from "@/services/quizzes/quiz-scoring";
+import type { QuizAnswer, QuizAttemptResult, QuizPublicView } from "@/types/quiz.types";
 import type { UpsertQuizInput } from "@/validations/quiz.schema";
 
-function parseQuestions(raw: unknown): QuizQuestion[] {
-  if (!Array.isArray(raw)) return [];
-  return raw as QuizQuestion[];
+/** Students can take a module test once it has questions (legacy saves defaulted published=false). */
+export function isModuleTestVisibleToStudents<T extends { questionPool: unknown }>(
+  test: T | null | undefined,
+): test is T {
+  if (!test) return false;
+  return coerceQuestionList(test.questionPool).length > 0;
 }
 
 export async function getModuleTestForStudent(moduleId: string): Promise<QuizPublicView | null> {
   const test = await prisma.moduleTest.findUnique({ where: { moduleId } });
-  if (!test || !test.published) return null;
+  if (!test || !isModuleTestVisibleToStudents(test)) return null;
 
-  const questions = parseQuestions(test.questionPool);
+  const questions = coerceQuestionList(test.questionPool);
   return {
     id: test.id,
     moduleId: test.moduleId,
@@ -31,7 +34,7 @@ export async function getModuleTestForAdmin(moduleId: string) {
     moduleId: test.moduleId,
     title: test.title,
     passingScore: test.passingScore,
-    questions: parseQuestions(test.questionPool),
+    questions: coerceQuestionList(test.questionPool),
     published: test.published,
   };
 }
@@ -40,6 +43,8 @@ export async function upsertModuleTest(moduleId: string, input: UpsertQuizInput)
   const mod = await prisma.module.findUnique({ where: { id: moduleId } });
   if (!mod) return null;
 
+  const published = input.published ?? true;
+
   const test = await prisma.moduleTest.upsert({
     where: { moduleId },
     create: {
@@ -47,13 +52,13 @@ export async function upsertModuleTest(moduleId: string, input: UpsertQuizInput)
       title: input.title,
       passingScore: input.passingScore ?? 60,
       questionPool: input.questions,
-      published: input.published ?? false,
+      published,
     },
     update: {
       title: input.title,
       passingScore: input.passingScore,
       questionPool: input.questions,
-      published: input.published,
+      published,
     },
   });
 
@@ -62,7 +67,7 @@ export async function upsertModuleTest(moduleId: string, input: UpsertQuizInput)
     moduleId: test.moduleId,
     title: test.title,
     passingScore: test.passingScore,
-    questions: parseQuestions(test.questionPool),
+    questions: coerceQuestionList(test.questionPool),
     published: test.published,
   };
 }
@@ -83,9 +88,9 @@ export async function submitModuleTestAttempt(
     where: { moduleId },
     include: { module: { select: { courseId: true } } },
   });
-  if (!test || !test.published) return null;
+  if (!isModuleTestVisibleToStudents(test)) return null;
 
-  const questions = parseQuestions(test.questionPool);
+  const questions = coerceQuestionList(test.questionPool);
   const result = scoreQuiz(questions, answers, test.passingScore);
 
   await prisma.quizAttempt.create({

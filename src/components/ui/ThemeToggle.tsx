@@ -29,12 +29,12 @@ export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) 
         showLabel && "h-auto w-auto gap-2 px-3",
         className,
       )}
-      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      title={isDark ? "Light mode" : "Dark mode"}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {isDark ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
       {showLabel ? (
-        <span className="text-xs font-medium">{isDark ? "Light" : "Dark"}</span>
+        <span className="text-xs font-medium">{isDark ? "Light mode" : "Dark mode"}</span>
       ) : null}
     </button>
   );

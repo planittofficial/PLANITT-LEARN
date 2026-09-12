@@ -25,7 +25,7 @@ export function LeaderboardAdminView() {
       />
 
       {entries.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-white/10 px-6 py-12 text-center font-mono text-xs text-textMuted uppercase tracking-wider">
+        <div className="rounded-lg border border-dashed border-borderSubtle px-6 py-12 text-center font-mono text-xs text-textMuted uppercase tracking-wider">
           No leaderboard entries yet. Learners appear after completing lessons and quizzes.
         </div>
       ) : (
@@ -35,15 +35,15 @@ export function LeaderboardAdminView() {
             return (
               <div
                 key={row.userId}
-                className={`flex items-center justify-between gap-4 rounded-lg border px-5 py-4 backdrop-blur-md transition hover:border-brand/40 ${row.rank <= 3 ? "border-amber-500/20 bg-amber-500/5" : "border-white/5 bg-[#131313]/60"}`}
+                className={`flex items-center justify-between gap-4 rounded-lg border px-5 py-4 backdrop-blur-md transition hover:border-brand/40 ${row.rank <= 3 ? "border-amber-500/20 bg-amber-500/5" : "border-borderSubtle bg-surface/80"}`}
               >
                 <div className="flex items-center gap-4 min-w-0">
                   {/* Rank Badge */}
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded font-mono text-sm font-black border ${row.rank <= 3 ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-white/5 bg-[#1C1B1B] text-textSecondary"}`}>
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded font-mono text-sm font-black border ${row.rank <= 3 ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-borderSubtle bg-elevated text-textSecondary"}`}>
                     #{row.rank}
                   </div>
                   {/* Avatar circle */}
-                  <div className="h-10 w-10 rounded-full bg-[#1C1B1B] border border-white/5 flex items-center justify-center font-mono font-bold text-xs text-brand shrink-0">
+                  <div className="h-10 w-10 rounded-full bg-elevated border border-borderSubtle flex items-center justify-center font-mono font-bold text-xs text-brand shrink-0">
                     {initials}
                   </div>
                   <div className="min-w-0">

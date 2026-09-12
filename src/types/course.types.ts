@@ -23,6 +23,7 @@ export type ApiModule = {
   title: string;
   summary: string;
   lessons: ApiLesson[];
+  hasModuleTest?: boolean;
 };
 
 export type ApiCourseListItem = {

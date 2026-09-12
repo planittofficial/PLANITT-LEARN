@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -63,8 +64,16 @@ async function throwIfAuthFailed(res: Response, fallback: string): Promise<void>
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(emptyState);
   const [authReady, setAuthReady] = useState(false);
+  const bootstrapRequest = useRef(0);
 
   const bootstrap = useCallback(async (): Promise<AuthState> => {
+    const requestId = ++bootstrapRequest.current;
+
+    // Login can start while the initial bootstrap is still in flight. Only
+    // the newest bootstrap may update shared auth state; an older request must
+    // not overwrite a successful login with the logged-out state.
+    const isCurrentRequest = () => requestId === bootstrapRequest.current;
+
     try {
       const loadSession = async () => {
         const res = await authedFetch(ROUTES.API.AUTH.ME);
@@ -101,18 +110,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Default to false on failure
         }
         const next: AuthState = { isAuthenticated: true, user, isAdmin };
-        setState(next);
+        if (isCurrentRequest()) setState(next);
         return next;
       }
 
       // Do not clear cookies here — a failed /me must not wipe a just-issued session.
-      setState(emptyState);
+      if (isCurrentRequest()) setState(emptyState);
       return emptyState;
     } catch {
-      setState(emptyState);
+      if (isCurrentRequest()) setState(emptyState);
       return emptyState;
     } finally {
-      setAuthReady(true);
+      if (isCurrentRequest()) setAuthReady(true);
     }
   }, []);
 

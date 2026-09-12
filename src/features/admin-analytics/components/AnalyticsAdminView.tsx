@@ -47,7 +47,7 @@ export function AnalyticsAdminView() {
           {data.popularCourses.map((course, index) => (
             <div
               key={course.courseId}
-              className="flex items-center justify-between rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-4 font-mono text-xs hover:border-brand/30 transition"
+              className="flex items-center justify-between rounded-lg border border-borderSubtle bg-surface/80 px-5 py-4 font-mono text-xs hover:border-brand/30 transition"
             >
               <div className="flex items-center gap-4 min-w-0">
                 <span className="text-[9px] text-brand/60 font-bold uppercase tracking-widest w-5 shrink-0">
@@ -70,7 +70,7 @@ export function AnalyticsAdminView() {
           {data.recentActivity.map((item, i) => (
             <div
               key={`${item.userId}-${item.lessonId}-${i}`}
-              className="flex items-start gap-4 rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-4 hover:border-brand/20 transition"
+              className="flex items-start gap-4 rounded-lg border border-borderSubtle bg-surface/80 px-5 py-4 hover:border-brand/20 transition"
             >
               {/* Status dot */}
               <div className="mt-1 shrink-0">

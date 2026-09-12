@@ -57,7 +57,7 @@ export default function ModuleTestPage() {
     <>
       <Breadcrumb
         items={[
-          { label: "Dashboard", href: ROUTES.STUDENT.HOME },
+          { label: "Home", href: ROUTES.STUDENT.HOME },
           { label: course?.title ?? courseId, href: ROUTES.STUDENT.course(courseId) },
           { label: "Module test" },
         ]}
@@ -67,7 +67,7 @@ export default function ModuleTestPage() {
         <EmptyState
           icon={GraduationCap}
           title="Module test not available"
-          description="This module doesn't have a published test yet. Check back later."
+          description="No module test is available for this module yet. Check back after the assessment has been added."
           action={
             <Link
               href={ROUTES.STUDENT.course(courseId)}

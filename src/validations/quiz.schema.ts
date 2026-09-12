@@ -12,17 +12,29 @@ function parseQuestions(raw: unknown): QuizQuestion[] | null {
 
   const questions: QuizQuestion[] = [];
   for (const item of raw) {
-    if (!item || typeof item !== "object") return null;
+    if (!item || typeof item !== "object") continue;
     const q = item as Record<string, unknown>;
     const id = typeof q.id === "string" ? q.id.trim() : "";
     const prompt = typeof q.prompt === "string" ? q.prompt.trim() : "";
-    const correctIndex = Number(q.correctIndex);
-    const options = Array.isArray(q.options)
-      ? q.options.map((o) => (typeof o === "string" ? o.trim() : "")).filter(Boolean)
-      : [];
+    const originalCorrect = Number(q.correctIndex);
+    const rawOptions = Array.isArray(q.options) ? q.options : [];
 
-    if (!id || !prompt || options.length < 2 || !Number.isInteger(correctIndex)) return null;
-    if (correctIndex < 0 || correctIndex >= options.length) return null;
+    const kept = rawOptions
+      .map((option, originalIndex) => ({
+        text: typeof option === "string" ? option.trim() : "",
+        originalIndex,
+      }))
+      .filter((option) => option.text.length > 0);
+
+    const isBlank = !prompt && kept.length === 0;
+    if (isBlank) continue;
+
+    const options = kept.map((option) => option.text);
+    const correctIndex = Number.isInteger(originalCorrect)
+      ? kept.findIndex((option) => option.originalIndex === originalCorrect)
+      : -1;
+
+    if (!id || !prompt || options.length < 2 || correctIndex < 0) continue;
 
     questions.push({ id, prompt, options, correctIndex });
   }

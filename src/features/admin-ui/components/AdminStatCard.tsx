@@ -15,8 +15,8 @@ const ACCENTS = {
   indigo: "text-accent border-accent/20 bg-accent/5",
   sky: "text-accent border-accent/20 bg-accent/5",
   emerald: "text-brand border-brand/20 bg-brand/5",
-  amber: "text-amber-400 border-amber-500/20 bg-amber-500/5",
-  rose: "text-red-400 border-red-500/20 bg-red-500/5",
+  amber: "text-amber-600 border-amber-500/20 bg-amber-500/5 dark:text-amber-400",
+  rose: "text-red-600 border-red-500/20 bg-red-500/5 dark:text-red-400",
 };
 
 export function AdminStatCard({
@@ -30,24 +30,25 @@ export function AdminStatCard({
   return (
     <div
       className={cn(
-        "rounded-lg border border-borderSubtle bg-surface/60 p-5 backdrop-blur-md transition hover:border-brand/40 shadow-2xl relative overflow-hidden group",
+        "group relative overflow-hidden rounded-xl border border-borderSubtle bg-surface p-5 shadow-card transition hover:border-brand/40",
         className,
       )}
     >
-      <div className="glow-border" />
-      <div className="flex items-start gap-4 relative z-10">
+      <div className="relative z-10 flex items-start gap-4">
         <div
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded border",
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border",
             ACCENTS[accent],
           )}
         >
           <Icon className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-textMuted">{label}</p>
-          <p className="mt-1 font-mono text-2xl font-extrabold tracking-tight text-textPrimary leading-none">{value}</p>
-          {hint ? <p className="mt-1.5 font-mono text-[9px] text-textSecondary uppercase tracking-wider">{hint}</p> : null}
+          <p className="text-xs font-medium text-textMuted">{label}</p>
+          <p className="mt-1 font-headline text-2xl font-bold leading-none tracking-tight text-textPrimary">
+            {value}
+          </p>
+          {hint ? <p className="mt-1.5 text-xs text-textSecondary">{hint}</p> : null}
         </div>
       </div>
     </div>

@@ -156,7 +156,7 @@ export function LessonEditorView({ lessonId }: { lessonId: string }) {
                   "flex flex-col items-start gap-2 rounded border p-4 text-left transition font-mono",
                   selected
                     ? "border-brand bg-brand/10 ring-1 ring-brand/30"
-                    : "border-white/5 bg-[#131313]/60 hover:border-brand/40 hover:bg-[#1C1B1B]",
+                    : "border-borderSubtle bg-surface/80 hover:border-brand/40 hover:bg-elevated",
                 )}
               >
                 <Icon className={cn("h-4 w-4", selected ? "text-brand animate-pulse" : "text-textMuted")} />

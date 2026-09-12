@@ -162,7 +162,14 @@ export function LessonQuizPanel({
     );
   }
 
-  // Quiz step wizard
+  if (!totalQuestions || !currentQuestion) {
+    return (
+      <section className="rounded-lg border border-borderSubtle bg-surface/60 p-6 text-sm text-textSecondary">
+        This assessment has no questions yet.
+      </section>
+    );
+  }
+
   const optionPrefixes = ["A", "B", "C", "D", "E"];
 
   return (

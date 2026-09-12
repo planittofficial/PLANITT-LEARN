@@ -56,17 +56,17 @@ export function QuizSmartPaste({
     <AdminCard highlight>
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-3 text-left font-mono"
+        className="flex w-full items-center justify-between gap-3 text-left"
         onClick={() => setOpen((v) => !v)}
       >
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded border border-brand/20 bg-brand/10 text-brand">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-brand/20 bg-brand/10 text-brand">
             <ClipboardPaste className="h-4 w-4" />
           </span>
           <div>
-            <p className="font-bold text-textPrimary text-xs uppercase tracking-wide">Smart Paste Console</p>
-            <p className="text-[9px] text-textMuted uppercase tracking-widest mt-0.5">
-              Paste bulk questions from docs, ChatGPT, or Google Forms exports.
+            <p className="text-sm font-semibold text-textPrimary">Smart paste</p>
+            <p className="mt-0.5 text-xs text-textMuted">
+              Paste bulk questions from docs, ChatGPT, or Google Forms.
             </p>
           </div>
         </div>
@@ -78,17 +78,16 @@ export function QuizSmartPaste({
       </button>
 
       {open ? (
-        <div className="mt-5 space-y-4 border-t border-white/5 pt-5">
-          <details className="rounded border border-white/5 bg-[#1C1B1B] px-4 py-3 font-mono text-xs text-textMuted">
-            <summary className="cursor-pointer font-bold text-brand uppercase tracking-widest">
-              Supported Format Template
+        <div className="mt-5 space-y-4 border-t border-borderSubtle pt-5">
+          <details className="rounded-lg border border-borderSubtle bg-elevated px-4 py-3 text-sm text-textMuted">
+            <summary className="cursor-pointer font-semibold text-brand">
+              Supported format
             </summary>
-            <pre className="mt-3 overflow-x-auto whitespace-pre-wrap font-mono text-[10px] leading-relaxed text-textSecondary uppercase">
+            <pre className="mt-3 overflow-x-auto whitespace-pre-wrap font-mono text-xs leading-relaxed text-textSecondary">
               {EXAMPLE}
             </pre>
-            <p className="mt-3 text-[9px] uppercase tracking-wider text-textMuted">
-              Numbered or Q1-style prompts, options as A) B) or A. or bullets, and an Answer /
-              Correct line. Separate questions with a blank line.
+            <p className="mt-3 text-xs text-textMuted">
+              Numbered prompts, lettered options (A) B) …), and an Answer / Correct line. Separate questions with a blank line.
             </p>
           </details>
 

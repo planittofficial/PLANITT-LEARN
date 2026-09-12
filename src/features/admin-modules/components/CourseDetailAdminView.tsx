@@ -227,7 +227,7 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
                     onChange={(e) => setLectureTitle(e.target.value)}
                   />
 
-                  <div className="rounded-lg border border-white/10 bg-[#131313]/60 p-4 space-y-4">
+                  <div className="rounded-lg border border-borderSubtle bg-surface/80 p-4 space-y-4">
                     <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest">
                       Primary video (optional now — you can upload later)
                     </p>
@@ -306,7 +306,7 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
           {(modules ?? []).map((mod) => (
             <div
               key={mod.id}
-              className="group flex flex-wrap items-center justify-between gap-4 rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-4 hover:border-brand/30 transition"
+              className="group flex flex-wrap items-center justify-between gap-4 rounded-lg border border-borderSubtle bg-surface/80 px-5 py-4 hover:border-brand/30 transition"
             >
               <div className="min-w-0">
                 <Link
@@ -346,7 +346,7 @@ export function CourseDetailAdminView({ courseId }: { courseId: string }) {
         </div>
 
         {(modules ?? []).length === 0 && !isLoading ? (
-          <div className="rounded-lg border border-dashed border-white/10 px-6 py-10 text-center font-mono text-xs text-textMuted uppercase tracking-wider">
+          <div className="rounded-lg border border-dashed border-borderSubtle px-6 py-10 text-center font-mono text-xs text-textMuted uppercase tracking-wider">
             No modules yet. Add your first module above.
           </div>
         ) : null}

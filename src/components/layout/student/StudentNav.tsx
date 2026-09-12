@@ -10,7 +10,7 @@ import {
   User,
   LogOut,
   LineChart,
-  BookOpen
+  BookOpen,
 } from "lucide-react";
 
 import { AlvestLogo } from "@/components/brand";
@@ -50,7 +50,7 @@ export function StudentHeaderNav({ className }: StudentHeaderNavProps) {
               href={item.href}
               title={item.label}
               className={cn(
-                "relative inline-flex h-full shrink-0 items-center gap-2 border-b-2 px-2.5 text-xs font-medium tracking-wide transition-colors sm:px-3",
+                "relative inline-flex h-full shrink-0 items-center gap-2 border-b-2 px-2.5 text-sm font-medium transition-colors sm:px-3",
                 active
                   ? "border-brand text-brand"
                   : "border-transparent text-textSecondary hover:border-borderSubtle hover:text-textPrimary",
@@ -74,10 +74,10 @@ export function StudentNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/90 backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-borderSubtle bg-surface/95 backdrop-blur-md md:hidden"
       aria-label="Main"
     >
-      <div className="mx-auto flex h-16 items-stretch px-4">
+      <div className="mx-auto flex h-16 items-stretch px-2">
         {STUDENT_NAV_ITEMS.map((item) => {
           const active =
             item.href === ROUTES.STUDENT.HOME
@@ -88,18 +88,18 @@ export function StudentNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1 py-2 text-[10px] font-medium tracking-wide transition",
+                "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-medium transition",
                 active ? "text-brand" : "text-textMuted",
               )}
             >
               {active ? (
                 <span
-                  className="absolute top-0 left-1/2 h-0.5 w-10 -translate-x-1/2 rounded-full bg-brand"
+                  className="absolute left-1/2 top-0 h-0.5 w-10 -translate-x-1/2 rounded-full bg-brand"
                   aria-hidden
                 />
               ) : null}
               <item.icon className="h-5 w-5 shrink-0" strokeWidth={active ? 2.25 : 2} />
-              <span className="max-w-full truncate leading-none uppercase">{item.shortLabel}</span>
+              <span className="max-w-full truncate leading-none">{item.shortLabel}</span>
             </Link>
           );
         })}
@@ -116,14 +116,11 @@ export function StudentLogo({ className }: StudentLogoProps) {
   return (
     <Link
       href={ROUTES.STUDENT.HOME}
-      className={cn(
-        "inline-flex shrink-0 items-center gap-3 transition hover:opacity-90",
-        className,
-      )}
+      className={cn("inline-flex shrink-0 items-center gap-3 transition hover:opacity-90", className)}
     >
       <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm" />
-      <span className="hidden whitespace-nowrap text-lg font-headline font-extrabold tracking-tighter text-brand uppercase md:inline">
-        Alvest<span className="text-textPrimary"> Learn</span>
+      <span className="hidden font-headline text-lg font-bold tracking-tight text-textPrimary md:inline">
+        Alvest <span className="text-brand">Learn</span>
       </span>
     </Link>
   );
@@ -134,34 +131,39 @@ export function StudentSidebar() {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
 
   const sidebarItems = [
-    { href: ROUTES.STUDENT.HOME, label: "Dashboard", icon: Home },
-    { 
-      href: ROUTES.STUDENT.HOME, 
-      label: "Courses", 
-      icon: BookOpen, 
-      matches: (p: string) => p.startsWith("/courses") || p === ROUTES.STUDENT.HOME 
+    {
+      href: ROUTES.STUDENT.HOME,
+      label: "My learning",
+      icon: Home,
+      matches: (p: string) => p === ROUTES.STUDENT.HOME,
+    },
+    {
+      href: ROUTES.STUDENT.COURSES,
+      label: "Courses",
+      icon: BookOpen,
+      matches: (p: string) => p.startsWith("/courses"),
     },
     { href: ROUTES.STUDENT.LEADERBOARD, label: "Leaderboard", icon: Trophy },
     { href: ROUTES.STUDENT.ACHIEVEMENTS, label: "Achievements", icon: Award },
     { href: ROUTES.STUDENT.ANALYTICS, label: "Progress", icon: BarChart3 },
     { href: ROUTES.STUDENT.PROFILE, label: "Profile", icon: User },
-    ...(isAdmin ? [{ href: ROUTES.ADMIN.HOME, label: "Admin Console", icon: LineChart }] : []),
+    ...(isAdmin ? [{ href: ROUTES.ADMIN.HOME, label: "Admin", icon: LineChart }] : []),
   ];
 
   return (
-    <aside className="hidden md:flex flex-col p-6 h-screen w-64 fixed left-0 top-0 z-40 bg-surface/80 backdrop-blur-xl border-r border-borderSubtle transition-colors">
-      {/* Sidebar Header Logo */}
-      <div className="flex items-center gap-3 mb-8 group">
-        <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm group-hover:scale-105 transition-transform" />
-        <span className="font-headline text-[20px] font-black tracking-tight bg-gradient-to-r from-brand via-brandBright to-accent bg-clip-text text-transparent">
-          Alvest Learn
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r border-borderSubtle bg-surface p-5 transition-colors md:flex">
+      <div className="mb-8 flex items-center gap-3">
+        <AlvestLogo variant="markClear" size={36} priority className="drop-shadow-sm" />
+        <span className="font-headline text-lg font-bold tracking-tight text-textPrimary">
+          Alvest <span className="text-brand">Learn</span>
         </span>
       </div>
 
-      {/* Navigation menu */}
-      <nav className="flex-grow flex flex-col gap-1.5">
+      <nav className="flex flex-1 flex-col gap-1">
         {sidebarItems.map((item) => {
-          const active = item.matches ? item.matches(pathname) : pathname === item.href;
+          const active = "matches" in item && item.matches
+            ? item.matches(pathname)
+            : pathname === item.href;
           return (
             <Link
               key={item.label}
@@ -172,50 +174,40 @@ export function StudentSidebar() {
                 }
               }}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-4 py-3 text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border border-transparent",
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
                 active
-                  ? "bg-brand/10 text-brand border-l-4 border-l-brand shadow-[0_0_15px_rgba(20,184,166,0.12)]"
-                  : "text-textSecondary hover:text-textPrimary hover:bg-overlay-hover hover:border-borderSubtle/40"
+                  ? "bg-brand/10 text-brand"
+                  : "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
               )}
             >
-              <item.icon className={cn("h-4 w-4 shrink-0", active ? "text-brand" : "text-textMuted")} strokeWidth={active ? 2.5 : 2} />
+              <item.icon
+                className={cn("h-4 w-4 shrink-0", active ? "text-brand" : "text-textMuted")}
+                strokeWidth={active ? 2.5 : 2}
+              />
               <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Sidebar Footer User Info */}
-      <div className="mt-auto border-t border-borderSubtle pt-5 space-y-4">
-        {isAuthenticated && user && (
-          <div className="flex items-center gap-3 p-2 rounded-lg bg-surface/60 border border-borderSubtle/60 shadow-sm">
-            <Avatar name={user.name ?? "Learner"} className="h-9 w-9 ring-2 ring-brand/30" />
+      <div className="mt-auto space-y-3 border-t border-borderSubtle pt-4">
+        {isAuthenticated && user ? (
+          <div className="flex items-center gap-3 rounded-xl border border-borderSubtle bg-elevated/60 p-2.5">
+            <Avatar name={user.name ?? "Learner"} className="h-9 w-9" />
             <div className="min-w-0 flex-1">
-              <p className="font-bold text-xs text-textPrimary truncate">{user.name}</p>
-              <p className="text-[9px] font-mono text-brand font-semibold uppercase tracking-wider">
-                Learner Profile
-              </p>
+              <p className="truncate text-sm font-semibold text-textPrimary">{user.name}</p>
+              <p className="text-xs text-textMuted">Learner</p>
             </div>
             <button
+              type="button"
               onClick={() => logout()}
-              title="Sign Out"
-              className="text-textMuted hover:text-red-400 p-1.5 rounded-lg hover:bg-overlay-hover transition"
+              title="Sign out"
+              className="rounded-lg p-1.5 text-textMuted transition hover:bg-overlay-hover hover:text-red-500"
             >
               <LogOut className="h-4 w-4" />
             </button>
           </div>
-        )}
-
-        <div className="p-3.5 bg-elevated/80 border border-borderSubtle/80 rounded-xl relative overflow-hidden">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-brand">Learner Status</span>
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          </div>
-          <p className="font-mono text-[10px] leading-relaxed text-textSecondary">
-            &gt; System: Optimal<br/>
-            &gt; Path: Synced
-          </p>
-        </div>
+        ) : null}
       </div>
     </aside>
   );

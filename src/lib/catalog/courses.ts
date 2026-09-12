@@ -21,6 +21,7 @@ export type CourseModule = {
   title: string;
   summary: string;
   lessons: Lesson[];
+  hasModuleTest?: boolean;
 };
 
 export type CourseDefinition = {

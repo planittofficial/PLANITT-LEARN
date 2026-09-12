@@ -40,20 +40,12 @@ export function LessonSidebar({
         currentLessonId={currentLessonId}
         progress={progress}
       />
-
-      <div className="rounded-xl border border-borderSubtle bg-surface/80 p-4 shadow-card">
-        <p className="text-xs font-semibold uppercase tracking-wide text-textMuted">Course</p>
-        <p className="mt-1 font-headline text-sm font-semibold leading-snug text-textPrimary">
-          {course.title}
-        </p>
-        <p className="mt-2 text-xs leading-6 text-textSecondary">{course.blurb}</p>
-        <Link
-          href={ROUTES.STUDENT.course(course.id)}
-          className="mt-3 inline-flex text-sm font-medium text-brand hover:underline"
-        >
-          View course overview →
-        </Link>
-      </div>
+      <Link
+        href={ROUTES.STUDENT.course(course.id)}
+        className="inline-flex text-sm font-medium text-brand hover:underline"
+      >
+        View full course →
+      </Link>
     </aside>
   );
 }
@@ -62,9 +54,10 @@ type LessonNavProps = {
   courseId: string;
   previous: { moduleId: string; lessonId: string; title: string } | null;
   next: { moduleId: string; lessonId: string; title: string } | null;
+  moduleTestHref?: string | null;
 };
 
-export function LessonNav({ courseId, previous, next }: LessonNavProps) {
+export function LessonNav({ courseId, previous, next, moduleTestHref }: LessonNavProps) {
   return (
     <nav className="mt-8 grid gap-4 border-t border-borderSubtle pt-8 sm:grid-cols-2">
       {previous ? (
@@ -84,7 +77,20 @@ export function LessonNav({ courseId, previous, next }: LessonNavProps) {
         <div className="hidden sm:block" />
       )}
 
-      {next ? (
+      {moduleTestHref ? (
+        <Link
+          href={moduleTestHref}
+          className="group flex items-center justify-end gap-3 rounded-xl border border-brand/35 bg-brand/10 p-4 transition hover:border-brand/50 hover:bg-brand/15 sm:col-start-2"
+        >
+          <div className="min-w-0 text-right">
+            <p className="text-xs font-medium text-brand/80">Module test</p>
+            <p className="mt-1 truncate text-sm font-semibold text-textPrimary group-hover:text-brand">
+              Take the module test
+            </p>
+          </div>
+          <ArrowRight className="h-5 w-5 shrink-0 text-brand" />
+        </Link>
+      ) : next ? (
         <Link
           href={ROUTES.STUDENT.lesson(courseId, next.moduleId, next.lessonId)}
           className="group flex items-center justify-end gap-3 rounded-xl border border-borderSubtle bg-surface p-4 transition hover:border-brand/30 hover:shadow-card sm:col-start-2"
@@ -185,6 +191,7 @@ export function LessonMetaBar({
   completed: boolean;
 }) {
   const isVideoLesson = lessonHasVideo(lesson);
+  const showModule = module.title.trim().toLowerCase() !== lesson.title.trim().toLowerCase();
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm text-textSecondary">
@@ -195,8 +202,12 @@ export function LessonMetaBar({
       <Badge className="py-0.5 text-xs">
         {isVideoLesson ? "Video" : lesson.kind === "external" ? "Resource" : "Reading"}
       </Badge>
-      <span className="hidden h-1 w-1 rounded-full bg-textMuted sm:inline-block" />
-      <span className="hidden truncate sm:inline">{module.title}</span>
+      {showModule ? (
+        <>
+          <span className="hidden h-1 w-1 rounded-full bg-textMuted sm:inline-block" />
+          <span className="hidden truncate sm:inline">{module.title}</span>
+        </>
+      ) : null}
       {completed ? (
         <span className="inline-flex items-center gap-1 rounded-full bg-brand-subtle px-3 py-1 text-xs font-semibold text-brand">
           <CheckCircle2 className="h-3.5 w-3.5" />
@@ -210,18 +221,19 @@ export function LessonMetaBar({
 export function LessonHeader({
   lesson,
   module,
-  courseTitle,
 }: {
   lesson: Lesson;
   module: CourseModule;
-  courseTitle: string;
+  courseTitle?: string;
 }) {
+  const showModule = module.title.trim().toLowerCase() !== lesson.title.trim().toLowerCase();
+
   return (
-    <header className="space-y-3">
-      <p className="text-xs font-medium uppercase tracking-[0.18em] text-brand">
-        {courseTitle} · {module.title}
-      </p>
-      <h1 className="font-headline text-2xl font-bold leading-tight tracking-tight text-textPrimary sm:text-3xl lg:text-[2rem]">
+    <header className="space-y-2">
+      {showModule ? (
+        <p className="text-sm font-medium text-brand">{module.title}</p>
+      ) : null}
+      <h1 className="font-headline text-2xl font-bold leading-tight tracking-tight text-textPrimary sm:text-3xl">
         {lesson.title}
       </h1>
     </header>
