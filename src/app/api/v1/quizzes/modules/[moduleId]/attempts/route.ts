@@ -34,7 +34,7 @@ export async function POST(request: Request, { params }: Params) {
 
   const mod = await prisma.module.findUnique({
     where: { id: normalized },
-    select: { courseId: true },
+    select: { courseId: true, lessons: { select: { id: true } } },
   });
   if (!mod) return fail("Module not found", 404);
 
@@ -43,6 +43,16 @@ export async function POST(request: Request, { params }: Params) {
   } catch (error) {
     if (error instanceof EnrollmentError) return fail(error.message, error.status);
     return fail("Enrollment check failed", 500);
+  }
+
+  const lessonCount = mod.lessons.length;
+  if (lessonCount > 0) {
+    const completedCount = await prisma.lessonProgress.count({
+      where: { userId: auth.user.id, lessonId: { in: mod.lessons.map((lesson) => lesson.id) }, completed: true },
+    });
+    if (completedCount !== lessonCount) {
+      return fail("Complete every lesson in this module before taking the test", 409);
+    }
   }
 
   const result = await submitModuleTestAttempt(auth.user.id, normalized, answers);

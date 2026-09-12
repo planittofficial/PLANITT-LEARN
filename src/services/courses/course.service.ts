@@ -4,7 +4,7 @@ import { normalizeCourseId } from "@/lib/api/path";
 import { COURSE_CATALOG, countCourseLessons } from "@/lib/catalog/courses";
 import { DatabaseError } from "@/lib/db/database-error";
 import { prisma } from "@/lib/db/prisma";
-import { getDatabaseUrl } from "@/lib/env";
+import { getDatabaseUrl, isDevStandalone } from "@/lib/env";
 import { isYoutubeUrl } from "@/lib/video/video-url";
 import { isModuleTestVisibleToStudents } from "@/services/quizzes/module-test.service";
 import type {
@@ -148,6 +148,9 @@ export async function listPublishedCourses(): Promise<ApiCourseListItem[]> {
       };
     });
   } catch (error) {
+    // Keep local standalone development usable when the optional remote DB is down.
+    // Production continues to fail loudly through the normal database error path.
+    if (isDevStandalone()) return courseListFromStatic();
     throw new DatabaseError(undefined, { cause: error });
   }
 }
@@ -197,6 +200,7 @@ export async function getCourseDetail(courseId: string): Promise<ApiCourseDetail
     };
   } catch (error) {
     console.error("[getCourseDetail] database error:", error);
+    if (isDevStandalone()) return courseDetailFromStatic(normalized);
     throw new DatabaseError(undefined, { cause: error });
   }
 }

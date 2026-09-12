@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Users } from "lucide-react";
+import { Check, Search, Users } from "lucide-react";
 
 import {
   AdminButton,
+  AdminCard,
+  AdminInput,
   AdminPageHeader,
   AdminPageSkeleton,
   AdminTable,
@@ -16,13 +18,42 @@ import {
   AdminTableHeaderCell,
   AdminTableRow,
 } from "@/features/admin-ui";
-import { useAdminStudents } from "@/hooks/admin/use-admin-students";
+import { useAdminStudents, useGrantSubscriptions } from "@/hooks/admin/use-admin-students";
+import type { SubscriptionStatus } from "@/types/admin.types";
+
+const statusStyles: Record<SubscriptionStatus, string> = {
+  active: "border-brand/25 bg-brand/10 text-brand",
+  expiring_soon: "border-amber-500/25 bg-amber-500/10 text-amber-400",
+  expired: "border-rose-500/25 bg-rose-500/10 text-rose-400",
+  none: "border-white/10 bg-white/5 text-textMuted",
+};
+
+function SubscriptionPill({ status, expiresAt }: { status: SubscriptionStatus; expiresAt: string | null }) {
+  const label = status === "expiring_soon" ? "Expiring soon" : status === "none" ? "No subscription" : status[0].toUpperCase() + status.slice(1);
+  return <div><span className={`inline-flex rounded border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-widest ${statusStyles[status]}`}>{label}</span>{expiresAt ? <p className="mt-1 font-mono text-[9px] text-textMuted">{new Date(expiresAt).toLocaleDateString()}</p> : null}</div>;
+}
 
 export function StudentsAdminView() {
   const [q, setQ] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = useAdminStudents({ page, q: search });
+  const [selected, setSelected] = useState<string[]>([]);
+  const [mode, setMode] = useState<"days" | "date">("days");
+  const [days, setDays] = useState("30");
+  const [date, setDate] = useState("");
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const grant = useGrantSubscriptions();
+  const visibleIds = (data?.items ?? []).map((student) => student.id);
+  const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.includes(id));
+
+  const applyGrant = () => {
+    setFeedback(null);
+    grant.mutate({ userIds: selected, mode, ...(mode === "days" ? { days: Number(days) } : { date }) }, {
+      onSuccess: (result) => { setFeedback(`${result.updated} subscription${result.updated === 1 ? "" : "s"} updated`); setSelected([]); },
+      onError: (err) => setFeedback(err.message),
+    });
+  };
 
   if (isLoading && !data) return <AdminPageSkeleton />;
 
@@ -65,20 +96,27 @@ export function StudentsAdminView() {
         </div>
       ) : null}
 
+      {feedback ? <div className={`rounded-lg border p-3 font-mono text-xs uppercase tracking-wider ${feedback.includes("updated") ? "border-brand/20 bg-brand/5 text-brand" : "border-rose-500/20 bg-rose-500/10 text-rose-400"}`}>{feedback.includes("updated") ? <Check className="mr-2 inline h-3.5 w-3.5" /> : null}{feedback}</div> : null}
+
+      {selected.length ? <AdminCard className="border-brand/30 bg-brand/5"><div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><div><p className="font-mono text-[10px] font-bold uppercase tracking-widest text-brand">{selected.length} learner{selected.length === 1 ? "" : "s"} selected</p><p className="mt-1 text-xs text-textSecondary">Apply one access change to the current selection.</p></div><div className="flex flex-col gap-3 sm:flex-row sm:items-end"><div className="flex rounded border border-white/10 p-0.5 font-mono text-[10px] uppercase"><button type="button" onClick={() => setMode("days")} className={`px-3 py-2 ${mode === "days" ? "bg-brand text-brandForeground" : "text-textMuted"}`}>Add days</button><button type="button" onClick={() => setMode("date")} className={`px-3 py-2 ${mode === "date" ? "bg-brand text-brandForeground" : "text-textMuted"}`}>Set date</button></div>{mode === "days" ? <AdminInput aria-label="Days to add" type="number" min="1" value={days} onChange={(e) => setDays(e.target.value)} className="w-28 font-mono" /> : <AdminInput aria-label="Subscription expiry date" type="date" min={new Date().toISOString().slice(0, 10)} value={date} onChange={(e) => setDate(e.target.value)} className="font-mono" />}<AdminButton onClick={applyGrant} disabled={grant.isPending}>{grant.isPending ? "Updating..." : "Apply access"}</AdminButton></div></div></AdminCard> : null}
+
       <AdminTable>
         <AdminTableElement>
           <AdminTableHead>
             <tr>
+              <AdminTableHeaderCell className="w-12"><input aria-label="Select all visible students" type="checkbox" checked={allSelected} onChange={(e) => setSelected(e.target.checked ? visibleIds : [])} className="accent-brand" /></AdminTableHeaderCell>
               <AdminTableHeaderCell>Name / ID</AdminTableHeaderCell>
               <AdminTableHeaderCell>Email Address</AdminTableHeaderCell>
               <AdminTableHeaderCell>Enrolled Courses</AdminTableHeaderCell>
               <AdminTableHeaderCell>Lessons Done</AdminTableHeaderCell>
               <AdminTableHeaderCell>Quiz Attempts</AdminTableHeaderCell>
+              <AdminTableHeaderCell>Subscription</AdminTableHeaderCell>
             </tr>
           </AdminTableHead>
           <AdminTableBody>
             {(data?.items ?? []).map((student) => (
               <AdminTableRow key={student.id}>
+                <AdminTableCell><input aria-label={`Select ${student.name ?? student.email}`} type="checkbox" checked={selected.includes(student.id)} onChange={(e) => setSelected((current) => e.target.checked ? [...current, student.id] : current.filter((id) => id !== student.id))} className="accent-brand" /></AdminTableCell>
                 <AdminTableCell>
                   <Link
                     href={`/admin/students/${student.id}`}
@@ -100,6 +138,7 @@ export function StudentsAdminView() {
                 <AdminTableCell>
                   <span className="font-mono font-bold text-textPrimary">{student.quizAttempts}</span>
                 </AdminTableCell>
+                <AdminTableCell><SubscriptionPill {...student.subscription} /></AdminTableCell>
               </AdminTableRow>
             ))}
           </AdminTableBody>

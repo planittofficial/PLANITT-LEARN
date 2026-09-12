@@ -14,24 +14,30 @@ import { authedFetch } from "@/lib/security/client-auth";
 type CourseProgressResponse = {
   ok: true;
   progress: CourseProgress;
+  moduleTests?: Record<string, boolean>;
+};
+
+export type CourseProgressSnapshot = {
+  progress: CourseProgress;
+  moduleTests: Record<string, boolean>;
 };
 
 export async function fetchCourseProgress(
   courseId: string,
   userId: string,
-): Promise<CourseProgress> {
+): Promise<CourseProgressSnapshot> {
   const res = await authedFetch(ROUTES.API.COURSES.progress(courseId));
   if (res.status === 503) {
     throw new Error("DATABASE_UNAVAILABLE");
   }
   if (!res.ok) {
     if (process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE === "true") {
-      return loadCourseProgress(userId, courseId);
+      return { progress: loadCourseProgress(userId, courseId), moduleTests: {} };
     }
-    return {};
+    return { progress: {}, moduleTests: {} };
   }
   const data = (await res.json()) as CourseProgressResponse;
-  return data.progress ?? {};
+  return { progress: data.progress ?? {}, moduleTests: data.moduleTests ?? {} };
 }
 
 async function postMarkLessonComplete(lessonId: string): Promise<boolean> {
@@ -70,11 +76,14 @@ export function useCourseProgress(courseId: string) {
     },
     onSuccess: (lessonId) => {
       if (!userId) return;
-      queryClient.setQueryData<CourseProgress>(
+      queryClient.setQueryData<CourseProgressSnapshot>(
         ["progress", "course", courseId, userId],
         (prev) => ({
-          ...(prev ?? loadCourseProgress(userId, courseId)),
-          [lessonId]: { completed: true, completedAt: new Date().toISOString() },
+          progress: {
+            ...(prev?.progress ?? loadCourseProgress(userId, courseId)),
+            [lessonId]: { completed: true, completedAt: new Date().toISOString() },
+          },
+          moduleTests: prev?.moduleTests ?? {},
         }),
       );
       queryClient.invalidateQueries({ queryKey: ["progress", lessonId] });
@@ -82,13 +91,14 @@ export function useCourseProgress(courseId: string) {
   });
 
   const progress =
-    query.data ??
+    query.data?.progress ??
     (userId && process.env.NEXT_PUBLIC_LEARN_DEV_STANDALONE === "true"
       ? loadCourseProgress(userId, courseId)
       : {});
 
   return {
     progress,
+    moduleTests: query.data?.moduleTests ?? {},
     isLoading: query.isLoading,
     markLessonComplete: markCompleteMutation.mutateAsync,
     isMarking: markCompleteMutation.isPending,

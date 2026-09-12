@@ -50,7 +50,7 @@ export function CourseHubView({
   userId,
   enrolled,
 }: CourseHubViewProps) {
-  const { progress, isLoading: progressLoading } = useCourseProgress(courseId);
+  const { progress, moduleTests: passedModuleTests, isLoading: progressLoading } = useCourseProgress(courseId);
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
 
   useEffect(() => {
@@ -216,6 +216,7 @@ export function CourseHubView({
 
             // Determine completed, current, and locked states
             const isCompleted = moduleStats.total > 0 && moduleStats.completed === moduleStats.total;
+            const testPassed = passedModuleTests[module.id] === true;
             let isCurrent = false;
             let isLocked = false;
 
@@ -227,7 +228,8 @@ export function CourseHubView({
                 const prevModuleLessonIds = prevModule.lessons.map((l) => l.id);
                 const prevModuleStats = getModuleProgressStats(progress, prevModuleLessonIds);
                 const prevCompleted = prevModuleStats.total > 0 && prevModuleStats.completed === prevModuleStats.total;
-                if (prevCompleted) {
+                const prevTestPassed = passedModuleTests[prevModule.id] === true;
+                if (prevCompleted && (!course.modules[moduleIndex - 1].lessons.length || prevTestPassed)) {
                   isCurrent = true;
                 } else {
                   isLocked = true;
@@ -276,6 +278,11 @@ export function CourseHubView({
                         {isCompleted && (
                           <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[11px] font-semibold text-brand">
                             Completed
+                          </span>
+                        )}
+                        {isCompleted && !testPassed && (
+                          <span className="flex items-center gap-1 rounded bg-amber-500/10 px-2 py-0.5 text-[9px] font-bold text-amber-700">
+                            TEST REQUIRED
                           </span>
                         )}
                         {isCurrent && (

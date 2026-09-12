@@ -29,8 +29,8 @@ export async function GET(request: Request, context: RouteContext) {
   }
 
   try {
-    const progress = await getCourseProgressForUser(auth.user.id, normalized);
-    return ok({ ok: true, progress });
+    const result = await getCourseProgressForUser(auth.user.id, normalized);
+    return ok({ ok: true, ...result });
   } catch (error) {
     return handleDatabaseError(error);
   }

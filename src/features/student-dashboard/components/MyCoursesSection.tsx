@@ -59,7 +59,7 @@ export function MyCoursesSection() {
   const progressByCourseId = useMemo(() => {
     const map = new Map<string, CourseProgress>();
     enrolledCourses.forEach((course, index) => {
-      map.set(course.id, progressQueries[index]?.data ?? {});
+      map.set(course.id, progressQueries[index]?.data?.progress ?? {});
     });
     return map;
   }, [enrolledCourses, progressQueries]);

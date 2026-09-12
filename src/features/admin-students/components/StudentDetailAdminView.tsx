@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Mail, Target, TrendingUp, CheckCircle2, Clock, Activity } from "lucide-react";
+import { useState } from "react";
+import { BookOpen, CalendarClock, Mail, Target, TrendingUp, CheckCircle2, Activity } from "lucide-react";
 
 import {
   AdminCard,
@@ -9,13 +10,20 @@ import {
   AdminPageSkeleton,
   AdminSection,
   AdminStatCard,
+  AdminButton,
+  AdminInput,
 } from "@/features/admin-ui";
-import { useAdminStudent } from "@/hooks/admin/use-admin-students";
+import { useAdminStudent, useGrantSubscriptions } from "@/hooks/admin/use-admin-students";
 import { ROUTES } from "@/constants/routes";
 import { COURSE_CATALOG, countCourseLessons } from "@/lib/catalog/courses";
 
 export function StudentDetailAdminView({ userId }: { userId: string }) {
   const { data: student, isLoading, error } = useAdminStudent(userId);
+  const grant = useGrantSubscriptions();
+  const [mode, setMode] = useState<"days" | "date">("days");
+  const [days, setDays] = useState("30");
+  const [date, setDate] = useState("");
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   if (isLoading) return <AdminPageSkeleton />;
   if (error) {
@@ -39,6 +47,16 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
       ? Math.round((student.lessonsCompleted / totalLessons) * 100)
       : 0;
 
+  const statusLabel = student.subscription.status === "expiring_soon" ? "Expiring soon" : student.subscription.status === "none" ? "No subscription" : student.subscription.status[0].toUpperCase() + student.subscription.status.slice(1);
+  const statusClass = student.subscription.status === "active" ? "text-brand border-brand/25 bg-brand/10" : student.subscription.status === "expiring_soon" ? "text-amber-400 border-amber-500/25 bg-amber-500/10" : student.subscription.status === "expired" ? "text-rose-400 border-rose-500/25 bg-rose-500/10" : "text-textMuted border-white/10 bg-white/5";
+  const applyGrant = () => {
+    setFeedback(null);
+    grant.mutate({ userIds: [student.id], mode, ...(mode === "days" ? { days: Number(days) } : { date }) }, {
+      onSuccess: () => setFeedback("Subscription updated"),
+      onError: (err) => setFeedback(err.message),
+    });
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in">
       <Link
@@ -54,6 +72,17 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
         description={student.email}
         icon={Mail}
       />
+
+      <AdminCard highlight>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest text-brand"><CalendarClock className="h-3.5 w-3.5" /> Subscription access</p>
+            <div className="mt-2 flex flex-wrap items-center gap-3"><span className={`rounded border px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${statusClass}`}>{statusLabel}</span>{student.subscription.expiresAt ? <span className="font-mono text-[10px] text-textMuted">Expires {new Date(student.subscription.expiresAt).toLocaleDateString()}</span> : null}</div>
+            {feedback ? <p className={`mt-2 font-mono text-[10px] uppercase tracking-wider ${feedback.includes("updated") ? "text-brand" : "text-rose-400"}`}>{feedback}</p> : null}
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end"><div className="flex rounded border border-white/10 p-0.5 font-mono text-[10px] uppercase"><button type="button" onClick={() => setMode("days")} className={`px-3 py-2 ${mode === "days" ? "bg-brand text-brandForeground" : "text-textMuted"}`}>Add days</button><button type="button" onClick={() => setMode("date")} className={`px-3 py-2 ${mode === "date" ? "bg-brand text-brandForeground" : "text-textMuted"}`}>Set date</button></div>{mode === "days" ? <AdminInput aria-label="Days to add" type="number" min="1" value={days} onChange={(e) => setDays(e.target.value)} className="w-28 font-mono" /> : <AdminInput aria-label="Subscription expiry date" type="date" min={new Date().toISOString().slice(0, 10)} value={date} onChange={(e) => setDate(e.target.value)} className="font-mono" />}<AdminButton onClick={applyGrant} disabled={grant.isPending}>{grant.isPending ? "Updating..." : "Update access"}</AdminButton></div>
+        </div>
+      </AdminCard>
 
       {/* Overview Stats */}
       <div className="grid gap-4 sm:grid-cols-3">

@@ -147,12 +147,17 @@ export type CourseProgressMap = Record<
   { completed: boolean; completedAt?: string }
 >;
 
+export type CourseProgressResult = {
+  progress: CourseProgressMap;
+  moduleTests: Record<string, boolean>;
+};
+
 /** All lesson progress for a user within one course. */
 export async function getCourseProgressForUser(
   userId: string,
   courseId: string,
-): Promise<CourseProgressMap> {
-  if (!getDatabaseUrl()) return {};
+): Promise<CourseProgressResult> {
+  if (!getDatabaseUrl()) return { progress: {}, moduleTests: {} };
 
   const normalized = normalizeCourseId(courseId);
 
@@ -162,9 +167,13 @@ export async function getCourseProgressForUser(
       select: { id: true },
     });
 
-    if (lessons.length === 0) return {};
+    if (lessons.length === 0) return { progress: {}, moduleTests: {} };
 
     const lessonIds = lessons.map((lesson) => lesson.id);
+    const modules = await prisma.module.findMany({
+      where: { courseId: normalized, published: true },
+      select: { id: true },
+    });
     const rows = await prisma.lessonProgress.findMany({
       where: { userId, lessonId: { in: lessonIds } },
     });
@@ -176,7 +185,15 @@ export async function getCourseProgressForUser(
         completedAt: row.completedAt?.toISOString(),
       };
     }
-    return progress;
+    const attempts = await prisma.quizAttempt.findMany({
+      where: { userId, moduleId: { in: modules.map((module) => module.id) }, attemptType: "module", passed: true },
+      select: { moduleId: true },
+      distinct: ["moduleId"],
+    });
+    const moduleTests = Object.fromEntries(
+      attempts.flatMap((attempt) => attempt.moduleId ? [[attempt.moduleId, true] as const] : []),
+    );
+    return { progress, moduleTests };
   } catch (error) {
     throw new DatabaseError(undefined, { cause: error });
   }

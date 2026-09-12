@@ -33,6 +33,14 @@ export type AdminStudentSummary = {
   lessonsCompleted: number;
   quizAttempts: number;
   createdAt: string;
+  subscription: SubscriptionSummary;
+};
+
+export type SubscriptionStatus = "active" | "expiring_soon" | "expired" | "none";
+
+export type SubscriptionSummary = {
+  status: SubscriptionStatus;
+  expiresAt: string | null;
 };
 
 export type AdminStudentDetail = AdminStudentSummary & {
