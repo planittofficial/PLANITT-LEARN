@@ -40,20 +40,12 @@ export function LessonSidebar({
         currentLessonId={currentLessonId}
         progress={progress}
       />
-
-      <div className="rounded-xl border border-borderSubtle bg-surface/80 p-4 shadow-card">
-        <p className="text-xs font-semibold uppercase tracking-wide text-textMuted">Course</p>
-        <p className="mt-1 font-headline text-sm font-semibold leading-snug text-textPrimary">
-          {course.title}
-        </p>
-        <p className="mt-2 text-xs leading-6 text-textSecondary">{course.blurb}</p>
-        <Link
-          href={ROUTES.STUDENT.course(course.id)}
-          className="mt-3 inline-flex text-sm font-medium text-brand hover:underline"
-        >
-          View course overview →
-        </Link>
-      </div>
+      <Link
+        href={ROUTES.STUDENT.course(course.id)}
+        className="inline-flex text-sm font-medium text-brand hover:underline"
+      >
+        View full course →
+      </Link>
     </aside>
   );
 }
@@ -199,6 +191,7 @@ export function LessonMetaBar({
   completed: boolean;
 }) {
   const isVideoLesson = lessonHasVideo(lesson);
+  const showModule = module.title.trim().toLowerCase() !== lesson.title.trim().toLowerCase();
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm text-textSecondary">
@@ -209,8 +202,12 @@ export function LessonMetaBar({
       <Badge className="py-0.5 text-xs">
         {isVideoLesson ? "Video" : lesson.kind === "external" ? "Resource" : "Reading"}
       </Badge>
-      <span className="hidden h-1 w-1 rounded-full bg-textMuted sm:inline-block" />
-      <span className="hidden truncate sm:inline">{module.title}</span>
+      {showModule ? (
+        <>
+          <span className="hidden h-1 w-1 rounded-full bg-textMuted sm:inline-block" />
+          <span className="hidden truncate sm:inline">{module.title}</span>
+        </>
+      ) : null}
       {completed ? (
         <span className="inline-flex items-center gap-1 rounded-full bg-brand-subtle px-3 py-1 text-xs font-semibold text-brand">
           <CheckCircle2 className="h-3.5 w-3.5" />
@@ -224,18 +221,19 @@ export function LessonMetaBar({
 export function LessonHeader({
   lesson,
   module,
-  courseTitle,
 }: {
   lesson: Lesson;
   module: CourseModule;
-  courseTitle: string;
+  courseTitle?: string;
 }) {
+  const showModule = module.title.trim().toLowerCase() !== lesson.title.trim().toLowerCase();
+
   return (
-    <header className="space-y-3">
-      <p className="text-xs font-medium uppercase tracking-[0.18em] text-brand">
-        {courseTitle} · {module.title}
-      </p>
-      <h1 className="font-headline text-2xl font-bold leading-tight tracking-tight text-textPrimary sm:text-3xl lg:text-[2rem]">
+    <header className="space-y-2">
+      {showModule ? (
+        <p className="text-sm font-medium text-brand">{module.title}</p>
+      ) : null}
+      <h1 className="font-headline text-2xl font-bold leading-tight tracking-tight text-textPrimary sm:text-3xl">
         {lesson.title}
       </h1>
     </header>

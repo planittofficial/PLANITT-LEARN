@@ -164,7 +164,7 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
                 Lesson Type (when no link is provided)
               </span>
               <select
-                className="mt-1.5 w-full rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 uppercase tracking-wide"
+                className="mt-1.5 w-full rounded border border-borderSubtle bg-elevated px-3 py-2.5 font-mono text-xs text-textPrimary outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 uppercase tracking-wide"
                 value={kind}
                 onChange={(e) => setKind(e.target.value as typeof kind)}
               >
@@ -210,14 +210,14 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
             return (
               <div
                 key={lesson.id}
-                className="group flex flex-wrap items-center justify-between gap-4 rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-4 hover:border-brand/30 transition"
+                className="group flex flex-wrap items-center justify-between gap-4 rounded-lg border border-borderSubtle bg-surface/80 px-5 py-4 hover:border-brand/30 transition"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded border font-bold ${
                       lesson.kind === "video"
                         ? "border-brand/20 bg-brand/10 text-brand"
-                        : "border-white/5 bg-[#1C1B1B] text-textMuted"
+                        : "border-borderSubtle bg-elevated text-textMuted"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -282,7 +282,7 @@ export function ModuleDetailAdminView({ moduleId }: { moduleId: string }) {
         </div>
 
         {(lessons ?? []).length === 0 && !isLoading ? (
-          <div className="rounded-lg border border-dashed border-white/10 px-6 py-10 text-center space-y-3">
+          <div className="rounded-lg border border-dashed border-borderSubtle px-6 py-10 text-center space-y-3">
             <p className="font-mono text-xs text-textMuted uppercase tracking-wider">
               No lessons in this module yet.
             </p>

@@ -108,7 +108,7 @@ export function CoursesAdminView() {
       </AdminTable>
 
       {(courses ?? []).length === 0 ? (
-        <div className="rounded-lg border border-dashed border-white/10 px-6 py-12 text-center font-mono text-xs text-textMuted uppercase tracking-wider">
+        <div className="rounded-lg border border-dashed border-borderSubtle px-6 py-12 text-center font-mono text-xs text-textMuted uppercase tracking-wider">
           No courses loaded.{" "}
           <Link href="/admin/courses/new" className="text-brand hover:underline font-bold">
             [Create First Course]

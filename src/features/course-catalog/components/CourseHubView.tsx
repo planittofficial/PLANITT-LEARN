@@ -274,18 +274,18 @@ export function CourseHubView({
                       <div className="flex flex-wrap items-center gap-2">
                         <h3 className="font-semibold text-textPrimary">{module.title}</h3>
                         {isCompleted && (
-                          <span className="flex items-center gap-1 bg-brand/10 text-brand px-2 py-0.5 rounded text-[9px] font-bold font-mono">
-                            COMPLETED
+                          <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[11px] font-semibold text-brand">
+                            Completed
                           </span>
                         )}
                         {isCurrent && (
-                          <span className="flex items-center gap-1 bg-brand text-brandForeground px-2 py-0.5 rounded text-[9px] font-bold font-mono">
-                            CURRENT
+                          <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold text-brandForeground">
+                            Current
                           </span>
                         )}
                         {isLocked && (
-                          <span className="flex items-center gap-1 bg-overlay-medium text-textMuted px-2 py-0.5 rounded text-[9px] font-bold font-mono">
-                            <Lock className="h-2.5 w-2.5" /> LOCKED
+                          <span className="inline-flex items-center gap-1 rounded-full bg-elevated px-2 py-0.5 text-[11px] font-semibold text-textMuted">
+                            <Lock className="h-2.5 w-2.5" /> Locked
                           </span>
                         )}
                       </div>

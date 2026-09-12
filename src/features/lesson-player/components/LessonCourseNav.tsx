@@ -57,17 +57,24 @@ export function LessonCourseNav({
   const coursePercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
   return (
-    <div className="rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md shadow-2xl">
+    <div className="overflow-hidden rounded-xl border border-borderSubtle bg-surface shadow-card">
       <div className="border-b border-borderSubtle p-4">
-        <p className="text-xs font-semibold text-brand">Course progress</p>
-        <p className="mt-1 font-headline text-sm font-extrabold text-textPrimary leading-snug tracking-tight">{course.title}</p>
+        <p className="text-xs font-semibold text-brand">Course outline</p>
+        <p className="mt-1 font-headline text-sm font-semibold leading-snug text-textPrimary">
+          {course.title}
+        </p>
         <div className="mt-3">
-          <div className="w-full h-1 bg-elevated rounded overflow-hidden">
-            <div className="h-full bg-brand transition-all duration-500" style={{ width: `${coursePercent}%` }} />
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-elevated">
+            <div
+              className="h-full rounded-full bg-brand transition-all duration-500"
+              style={{ width: `${coursePercent}%` }}
+            />
           </div>
-          <div className="mt-1 flex justify-between text-xs text-textMuted">
+          <div className="mt-1.5 flex justify-between text-xs text-textMuted">
             <span>{coursePercent}% complete</span>
-            <span>{completedCount}/{totalLessons} lessons</span>
+            <span>
+              {completedCount}/{totalLessons} lessons
+            </span>
           </div>
         </div>
       </div>
@@ -83,9 +90,9 @@ export function LessonCourseNav({
               <button
                 type="button"
                 onClick={() => toggle(mod.id)}
-                className="flex w-full items-center gap-2 rounded px-2 py-2.5 text-left text-sm transition hover:bg-overlay-hover"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-left text-sm transition hover:bg-overlay-hover"
               >
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-bold text-brand border border-brand/20">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-bold text-brand">
                   {modIndex + 1}
                 </span>
                 <span className="min-w-0 flex-1 truncate font-semibold text-textPrimary">{mod.title}</span>
@@ -111,10 +118,10 @@ export function LessonCourseNav({
                         <Link
                           href={ROUTES.STUDENT.lesson(courseId, mod.id, lesson.id)}
                           className={cn(
-                            "group flex items-center gap-2 rounded px-2 py-2 text-sm transition border border-transparent",
+                            "group flex items-center gap-2 rounded-lg px-2 py-2 text-sm transition",
                             active
-                              ? "bg-brand/5 border-l-2 border-l-brand text-brand font-bold"
-                              : "text-textSecondary hover:text-textPrimary hover:bg-overlay-hover",
+                              ? "bg-brand/10 font-semibold text-brand"
+                              : "text-textSecondary hover:bg-overlay-hover hover:text-textPrimary",
                           )}
                         >
                           {done ? (
@@ -137,10 +144,10 @@ export function LessonCourseNav({
                     <li className="mb-0.5">
                       <Link
                         href={ROUTES.STUDENT.moduleTest(courseId, mod.id)}
-                        className="group flex items-center gap-2 rounded px-2 py-2 text-sm text-brand transition hover:bg-overlay-hover"
+                        className="group flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold text-brand transition hover:bg-overlay-hover"
                       >
                         <Circle className="h-3.5 w-3.5 shrink-0 text-brand" />
-                        <span className="min-w-0 flex-1 truncate font-semibold">Module test</span>
+                        <span className="min-w-0 flex-1 truncate">Module test</span>
                       </Link>
                     </li>
                   ) : null}

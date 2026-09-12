@@ -34,13 +34,6 @@ export default function HomePage() {
     return <LandingView />;
   }
 
-  return (
-    <>
-      <MyCoursesSection />
-      <p className="mt-12 text-center text-xs text-textMuted">
-        Educational content only — not investment advice. Always perform your own due diligence.
-      </p>
-    </>
-  );
+  return <MyCoursesSection />;
 }
 

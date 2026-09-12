@@ -80,7 +80,7 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
       {/* Progress bar */}
       <AdminCard>
         <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest mb-3">Learning_Progress_Matrix</p>
-        <div className="w-full h-2 bg-white/5 rounded overflow-hidden mb-2">
+        <div className="w-full h-2 bg-overlay-subtle rounded overflow-hidden mb-2">
           <div className="h-full bg-brand transition-all duration-500" style={{ width: `${progressPercent}%` }} />
         </div>
         <div className="flex justify-between font-mono text-[10px] text-textMuted uppercase tracking-wider">
@@ -93,7 +93,7 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
       <AdminSection title="Course Enrollments">
         <div className="space-y-2">
           {student.enrollments.map((e) => (
-            <div key={e.courseId} className="flex items-center justify-between rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-4 font-mono text-xs hover:border-brand/30 transition">
+            <div key={e.courseId} className="flex items-center justify-between rounded-lg border border-borderSubtle bg-surface/80 px-5 py-4 font-mono text-xs hover:border-brand/30 transition">
               <div className="min-w-0">
                 <p className="font-bold text-textPrimary uppercase tracking-wide truncate">{e.courseTitle}</p>
                 <p className="text-[9px] text-textMuted uppercase tracking-widest mt-1">
@@ -114,7 +114,7 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
           {student.progress.map((p) => (
             <div
               key={p.lessonId}
-              className="flex items-center justify-between rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-3.5 hover:border-brand/20 transition"
+              className="flex items-center justify-between rounded-lg border border-borderSubtle bg-surface/80 px-5 py-3.5 hover:border-brand/20 transition"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className="shrink-0">
@@ -143,7 +143,7 @@ export function StudentDetailAdminView({ userId }: { userId: string }) {
           {student.quizResults.map((q) => (
             <div
               key={q.id}
-              className="flex items-center justify-between rounded-lg border border-white/5 bg-[#131313]/60 px-5 py-3.5 hover:border-brand/20 transition"
+              className="flex items-center justify-between rounded-lg border border-borderSubtle bg-surface/80 px-5 py-3.5 hover:border-brand/20 transition"
             >
               <p className="font-mono text-xs font-bold text-textPrimary uppercase tracking-wide capitalize">{q.type} Quiz</p>
               <div className="flex items-center gap-3">

@@ -12,17 +12,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="admin-area flex min-h-screen bg-appBase text-textPrimary">
-      {/* Background Overlay */}
-      <div className="absolute inset-0 radar-grid opacity-10 pointer-events-none" />
-
+    <div className="admin-area relative flex min-h-screen bg-appBase text-textPrimary">
       <AdminSidebar
         mobileOpen={mobileNavOpen}
         onMobileClose={() => setMobileNavOpen(false)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col relative z-10 lg:pl-0">
-        {/* Mobile Header */}
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col lg:pl-0">
         <header className="sticky top-0 z-30 border-b border-borderSubtle bg-surface/90 backdrop-blur-lg lg:hidden">
           <div className="flex items-center gap-3 px-4 py-3">
             <button
@@ -35,11 +31,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </button>
             <div className="flex flex-1 items-center gap-2">
               <AlvestLogo variant="markClear" size={28} priority />
-              <span className="font-headline text-md font-bold text-textPrimary tracking-tight">
+              <span className="font-headline text-md font-bold tracking-tight text-textPrimary">
                 Alvest Learn <span className="text-brand">Admin</span>
               </span>
             </div>
-            <ThemeToggle />
+            <ThemeToggle className="rounded-lg border border-borderSubtle" />
           </div>
         </header>
 

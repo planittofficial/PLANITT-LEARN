@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -22,13 +22,14 @@ import { LessonOverviewPanel } from "@/features/lesson-player/components/LessonO
 import { lessonHasResources } from "@/features/lesson-player/components/LessonResources";
 import { LessonBookmarkButton } from "@/features/lesson-player/components/LessonBookmark";
 import { LessonQuizPanel } from "@/features/quizzes";
-import { useGamification } from "@/features/gamification";
+import { CompletionCelebration, useGamification } from "@/features/gamification";
+import type { CelebrationKind } from "@/features/gamification";
 import { useCourseDetail } from "@/hooks/courses/use-course-detail";
 import { useEnrollment } from "@/hooks/enrollment/use-enrollment";
 import { useCourseProgress } from "@/hooks/progress/use-course-progress";
 import { useLessonQuiz } from "@/hooks/quizzes/use-lesson-quiz";
 import { apiCourseDetailToDefinition } from "@/lib/catalog/map-api-course";
-import type { CourseDefinition, CourseModule, Lesson } from "@/lib/catalog/courses";
+import type { Lesson } from "@/lib/catalog/courses";
 import { recordRecentlyWatched } from "@/lib/learning/activity";
 import { recordLearningActivity, touchDailyActivity, loadGamification } from "@/lib/learning/gamification";
 import { syncAchievements } from "@/lib/learning/achievements";
@@ -55,6 +56,15 @@ function mapApiLesson(lesson: ApiLesson): Lesson {
   };
 }
 
+type CelebrationState = {
+  kind: CelebrationKind;
+  title: string;
+  subtitle: string;
+  xpEarned: number;
+  primaryHref: string;
+  primaryLabel: string;
+};
+
 export default function LessonPage() {
   const params = useParams<{ courseId: string; moduleId: string; lessonId: string }>();
   const courseId = decodeURIComponent(params.courseId ?? "");
@@ -71,6 +81,7 @@ export default function LessonPage() {
   } = useCourseProgress(courseId);
   const lessonQuiz = useLessonQuiz(lessonId, Boolean(user?.id));
   const gamification = useGamification(user?.id);
+  const [celebration, setCelebration] = useState<CelebrationState | null>(null);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -102,28 +113,25 @@ export default function LessonPage() {
     return <LessonPageSkeleton />;
   }
 
-  // Enrollment gate (fast client-side check) — API also enforces enrollment.
   if (!isEnrolledInCourse(enrolledIds, courseId)) {
     return (
-      <>
-        <LockedCourseEmpty
-          action={
-            <a
-              href={alvestCheckoutUrl(courseId)}
-              className="inline-flex rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover"
-            >
-              Buy course on Alvest →
-            </a>
-          }
-        />
-      </>
+      <LockedCourseEmpty
+        action={
+          <a
+            href={alvestCheckoutUrl(courseId)}
+            className="inline-flex rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground transition hover:bg-brandHover"
+          >
+            Buy course on Alvest →
+          </a>
+        }
+      />
     );
   }
 
   const apiCourse = courseQuery.data;
   if (!apiCourse) {
     return (
-      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-200">
+      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-800 dark:text-amber-200">
         Could not load this lesson. Go back to the{" "}
         <Link href={ROUTES.STUDENT.course(courseId)} className="text-brand underline">
           course page
@@ -138,7 +146,7 @@ export default function LessonPage() {
 
   if (!apiMod || !apiLesson) {
     return (
-      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-200">
+      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-6 text-sm text-amber-800 dark:text-amber-200">
         This lesson was not found. It may be unpublished or the link is outdated.{" "}
         <Link href={ROUTES.STUDENT.course(courseId)} className="text-brand underline">
           Return to course
@@ -173,6 +181,7 @@ export default function LessonPage() {
     recordLearningActivity(user.id);
     syncAchievements(user.id);
     const xpAfter = loadGamification(user.id).xp;
+    const xpEarned = Math.max(0, xpAfter - xpBefore);
     checkLevelUpNotification(user.id, xpBefore, xpAfter);
     notifyLessonComplete(
       user.id,
@@ -182,31 +191,78 @@ export default function LessonPage() {
     );
     syncNotifications(user.id);
     gamification.refresh();
+
+    const moduleLessonIds = module.lessons.map((item) => item.id);
+    const moduleDone = moduleLessonIds.every(
+      (id) => id === lesson.id || progress[id]?.completed,
+    );
+
+    if (moduleDone) {
+      const moduleTestHref = module.hasModuleTest
+        ? ROUTES.STUDENT.moduleTest(courseId, moduleId)
+        : null;
+      const nextModuleHref =
+        nextLesson && nextLesson.moduleId !== moduleId
+          ? ROUTES.STUDENT.lesson(courseId, nextLesson.moduleId, nextLesson.lesson.id)
+          : null;
+
+      setCelebration({
+        kind: "module",
+        title: "You finished this module!",
+        subtitle: module.hasModuleTest
+          ? "Great work. Take the module test to lock in what you learned."
+          : "Keep the momentum going with the next module.",
+        xpEarned,
+        primaryHref: moduleTestHref ?? nextModuleHref ?? ROUTES.STUDENT.course(courseId),
+        primaryLabel: moduleTestHref
+          ? "Take module test"
+          : nextModuleHref
+            ? "Continue to next module"
+            : "Back to course",
+      });
+      return;
+    }
+
+    setCelebration({
+      kind: "lesson",
+      title: "Nice progress!",
+      subtitle: nextLesson
+        ? `Up next: ${nextLesson.lesson.title}`
+        : "You are moving through this course steadily.",
+      xpEarned,
+      primaryHref: nextLesson
+        ? ROUTES.STUDENT.lesson(courseId, nextLesson.moduleId, nextLesson.lesson.id)
+        : ROUTES.STUDENT.course(courseId),
+      primaryLabel: nextLesson ? "Next lesson" : "Back to course",
+    });
   };
+
+  const breadcrumbItems: Array<{ label: string; href?: string }> = [
+    { label: "Home", href: ROUTES.STUDENT.HOME },
+    { label: course.title, href: ROUTES.STUDENT.course(courseId) },
+  ];
+  if (module.title.trim().toLowerCase() !== lesson.title.trim().toLowerCase()) {
+    breadcrumbItems.push({ label: module.title, href: ROUTES.STUDENT.course(courseId) });
+  }
+  breadcrumbItems.push({ label: lesson.title });
 
   return (
     <>
       <Link
         href={ROUTES.STUDENT.course(courseId)}
-        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-brand sm:hidden"
+        className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-brand sm:hidden"
       >
         ← Back to course
       </Link>
 
-      <Breadcrumb
-        className="hidden sm:block"
-        items={[
-          { label: "Dashboard", href: ROUTES.STUDENT.HOME },
-          { label: course.title, href: ROUTES.STUDENT.course(courseId) },
-          { label: module.title, href: ROUTES.STUDENT.course(courseId) },
-          { label: lesson.title },
-        ]}
-      />
+      <Breadcrumb className="hidden sm:block" items={breadcrumbItems} />
 
-      <div className="mt-4 flex flex-col gap-8 xl:grid xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
-        <div className="order-2 min-w-0 space-y-6 xl:order-1">
-          <LessonHeader lesson={lesson} module={module} courseTitle={course.title} />
-          <LessonMetaBar lesson={lesson} module={module} completed={!!completed} />
+      <div className="mt-2 flex flex-col gap-6 xl:grid xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start xl:gap-8">
+        <div className="order-2 min-w-0 space-y-5 xl:order-1">
+          <div className="space-y-3">
+            <LessonHeader lesson={lesson} module={module} />
+            <LessonMetaBar lesson={lesson} module={module} completed={!!completed} />
+          </div>
 
           <LessonContent
             lesson={lesson}
@@ -215,18 +271,20 @@ export default function LessonPage() {
             onComplete={() => void markComplete()}
           />
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="flex flex-col gap-3 rounded-xl border border-borderSubtle bg-surface p-4 shadow-card sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <button
               type="button"
               onClick={() => void markComplete()}
               disabled={completed || isMarking}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-brandForeground shadow-card transition hover:bg-brandHover disabled:opacity-50 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-brandForeground shadow-card transition hover:bg-brandHover disabled:opacity-50 sm:w-auto"
             >
               {completed ? (
                 <>
                   <CheckCircle2 className="h-4 w-4" />
-                  Marked complete
+                  Completed
                 </>
+              ) : isMarking ? (
+                "Saving…"
               ) : (
                 "Mark as complete"
               )}
@@ -299,9 +357,18 @@ export default function LessonPage() {
         </div>
       </div>
 
-      <p className="mt-8 text-center text-xs text-textMuted">
-        Educational content only — not investment advice.
-      </p>
+      <CompletionCelebration
+        open={Boolean(celebration)}
+        kind={celebration?.kind ?? "lesson"}
+        title={celebration?.title ?? ""}
+        subtitle={celebration?.subtitle}
+        xpEarned={celebration?.xpEarned}
+        primaryHref={celebration?.primaryHref ?? ROUTES.STUDENT.course(courseId)}
+        primaryLabel={celebration?.primaryLabel ?? "Continue"}
+        secondaryHref={ROUTES.STUDENT.course(courseId)}
+        secondaryLabel="Back to course"
+        onClose={() => setCelebration(null)}
+      />
     </>
   );
 }

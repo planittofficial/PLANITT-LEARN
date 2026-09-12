@@ -57,7 +57,7 @@ export default function ModuleTestPage() {
     <>
       <Breadcrumb
         items={[
-          { label: "Dashboard", href: ROUTES.STUDENT.HOME },
+          { label: "Home", href: ROUTES.STUDENT.HOME },
           { label: course?.title ?? courseId, href: ROUTES.STUDENT.course(courseId) },
           { label: "Module test" },
         ]}

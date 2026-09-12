@@ -61,8 +61,8 @@ export function VideoUploadPanel({
   );
 
   return (
-    <section className="overflow-hidden rounded-lg border border-white/5 bg-[#131313]/60 backdrop-blur-md">
-      <div className="border-b border-white/5 px-5 py-4">
+    <section className="overflow-hidden rounded-lg border border-borderSubtle bg-surface/80 backdrop-blur-md">
+      <div className="border-b border-borderSubtle px-5 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded border border-brand/20 bg-brand/10 text-brand">
             <Video className="h-5 w-5" />
@@ -98,7 +98,7 @@ export function VideoUploadPanel({
             "flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded border border-dashed p-8 text-center transition-all",
             dragOver
               ? "border-brand bg-brand/10 scale-[1.01]"
-              : "border-white/10 hover:border-brand/40 hover:bg-[#1C1B1B]",
+              : "border-borderSubtle hover:border-brand/40 hover:bg-elevated",
             uploading && "pointer-events-none opacity-60",
           )}
         >
@@ -132,7 +132,7 @@ export function VideoUploadPanel({
 
         {/* Preview + metadata */}
         <div className="space-y-4">
-          <div className="overflow-hidden rounded border border-white/5 bg-black/60">
+          <div className="overflow-hidden rounded border border-borderSubtle bg-black/60">
             {youtubeEmbedUrl ? (
               <iframe
                 key={youtubeEmbedUrl}
@@ -169,7 +169,7 @@ export function VideoUploadPanel({
               YouTube or Hosted Video Stream URL
             </span>
             <input
-              className="mt-1.5 w-full rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 uppercase tracking-wide"
+              className="mt-1.5 w-full rounded border border-borderSubtle bg-elevated px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 uppercase tracking-wide"
               value={videoUrl}
               onChange={(e) => onVideoUrlChange(e.target.value)}
               placeholder="HTTPS://WWW.YOUTUBE.COM/WATCH?V=…"
@@ -194,7 +194,7 @@ export function VideoUploadPanel({
               <input
                 type="number"
                 min={0}
-                className="mt-1.5 w-full rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 tracking-wide"
+                className="mt-1.5 w-full rounded border border-borderSubtle bg-elevated px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 focus:ring-1 focus:ring-brand/20 tracking-wide"
                 value={durationSeconds}
                 onChange={(e) =>
                   onDurationChange(e.target.value === "" ? "" : Number(e.target.value))

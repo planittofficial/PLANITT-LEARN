@@ -127,7 +127,7 @@ export function QuizBuilder({
       <QuizSmartPaste onImport={handleSmartPaste} />
 
       <AdminCard>
-        <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest mb-3">Quiz_Assessment_Properties</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-textMuted">Assessment settings</p>
         <div className="grid gap-4 sm:grid-cols-2">
           <AdminInput label="Quiz Title" value={title} onChange={(e) => setTitle(e.target.value)} />
           <AdminInput
@@ -143,8 +143,8 @@ export function QuizBuilder({
 
       {questions.map((question, qIndex) => (
         <AdminCard key={question.id}>
-          <div className="mb-3 flex items-center justify-between gap-2 border-b border-white/5 pb-2">
-            <p className="font-mono text-xs font-bold text-brand uppercase tracking-wider">Question #{qIndex + 1}</p>
+          <div className="mb-3 flex items-center justify-between gap-2 border-b border-borderSubtle pb-2">
+            <p className="text-sm font-semibold text-brand">Question {qIndex + 1}</p>
             <AdminButton
               variant="danger"
               size="sm"
@@ -156,23 +156,23 @@ export function QuizBuilder({
           </div>
           <AdminTextarea
             rows={2}
-            placeholder="ENTER QUESTION PROMPT / STEM..."
+            placeholder="Enter the question prompt…"
             value={question.prompt}
             onChange={(e) => updateQuestion(qIndex, { prompt: e.target.value })}
           />
           <div className="mt-4 space-y-2.5">
-            <p className="font-mono text-[9px] text-textMuted uppercase tracking-widest">Options / Distractors (Select correct answer)</p>
+            <p className="text-xs font-medium text-textMuted">Options (select the correct answer)</p>
             {question.options.map((option, oIndex) => (
-              <label key={oIndex} className="flex items-center gap-3 font-mono text-xs text-textPrimary">
+              <label key={oIndex} className="flex items-center gap-3 text-sm text-textPrimary">
                 <input
                   type="radio"
                   name={`correct-${question.id}`}
                   checked={question.correctIndex === oIndex}
                   onChange={() => updateQuestion(qIndex, { correctIndex: oIndex })}
-                  className="accent-brand h-4 w-4 border-white/10 bg-[#1C1B1B]"
+                  className="h-4 w-4 accent-brand"
                 />
                 <input
-                  className="flex-1 rounded border border-white/5 bg-[#1C1B1B] px-3 py-2.5 font-mono text-xs text-textPrimary placeholder:text-textMuted outline-none focus:border-brand/40 tracking-wide uppercase"
+                  className="flex-1 rounded-lg border border-borderSubtle bg-elevated px-3 py-2.5 text-sm text-textPrimary placeholder:text-textMuted outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
                   value={option}
                   onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
                   placeholder={`Option ${String.fromCharCode(65 + oIndex)}`}
@@ -181,46 +181,46 @@ export function QuizBuilder({
             ))}
             <button
               type="button"
-              className="font-mono text-[10px] text-brand hover:underline uppercase tracking-wider font-bold"
+              className="text-xs font-semibold text-brand hover:underline"
               onClick={() =>
                 updateQuestion(qIndex, { options: [...question.options, ""] })
               }
             >
-              + Add Option Row
+              + Add option
             </button>
           </div>
         </AdminCard>
       ))}
 
       {saveError ? (
-        <p role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 font-mono text-xs text-red-400">
+        <p role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">
           {saveError}
         </p>
       ) : null}
       {saveOk ? (
-        <p className="rounded-lg border border-brand/20 bg-brand/10 px-3 py-2 font-mono text-xs text-brand">
+        <p className="rounded-lg border border-brand/20 bg-brand/10 px-3 py-2 text-sm text-brand">
           {published
             ? "Saved. Students can now take this assessment."
             : "Saved as a draft. Check “Publish to Students” and save again to make it visible."}
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-4 font-mono text-xs">
+      <div className="flex flex-wrap items-center gap-4 text-sm">
         <AdminButton variant="secondary" onClick={() => setQuestions((prev) => [...prev, newQuestion()])}>
           <Plus className="h-3.5 w-3.5" />
-          Add Question Node
+          Add question
         </AdminButton>
-        <label className="flex items-center gap-2 text-textSecondary cursor-pointer uppercase tracking-widest text-[10px]">
+        <label className="flex cursor-pointer items-center gap-2 text-textSecondary">
           <input
             type="checkbox"
-            className="rounded border-white/10 accent-brand h-4 w-4 bg-[#1C1B1B]"
+            className="h-4 w-4 rounded border-borderSubtle accent-brand"
             checked={published}
             onChange={(e) => setPublished(e.target.checked)}
           />
-          Publish to Students
+          Publish to students
         </label>
         <AdminButton disabled={saving} onClick={() => void handleSave()}>
-          {saving ? "Commiting..." : "Commit Assessment Setup"}
+          {saving ? "Saving…" : "Save assessment"}
         </AdminButton>
       </div>
     </div>

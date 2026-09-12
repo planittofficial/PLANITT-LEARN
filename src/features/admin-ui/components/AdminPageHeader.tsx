@@ -21,7 +21,7 @@ export function AdminPageHeader({
   return (
     <header
       className={cn(
-        "relative overflow-hidden rounded-lg border border-borderSubtle bg-surface/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl",
+        "relative overflow-hidden rounded-xl border border-borderSubtle bg-surface p-6 shadow-card sm:p-8",
         className,
       )}
     >
@@ -29,16 +29,16 @@ export function AdminPageHeader({
       <div className="relative flex flex-wrap items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-brand font-bold">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand">
               {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="mt-2 font-headline text-2xl font-extrabold tracking-tight sm:text-3xl uppercase text-textPrimary">{title}</h1>
+          <h1 className="mt-2 font-headline text-2xl font-bold tracking-tight text-textPrimary sm:text-3xl">
+            {title}
+          </h1>
           {description ? (
-            <p className="mt-2 max-w-2xl text-xs text-textSecondary leading-relaxed">
-              {description}
-            </p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-textSecondary">{description}</p>
           ) : null}
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
